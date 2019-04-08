@@ -32,8 +32,35 @@ A relationship are data records that need to have two properties: direction and 
 
 ![relationshipProperties](/resources/relationshipProperties.PNG)
 
+## Introduction to Neo4J
+
+### Cypher
+
+###### ***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
+###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
+
+Neo4J's Cypher language is purpose built for working with graph data, uses patterns to describe graph data and it's familiar to sql-like clauses and follow this rule: ***describing what to find and not how to find it**.
+
+Let's create a small social graph.
+To create a new data we use the *CREATE* clause:
+
+```Cypher
+CREATE (ee:Person {name: "Emil", from: "Sweden", klout:99})
+```
+***klout = influence based on the ability to drive action across the social web***
+
+With this query we create a node **ee** of type Person that have 3 properties: name, from and klout.
+
+The output of this query will be:
+```
+Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
+```
+
+
 
 ### References
 
 Neo4J:
     - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
+        * :play concepts
+        * :play intro
