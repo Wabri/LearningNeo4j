@@ -69,27 +69,25 @@ Take the nodes label Person and return only the nodes that have a property name 
 
 The output of this query can be different:
     - by **graph**:
-        ![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
+![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
 
     - by **table**:
-        
-        ```Json
-        {
-            "name": "Emil",
-            "from": "Sweden",
-            "klout": 99
-        } 
-        ```
+```Json
+{
+    "name": "Emil",
+    "from": "Sweden",
+    "klout": 99
+} 
+```
 
     - by **text**:
-
-        ```
-        ╒══════════════════════════════════════════╕
-        │"ee"                                      │
-        ╞══════════════════════════════════════════╡
-        │{"name":"Emil","from":"Sweden","klout":99}│
-        └──────────────────────────────────────────┘ 
-        ```
+```
+╒══════════════════════════════════════════╕
+│"ee"                                      │
+╞══════════════════════════════════════════╡
+│{"name":"Emil","from":"Sweden","klout":99}│
+└──────────────────────────────────────────┘ 
+```
 
 
 
