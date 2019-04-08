@@ -68,10 +68,9 @@ Take the nodes label Person and return only the nodes that have a property name 
     - **RETURN** -> clause used to request particular results
 
 The output of this query can be different:
-    - by **graph**:
+- by **graph**:
 ![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
-
-    - by **table**:
+- by **table**:
 ```Json
 {
     "name": "Emil",
@@ -79,8 +78,7 @@ The output of this query can be different:
     "klout": 99
 } 
 ```
-
-    - by **text**:
+- by **text**:
 ```
 ╒══════════════════════════════════════════╕
 │"ee"                                      │
