@@ -66,10 +66,13 @@ Take the nodes label Person and return only the nodes that have a property name 
     - **WHERE** -> clause to filter the results
     - **ee.name = "Emil"** -> compare name property to the value "Emil"
     - **RETURN** -> clause used to request particular results
+
 The output of this query can be different:
     - by **graph**:
         ![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
+
     - by **table**:
+        
         ```Json
         {
             "name": "Emil",
@@ -77,7 +80,9 @@ The output of this query can be different:
             "klout": 99
         } 
         ```
+
     - by **text**:
+
         ```
         ╒══════════════════════════════════════════╕
         │"ee"                                      │
@@ -85,6 +90,7 @@ The output of this query can be different:
         │{"name":"Emil","from":"Sweden","klout":99}│
         └──────────────────────────────────────────┘ 
         ```
+
 
 
 ### References
