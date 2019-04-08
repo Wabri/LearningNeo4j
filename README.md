@@ -69,6 +69,7 @@ Take the nodes label Person and return only the nodes that have a property name 
 
 The output of this query can be different:
 - by **graph**:
+
 ![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
 - by **table**:
 ```Json
@@ -87,11 +88,44 @@ The output of this query can be different:
 └──────────────────────────────────────────┘ 
 ```
 
+Create clauses can create many nodes and relationships at once:
+```Cypher
+MATCH (ee:Person) WHERE ee.name = "Emil"
+CREATE 
+(js:Person {name:"Johan", from:"Sweden", learn:"surfing"}),
+(ir:Person {name:"Ian", from:"England", title:"author"}),
+(rvb:Person {name:"Rik", from:"Belgium", pet:"Orval"}),
+(ally:Person {name:"Allison", from: "California", hobby: "surfing" }),
+(ee)-[:KNOWS {since: 2001}]->(js),
+(ee)-[:KNOWS {rating:5}]->(ir),
+(js)-[:KNOWS]->(ir), (js)-[:KNOWS]->(rvb),
+(ir)-[:KNOWS]->(js), (ir)-[:KNOWS]->(ally),
+(rvb)-[:KNOWS]->(ally)
+```
+If exits in the database a node with **name** property with value **Emil** then create 4 new nodes and 7 relationship between them.
+The relationships are created by defined the left node and the right node:
+```
+(left_node)-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]->(right_node)
+```
+The output of the query above is:
+```
+Added 4 labels, created 4 nodes, set 14 properties, created 7 relationships, completed after 33 ms.
+```
+
+To see what we created we need to run a new query that take all of the nodes in relationship with **Emil**:
+```
+MATCH (ee:Person)-[:KNOWS]-(friends) 
+WHERE ee.name="Emil"
+RETURN ee.name, friends
+```
+Analyze this clause `MATCH (ee:Person)-[:KNOWS]-(friends)`, the meaning of `()-[:KNOWS]-()` is to maches **KNOWS** relationship in either direction and takes all nodes with label Person that have a relationship with other nodes.
+The output will be all the relationships between node **ee** with property name set as Emil and nodes **friends**, the query graph result will be:
+![matchEmilFriendsG](/resources/matchEmilFriendsG.PNG)
 
 
-### References
 
-Neo4J:
-    - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
+### References Neo4J: 
+- [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
         * :play concepts
         * :play intro
+        * :play cypher
