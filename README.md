@@ -123,7 +123,25 @@ The output will be all the relationships between node **ee** with property name 
 
 ![matchEmilFriendsG](/resources/matchEmilFriendsG.PNG)
 
+Pattern matching can be used to make recommendations, to suggest a new friend or a new film to watch. For example we can make recomandation to johan that is learning to surf, he may want to find a new frend who already does:
+```
+MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
+WHERE js.name = "Johan" AND surfer.hobby = "surfing"
+RETURN DISTINCT surfer
+```
+The clause DISTINCT is use to avoid an output of the same nodes because more than one Person can be friend to the same Person at the same time more than one nodes can be related to the same node.
+The pattern put on the MATCH clause contains 2 relations and the nodes in the center `()` is not important in our recommendation so is ignored and not referred with a name.
+This query return all of the Person who have the hobby "surfing" that are connected to a friend of a friend of Johan. In our database only one node correspond to this filter: "Allison".
 
+![matchsurfingrecommendation](/resources/matchSurfingRecommendations.PNG)
+
+To understand how the query works you can use the EXPLAIN or PROFILE clause put at the beginning of the query, like this:
+```
+PROFILE MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
+WHERE js.name = "Johan" AND surfer.hobby = "surfing"
+RETURN DISTINCT surfer
+```
+The outcome will be a cause effect of how the engine find the result.
 
 ### References Neo4J: 
 - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
