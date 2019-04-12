@@ -6,6 +6,7 @@
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
     * [Application - Movie Graph](#application---movie-graph)
+    * [Application - Northwind Graph](#application---northwind-graph)
 3. [References](#references)
 
 --------------------
@@ -304,6 +305,142 @@ RETURN n
 
 #### ***All the query above is on the source directory of Cypher [here](/Cypher/MovieGraph/)***
 
+### Application - Northwind Graph
+
+This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
+Pratically how to get this:
+
+![northGraphNodes](\resources\northGraphNodes.PNG)
+
+From this:
+
+![northGraphTables](\resources\northGraphTables.PNG)
+
+This example is a sellers of food products for a few categories provided by suppliers. The database actually in use is a relational table of product catalog. The first step to transform this is with the `LOAD CSV` clause that retrive a CSV file from a valid URL and create a named map:
+* Products nodes:
+    ```Cypher
+    LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/products.csv" AS row
+    CREATE (n:Product)
+    SET n = row,
+        n.unitPrice = toFloat(row.unitPrice),
+        n.unitinStock = toInteger(row.unitsInStock), n.unitOnOrder = toInteger(row.unitsOnOrder),
+        n.reorderLevel = toInteger(row.reorderLevel), n.discontinued = (row.discontinued <> "0")
+    ```
+* Categories nodes:
+    ```Cypher
+    LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/categories.csv" AS row
+    CREATE (n:Category)
+    SET n = row
+    ```
+* Suppliers nodes:
+    ```Cypher
+    LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/suppliers.csv" AS row
+    CREATE (n:Supplier)
+    SET n = row
+    ```
+It's important to define an index for a node with the purpose of making searches of related data more efficent:
+* Product index:
+    ```Cypher
+    CREATE INDEX ON :Product(productID)
+    ```
+* Category index:
+    ```Cypher
+    CREATE INDEX ON :Category(productID)
+    ```
+* Supplier index:
+    ```Cypher
+    CREATE INDEX ON :Supplier(productID)
+    ```
+
+This 3 type of nodes are related one to another with foreign keys references we can use this properties to create the relationships from node to node.
+A product is a part of a category and a supplier supplies product, let's create this two relationship:
+* Product-part_of->Category:
+    ```Cypher
+    MATCH (p:Product), (c:Category)
+    WHERE p.categoryID = c.categoryID
+    CREATE (p)-[:PART_OF]->(c)
+    ```
+* Supplier-supplies->Product:
+    ```Cypher
+    MATCH (p:Product), (s:Supplier)
+    WHERE p.supplierID = s.supplierID
+    CREATE (s)-[:SUPPLIES]->(p)
+    ```
+
+We can now test what we crated:
+1. List the product categories proviced by each supplier:
+    ```Cypher
+    MATCH (s:Supplier)-[*]->(c:Category)
+    RETURN 
+        s.companyName as Company,
+        collect(distinct c.categoryName) as Categories
+    ORDER BY Company DESC
+    ```
+2. Find the produce suppliers:
+    ```Cypher
+    MATCH (s:Supplier)-[*]->(c:Category {categoryName: "Produce"})
+    RETURN DISTINCT s.companyName as ProduceSuppliers
+    ```
+
+We can expand this graph with more datas and infos about Orders and Costumers:
+
+![northGraphNewTables](/resources/northGraphNewTables.PNG)
+
+We can do the same thing we had before to load and index the records:
+* Customers nodes
+    ```Cypher
+    LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/customers.csv" AS row
+    CREATE (n:Customer)
+    SET n = row
+    ```
+* Orders nodes
+    ```Cypher
+    LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/orders.csv" AS row
+    CREATE (n:Order)
+    SET n = row
+    ```
+* Index customer
+    ```Cypher
+    CREATE INDEX ON :Customer(customerID)
+    ```
+* Index order
+    ```Cypher
+    CREATE INDEX ON :Order(orderID)
+    ```
+* Create relationship customer-purchased-order
+    ```Cypher
+    MATCH 
+        (c:Customer),
+        (o:Order)
+    WHERE c.customerID = o.customerID
+    CREATE (c)-[:PURCHASE]->(o)
+    ```
+Notice that the Order Details are always part of an Order and are the description of the relation between an order and a product, this is a sign of a data relationship indicating shared information between two other records:
+```Cypher
+LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/order-details.csv" AS row
+MATCH (p:Product), (o:Order)
+WHERE 
+    p.productID = row.productID AND
+    row.orderID = o.orderID
+CREATE (o)-[details:ORDERS]->(p)
+set details = row,
+    details.quantity = toInteger(row.quantity)
+```
+Example of query:
+* List of costumers with the number of products purchased for the Produce category:
+```Cypher
+MATCH 
+    (c:Customer)-[:PURCHASED]->(:Order)-[o:ORDERS]->(p:Product),
+    (p)-[:PART_OF]->(cat:Category {categoryName: "Produce"})
+    RETURN DISTINCT
+        c.contactName AS CustomerName,
+        SUM(o.quantity) AS TotalProductsPurchased
+```
+
+
+
+    
+
 -----------------------
 
 ### References 
@@ -312,4 +449,5 @@ RETURN n
     * :play intro
     * :play cypher
     * :play movie-graph
+    * :play northwind-graph
 - [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2/)
