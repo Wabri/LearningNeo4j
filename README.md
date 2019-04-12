@@ -310,11 +310,11 @@ RETURN n
 This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
 Pratically how to get this:
 
-![northGraphNodes](\resources\northGraphNodes.PNG)
+![northGraphNodes](/resources/northGraphNodes.PNG)
 
 From this:
 
-![northGraphTables](\resources\northGraphTables.PNG)
+![northGraphTables](/resources/northGraphTables.PNG)
 
 This example is a sellers of food products for a few categories provided by suppliers. The database actually in use is a relational table of product catalog. The first step to transform this is with the `LOAD CSV` clause that retrive a CSV file from a valid URL and create a named map:
 * Products nodes:
