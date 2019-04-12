@@ -8,6 +8,8 @@
     * [Application - Movie Graph](#application---movie-graph)
 3. [References](#references)
 
+--------------------
+
 ## Graph Fundamentals
 
 ###### ***This notes below can be read on neo4J browser sandbox by type the command: :play concepts***
@@ -39,6 +41,8 @@ One of the properties of a database is to connect data, in a graph database the 
 A relationship are data records that need to have two properties: **direction** and **type**, and can also contains properties like nodes.
 
 ![relationshipProperties](/resources/relationshipProperties.PNG)
+
+----------------
 
 ## Neo4J
 
@@ -175,6 +179,7 @@ CREATE
   (JoelS)-[:PRODUCED]->(TheMatrix)
 ```
 ***You can find all the query block here: [Cypher/MovieGraph/createGraph.cql](Cypher/MovieGraph/createGraph.cql)***
+#### ***Source query of movie graph -> [here](/Cypher/MovieGraph/)***
 
 The script add lot of nodes with relative relationships and properties, with this we can test some query:
 1. Find the actor named "TOM Hanks"
@@ -247,6 +252,59 @@ The script add lot of nodes with relative relationships and properties, with thi
     RETURN people.name,Type(relatedTo),relatedTo
     ```
     The *Type()* is use to get the type of nodes or relationships.
+3. Movies and actors up to 4 "hops" away from Kevin Bacon
+    ```Cypher
+    MATCH (bacon:Person {name: "Kevin Bacon"})-[*1..4]-(person)
+    RETURN DISTINCT person
+    ```
+    The result of this query block count 135 nodes and 180 relationships.
+3. Kevin Bacon the shortest path of any relationships to Meg Ryan
+    ```Cypher
+    MATCH p=shortestPath(
+        (bacon:Person {name: "Kevin Bacon"})-[*]-(meg:Person {name: "Meg Ryan"})
+    )
+    RETURN p
+    ```
+    Result graph:
+
+    ![movieGraphKevinToMeg](/resources/movieGraphKevinToMeg.PNG)
+
+    The **shortestPath({}-[]-{})** is a function that take a relation of 2 nodes and return the shortest path from them.
+
+    ###### ***To know more about the shortest path problem you can visit the wikipedia page: https://en.wikipedia.org/wiki/Shortest_path_problem***
+3. Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks
+    ```Cypher
+    MATCH (tom:Person {name: "Tom Hanks"})-[:ACTED_IN]->()<-[:ACTED_IN]-(coactor:Person),
+        (coactor)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoactor:Person)
+    WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoactor) AND tom <> cocoactor
+    RETURN cocoactor.name AS Racommended, count(*) AS Strength ORDER BY Strength DESC
+    ```
+3. Find someone to introduce Tom Hanks to Tom Cruise
+    ```Cypher
+    MATCH (tomh:Person {name: "Tom Hanks"})-[]->(movie)<-[]-(someone:Person),
+        (someone)-[]->(movie2)<-[]-(tomc:Person {name: "Tom Cruise"})
+    RETURN tomh,movie, someone,movie2, tomc
+    ```
+    Result graph:
+
+    ![movieGraphHanksCruise](/resources/movieGraphHanksCruise.PNG)
+
+Let's now clean the graph by delete all the nodes and relationships:
+```Cypher
+MATCH (n) 
+DETACH 
+DELETE n
+```
+With this the engine take all the nodes, for every one it detach from any relationships and then delete it.
+To be sure and prove that the graph is gone the query is:
+```Cypher
+MATCH (n) 
+RETURN n
+```
+
+#### ***All the query above is on the source directory of Cypher [here](/Cypher/MovieGraph/)***
+
+-----------------------
 
 ### References 
 - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
