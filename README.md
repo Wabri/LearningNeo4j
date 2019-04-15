@@ -453,7 +453,7 @@ Generating personalized recommendations is one of the most common use cases for 
 * Performance -> [index-free adjacency](#index-free-adjacency) allows for calculating recommendations in real time, ensuring the recommendation is always relevant and reflecting up-to-date information.
 * Data model -> The labeled property graph model allows for easily combining datasets from multiple sources allowing enterprises to unlock value from previously separated data silos.
 
-The default node-relationships-node template is this:
+For this paragraph will use a graph movie with default node-relationships-node template:
 
 ![recommendationsGraphTemplate](/resources/recommendationsGraphTemplate.PNG)
 
