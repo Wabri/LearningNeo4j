@@ -1,12 +1,14 @@
 # LearningNeo4J
 
-## Summary
+## Content
 
 1. [Graph Fundamentals](#graph-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
     * [Application - Movie Graph](#application---movie-graph)
     * [Application - Northwind Graph](#application---northwind-graph)
+    * [Recommendations](#recommendations)
+3. [Index](#index)
 3. [References](#references)
 
 --------------------
@@ -437,10 +439,55 @@ RETURN DISTINCT
     SUM(o.quantity) AS TotalProductsPurchased
 ```
 
+### Recommendations
 
-<!-- :play https://guides.neo4j.com/sandbox/recommendations/index.html
+###### ***This paragraph is referred to recommedation application on neo4j browser.***
+###### It is possible to recreate this database using the open movie database here -> [www.omdbapi.com](https://www.omdbapi.com/)
+###### for more -> [https://movielens.org/](https://movielens.org/) and [https://grouplens.org/datasets/movielens/](https://grouplens.org/datasets/movielens/)
+
+Personalized product recommendations can increase conversions, improve sales rates and provide a better experice for users. 
+This paragraph take a look at how generate graph-based real-time personalized product recommendations using a dataset of movies and movie ratings.
+All of this techniques can also apply through many different types of products or content.
+
+Generating personalized recommendations is one of the most common use cases for a graph database and there are some benefits of using a graph to generate racommendations:
+    * Performance -> [index-free adjacency](#index-free-adjacency) allows for calculating recommendations in real time, ensuring the recommendation is always relevant and reflecting up-to-date information.
+    * Data model -> The labeled property graph model allows for easily combining datasets from multiple sources allowing enterprises to unlock value from previously separated data silos.
+
+The default node-relationships-node template is this:
+
+![recommendationsGraphTemplate](/resources/recommendationsGraphTemplate.PNG)
+
+## Index
+
+### index-free adjacency
+<!-- 
+* https://medium.com/@dmccreary/how-to-explain-index-free-adjacency-to-your-manager-1a8e68ec664a 
+* https://en.wikipedia.org/wiki/Talk:Graph_database#No_indexes?
+* https://www.arangodb.com/2016/04/index-free-adjacency-hybrid-indexes-graph-databases/
 -->
-    
+A graph database is any storage system that provides index-free adjacency and this means that every element contains a direct pointer to its adjacent element and no index lookups are necessary. 
+This is one of the most element of distinction from relational databases that are based on a key-value store.
+The idea of an index-free adjacency is analogous to that of a pointer where the time to follow the relationship is O(1) with respect to the size of the graph, and this is not the cost of found a relationship in a relational.
+To be more precise a relational database use indexes but the aren't used for adjacency or link purposes.
+With Neo4j tipically a query will find the node to start from with an index and then the resto fo the query simply follows relationships to compute the answer.
+When create a new set of nodes it's typical to create an index of that type, see [northwind graph](#Application-Northwind-Graph), this reduce the cost of every query run.
+Example:
+
+![simple graph](/resources/simpleGraph.jpeg)
+
+In a relational database if we want to switch from data **A** to data **B** the step are:
+1. The db prohibited you to access direct items via pointers, so you need to ask for the permission.
+2. The request permission line can be full of other request, wait for your turn.
+3. The central index of db search for the data you want in a list of other data , the cost of search is O(n) with **n** number of the data stored.
+4. Once you get the memory pointer of that data you can go to **B** by follow the memory allocations by hopping on memory.
+5. The cost of this hopping is O(n), but at the end you can switch to **B** and do your operations.
+
+In a graph database like Neo4j all the nodes are connected to each other by relationships, so in order to go from **A** to **B**:
+1. Get the relationships pointer
+2. Point to node **B** wherever the type of the relationships are
+3. Do operations on **B**
+
+The cost in this case is O(1), a big difference in performance between a classical relational db.
 
 -----------------------
 
@@ -451,4 +498,5 @@ RETURN DISTINCT
     * :play cypher
     * :play movie-graph
     * :play northwind-graph
+    * Racommendations -> :play https://guides.neo4j.com/sandbox/recommendations/index.html
 - [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2/)
