@@ -5,9 +5,10 @@
 1. [Graph Fundamentals](#graph-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
-    * [Application - Movie Graph](#application---movie-graph)
-    * [Application - Northwind Graph](#application---northwind-graph)
-    * [Recommendations](#recommendations)
+    * [Application - Movies](#application---movie-graph)
+    * [Application - Northwind](#application---northwind-graph)
+    * [Recommendations - Movies](#recommendations)
+        - [Personalized recommendations](#personalized-reccomendations)
 3. [Index](#index)
 3. [References](#references)
 
@@ -19,14 +20,15 @@
 
 A graph database can store any kind of data using a few simple concepts:
 1. **Nodes** - graph data records
-2. **Relationships** - connect nodes
-3. **Properties** - named data values
+2. **Labels** - specifies the type of the node 
+3. **Relationships** - connect nodes
+3. **Properties** - key-value pair properties
 
 The simplest graph has just a single **node** with some named values called **Properties**:
 
 ![simpleGraph](resources/simpleGraph.PNG)
 
-Nodes are the name for data records in a graph and the data is stored as Properties that can be simple name/value pairs.
+Nodes are the name for data records in a graph and the data is stored as Properties that can be simple key-value pairs.
 
 Nodes can be grouped together by applying a Label to each member. In the example above we can set to that node the label **Person**.  Is important to know that a label is not a object and can't have any properties, is used only to categorize the nodes in a graph. A node can have zero or more labels based on the definition of that node.
 
@@ -54,7 +56,15 @@ A relationship are data records that need to have two properties: **direction** 
 ###### ***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
 ###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
 
-Neo4J's Cypher language is purpose built for working with graph data. It uses patterns to describe graph data and is familiar to sql-like clauses, this language follow this rule: ***describing what to find and not how to find it***.
+Neo4J's Cypher language is purpose built for working with graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
+
+**" Describing what to find and not how to find it "**
+
+Graph patterns are expressed in Cypher using ASCII-art like syntax:
+* **NODES** are defined within parentheses `()` and optionally we can specify node label(s) like `(:Movie)`
+* **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `(:Movie)<-[:RATED]-(:User)`
+* **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(m:Movie)<-[r:RATED]-(u:User)` where m, r and u are aliases
+* **Predicates** are filters that can be applied to limit the matching paths: boolean logi operators, regular expressions and string comparison operators.
 
 Let's create a small social graph using this query language.
 To create a new data we use the **CREATE** clause:
@@ -117,6 +127,8 @@ CREATE
 (ir)-[:KNOWS]->(js), (ir)-[:KNOWS]->(ally),
 (rvb)-[:KNOWS]->(ally)
 ```
+
+
 If exits in the database a node with **name** property with value **Emil** then create 4 new nodes and 7 relationship between them.
 The relationships are created by defined the left node and the right node:
 ```Cypher
@@ -456,6 +468,79 @@ Generating personalized recommendations is one of the most common use cases for 
 For this paragraph will use a graph movie with default node-relationships-node template:
 
 ![recommendationsGraphTemplate](/resources/recommendationsGraphTemplate.PNG)
+
+In this use case, we are using graphs to combine data from multiple silos:
+* Product catalog -> data describing movies comes from the product catalog silo
+* User Purchases and Reviews -> data on user purchases and reviews comes from the user or transaction silo
+
+By combining these two containers in one graph, we are able to query across datasets to generate personalized product recommendations.
+
+The graph result is made by:
+* Labels nodes -> Movie, Actor, Director, User, Genre are the
+* Relationships -> ACTED_IN, IN_GENERE, DIRECTED, RATED
+* Properties -> title, name, year, rating
+
+![recommendationsGraph](/resources/recommendationsGraph.PNG)
+
+###### From now on i will use Cypher -> [Query Language](#cypher)
+
+Let's look at a Cypher query that answers the question "How many reviews does each Matrix movie have?":
+```Cypher
+MATCH (movie:Movie)<-[:RATED]-(user:User)
+WHERE movie.title CONTAINS "Matrix"
+WITH 
+    movie.title AS movie, 
+    COUNT(*) AS reviews
+RETURN movie, reviews
+ORDER BY reviews DESC
+LIMIT 5
+```
+Dissection of the query:
+* Search for an existing graph pattern -> `MATCH (movie:Movie)<-[:RATED]-(user:User)` -> find all Movie-Rated-User on the graph
+* Filter the match result -> `WHERE movie.title CONTAINS "Matrix"` -> remove useless Movie-Rated-User
+* Aggregate users with movie -> `WITH movie.title AS movie, COUNT(*) AS reviews` -> count number of paths matched for each movie
+* Return for each movie the number of reviews -> `RETURN movie, reviews`
+* Order return by number of reviews in descending order -> `ORDER BY reviews DESC`
+* Limit the number of records to find and return -> `LIMIT 5`
+
+The result is:
+|movie|reviews|
+| --- | --- |
+|"Matrix, The" | 259 |
+|"Matrix Reloaded, The" | 82 |
+|"Matrix Revolutions, The" | 54 |
+
+#### **Personalized Reccomendations**
+
+There are two basic approaches to recommendation algorithms:
+* Content-Based filtering: recommend intems that are similar to those that a user is viewing, rated highly or purchased previously.
+
+    An example can be "Products similar to the product you are looking at now":
+    ```Cypher
+    MATCH p=(m:Movie {title: "Net, the"})-[:ACTED_IN|:IN_GENRE|:DIRECTED*2]-()
+    RETURN p LIMIT 25
+    ```
+
+    ![recommendationsGraphContentBased](/resources/recommendationsGraphContentBased.PNG)
+
+    All of that result can be a movie to recommend.
+
+* Collaborative Filtering: use the preferences, ratings and actions of other users in the network to find items to recommend.
+
+    An example can be "Users who bought this thing, also bought that other thing":
+    ```Cypher
+    MATCH (m:Movie {title: "Crimson Tide"})<-[:RATED]-(u:User)-[:RATED]->(rec:Movie)
+    RETURN 
+        rec.title AS recommendation,
+        COUNT(*) as usersWhoAlsoWatched
+    ORDER BY usersWhoAlsoWatched DESC
+    LIMIT 25
+    ```
+
+    ![recommendationsGraphCollaborativeFiltering](/resources/recommendationsGraphCollaborativeFiltering.PNG)
+
+    All of that result can be a movie to recommend.
+
 
 ## Index
 
