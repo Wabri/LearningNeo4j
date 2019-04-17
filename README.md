@@ -513,7 +513,7 @@ The result is:
 #### **Personalized Reccomendations**
 
 There are two basic approaches to recommendation algorithms:
-* Content-Based filtering: recommend intems that are similar to those that a user is viewing, rated highly or purchased previously.
+* **Content-Based filtering**: recommend intems that are similar to those that a user is viewing, rated highly or purchased previously.
 
     An example can be "Products similar to the product you are looking at now":
     ```Cypher
@@ -525,7 +525,59 @@ There are two basic approaches to recommendation algorithms:
 
     All of that result can be a movie to recommend.
 
-* Collaborative Filtering: use the preferences, ratings and actions of other users in the network to find items to recommend.
+    The goal of content-based filtering is to find similar items, usign attributes (or traits) of the item. Using our movie data, one way we could define similarity is movies that have common genres.
+
+    Examples:
+    1. Find movies most similar to Inception based on shared generes:
+        ```Cypher
+        MATCH (inc:Movie {title: "Inception"})-[:IN_GENRE]->(g:Genre)<-[:IN_GENRE]-(rec:Movie)
+        WITH rec.title, COLLECT(g.name) AS genres, COUNT(*) AS commonGenres
+        RETURN rec.title AS title, genres, commonGenres
+        ORDER BY commonGenres DESC
+        LIMIT 10;
+        ```
+    
+        |title|genres|commonGenres|
+        |---|---|---|
+        |"Patlabor: The Movie (Kidô keisatsu patorebâ: The Movie)"|["Drama", "Action", "Crime", "Thriller", "Mystery", "Sci-Fi"]|6|
+        |"Strange Days"|["Drama", "Action", "Crime", "Thriller", "Mystery", "Sci-Fi"]|6|
+        |"Watchmen"|["Drama", "Action", "Thriller", "Mystery", "Sci-Fi", "IMAX"]|6|
+        |"Girl Who Played with Fire, The (Flickan som lekte med elden)"|["Drama", "Action", "Crime", "Thriller", "Mystery"]|5|
+        |"Fast Five (Fast and the Furious 5, The)"|["Drama", "Action", "Crime", "Thriller", "IMAX"]|5|
+        |"Cellular"|["Drama", "Action", "Crime", "Thriller", "Mystery"]|5|
+        |"Rubber"|["Drama", "Action", "Crime", "Thriller", "Mystery"]|5|
+        |"Negotiator, The"|["Drama", "Action", "Crime", "Thriller", "Mystery"]|5|
+        |"X-Files: Fight the Future, The"|["Action", "Crime", "Thriller", "Mystery", "Sci-Fi"]|5|
+        |"Source Code"|["Drama", "Action", "Thriller", "Mystery", "Sci-Fi"]|5|
+
+        Remember to use the LIMIT clause to prevent the output of too many rows.
+
+    2. Recommend movies similar to those the user Amgeòoca Rodriguez has already watched:
+
+        The solution can be more tricky than expected, let's analize how to do that.
+        We need to get all the movies that Angelica Rodriguez have rated `MATCH (u:User{name:"Angelica Rodriguez"})-[r:RATED]->(movie:Movie)`.
+        To find the most similar movies we take the genres linked and scan to find all the movies with the same genres `(movie)-[:IN_GENRE]->(genre:Genre)<-[:IN_GENRE]-(other:Movie)` and the result of this match are a graph with all the user recommendations, but some movies can be already rated by the user so we need to put a filter to the movies not yet rated `WHERE NOT EXISTS((user)-[:RATED]->(other))`.
+        To recommend the best element of all, we necessary do some sort of rating: count the common genres between the movies watch by the user and the movie on the list `WITH other, [genre.name, COUNT(*)] AS scores`.
+        The single score of the movie to recommend is the sum of the scores of the genres to do this we can use the REDUCE expression `REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score`.
+        ```Cypher
+        MATCH 
+            (user:User {name: "Angelica Rodriguez"})-[rated:RATED]->(movie:Movie),
+            (movie)-[:IN_GENRE]->(genre:Genre)<-[:IN_GENRE]-(other:Movie)
+        WHERE NOT EXISTS( (user)-[:RATED]->(other) )
+        WITH 
+            other, 
+            [genre.name, COUNT(*)] AS scores
+        RETURN 
+            other.title AS recommendation, 
+            other.year AS year,
+            COLLECT(scores) AS scoreComponents,
+            REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score
+        ORDER BY score DESC 
+        LIMIT 50
+        ```
+
+
+* **Collaborative Filtering**: use the preferences, ratings and actions of other users in the network to find items to recommend.
 
     An example can be "Users who bought this thing, also bought that other thing":
     ```Cypher
@@ -537,9 +589,22 @@ There are two basic approaches to recommendation algorithms:
     LIMIT 25
     ```
 
-    ![recommendationsGraphCollaborativeFiltering](/resources/recommendationsGraphCollaborativeFiltering.PNG)
-
+    |recommendation|usersWhoAlsoWatched|
+    | --- | --- |
+    |"Forrest Gump"|70|
+    |"Dances with Wolves"|68|
+    |"Pulp Fiction"|68|
+    |"Fugitive, The"|65|
+    |"True Lies"|64|
+    |"Jurassic Park"|63|
+    |"Silence of the Lambs, The"|62|
+    |"Apollo 13"|61|
+    |"Batman"|61|
+    |"Aladdin"|58|
+    | ... | ... |
+    
     All of that result can be a movie to recommend.
+
 
 
 ## Index
