@@ -3,6 +3,7 @@
 ## Content
 
 1. [Graph Fundamentals](#graph-fundamentals)
+    * [Intro to Graph Databases](#intro-to-graph-databases)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
     * [Application - Movies](#application---movie-graph)
@@ -47,11 +48,19 @@ A relationship are data records that need to have two properties: **direction** 
 
 ![relationshipProperties](/resources/relationshipProperties.PNG)
 
+### Intro to Graph Databases 
+
+[YouTube playlist](https://www.youtube.com/playlist?list=PL9Hl4pk2FsvWM9GWaguRhlCQ-pa-ERd4U):
+1. Evolution of DBs
+2. Properties of Graph DBs & Use Cases 
+    * Intuitivness, Speed, Agility 
+    * Query language Cypher 
+
 ----------------
 
 ## Neo4J
 
-![video youtube](https://www.youtube.com/watch?v=_D19h5s73Co)
+[video youtube](https://www.youtube.com/watch?v=_D19h5s73Co)
 
 Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model. 
 
@@ -63,8 +72,11 @@ Neo4J is a high performance graph store with all the feature expected of a matur
 ###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
 
 Neo4J's Cypher language is purpose built for working with graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
-
+This query language allows users to store and retrive data from the graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs. 
+It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it: 
 **" Describing what to find and not how to find it "**
+
+Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality.
 
 Graph patterns are expressed in Cypher using ASCII-art like syntax:
 * **NODES** are defined within parentheses `()` and optionally we can specify node label(s) like `(:Movie)`
@@ -677,9 +689,27 @@ In a graph database like Neo4j all the nodes are connected to each other by rela
 
 The cost in this case is O(1), a big difference in performance between a classical relational db.
 
+### ACID consistency model
+
+<!--
+* https://neo4j.com/blog/acid-vs-base-consistency-models-explained/
+* https://en.wikipedia.org/wiki/ACID
+-->
+
+The acronym stands for:
+* Atomic -> All operations in a transaction succeed or every operation is rolled back
+* Consistent -> On the completition of a transaction, the database is structurally sound
+* Isolated -> Transactions do not contend with one another. Contentious access to data is moderated by database so that transactions appear to run sequentially.
+* Durable -> The results of applying a transaction are permanent, even in the presence of failures
+
+This four properties mean that once a transaction is complete, its data is consistent and stable on disk.
+
+Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure data is safe and consistently stored.
+
 -----------------------
 
 ### References 
+- [neo4j online course](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
 - [neo4j docs](https://neo4j.com/docs/)
 - [neo4j repository](https://github.com/neo4j/neo4j)
 - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
