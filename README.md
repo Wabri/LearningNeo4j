@@ -528,7 +528,7 @@ There are two basic approaches to recommendation algorithms:
     The goal of content-based filtering is to find similar items, usign attributes (or traits) of the item. Using our movie data, one way we could define similarity is movies that have common genres.
 
     Examples:
-    1. Find movies most similar to Inception based on shared generes:
+    1.  Find movies most similar to Inception based on shared generes:
         ```Cypher
         MATCH (inc:Movie {title: "Inception"})-[:IN_GENRE]->(g:Genre)<-[:IN_GENRE]-(rec:Movie)
         WITH rec.title, COLLECT(g.name) AS genres, COUNT(*) AS commonGenres
@@ -552,7 +552,7 @@ There are two basic approaches to recommendation algorithms:
 
         Remember to use the LIMIT clause to prevent the output of too many rows.
 
-    2. Recommend movies similar to those the user Amgeòoca Rodriguez has already watched:
+    2.  Recommend movies similar to those the user Amgeòoca Rodriguez has already watched:
 
         The solution can be more tricky than expected, let's analize how to do that.
         We need to get all the movies that Angelica Rodriguez have rated `MATCH (u:User{name:"Angelica Rodriguez"})-[r:RATED]->(movie:Movie)`.
@@ -573,9 +573,43 @@ There are two basic approaches to recommendation algorithms:
             COLLECT(scores) AS scoreComponents,
             REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score
         ORDER BY score DESC 
-        LIMIT 50
+        LIMIT 20
         ```
 
+    3.  Now let's try to create a better recommendation for similar films by give a score and weight for the other relationships: such the similar actors and the same directors.
+        ```Cypher
+        // Find similar movies by common genres
+        MATCH (m:Movie)
+        WHERE m.title = "Wizard of Oz, The"
+        MATCH (m)-[:IN_GENRE]->(g:Genre)<-[:IN_GENRE]-(o:Movie)
+        WITH m, o, COUNT(*) AS gs
+       
+        // Find similar movies by common actors
+        OPTIONAL MATCH (m)<-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]->(o)
+        WITH m, o, gs, COUNT(a) AS as
+
+        // Find similar movies by common directors
+        OPTIONAL MATCH (m)<-[:DIRECTED]-(d:Director)-[:DIRECTED]->(o)
+        WITH m, o, gs, as, COUNT(d) AS ds
+
+        // Then return with a weighted score
+        RETURN o.title AS recommendation, (5*gs)+(3*as)+(4*ds) AS score
+        ORDER BY score DESC
+        LIMIT 100
+        ```
+        
+    These method used to find similar nodes are not so consistent and robust, so we need a new way to quantify usign a similarity metric. Similarity metrics are an important component used in generating personalized recommendations that allow us to quantify how similar two items are, the method we used is the Jaccard Index:
+
+    ![Jaccard Index](https://latex.codecogs.com/gif.latex?J(A,B)=\frac{\mid&space;A&space;\cap&space;B&space;\mid}{\mid&space;A&space;\cup&space;B&space;\mid}&space;\bigg&space;|)
+
+    The output of this function is a number between 0 and 1 that indicates how similar two sets are: 1 for the identical sets and 0 for sets without common element.
+
+    We can use this index for the movies to answer at the question: "What movies are most similar to Inception based on genres?
+    ```Cypher
+
+    ```
+
+    <!-- this query is important and i cannot reproduce by myself so i will take later and go back to learning the basics from the developer tutorial on neo4j -->
 
 * **Collaborative Filtering**: use the preferences, ratings and actions of other users in the network to find items to recommend.
 
