@@ -51,6 +51,12 @@ A relationship are data records that need to have two properties: **direction** 
 
 ## Neo4J
 
+![video youtube](https://www.youtube.com/watch?v=_D19h5s73Co)
+
+Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model. 
+
+Neo4J is a high performance graph store with all the feature expected of a mature and robust database. The network structure is made by nodes and relationships rather than static tables.
+
 ### Cypher
 
 ###### ***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
@@ -639,8 +645,6 @@ There are two basic approaches to recommendation algorithms:
     
     All of that result can be a movie to recommend.
 
-
-
 ## Index
 
 ### index-free adjacency
@@ -676,6 +680,8 @@ The cost in this case is O(1), a big difference in performance between a classic
 -----------------------
 
 ### References 
+- [neo4j docs](https://neo4j.com/docs/)
+- [neo4j repository](https://github.com/neo4j/neo4j)
 - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
     * :play concepts
     * :play intro
@@ -683,4 +689,16 @@ The cost in this case is O(1), a big difference in performance between a classic
     * :play movie-graph
     * :play northwind-graph
     * Racommendations -> :play https://guides.neo4j.com/sandbox/recommendations/index.html
-- [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2/)
+- [neo4j developer get started](https://neo4j.com/developer/get-started/)
+    * [dev-cypher](https://neo4j.com/developer/cypher/)
+    * [dev-graph-database](https://neo4j.com/developer/graph-database/)
+    * [dev-graph-data-modeling](https://neo4j.com/developer/data-modeling/)
+    * [dev-graph-platform](https://neo4j.com/developer/graph-platform/)
+    * [dev-graph-visualization-tools](https://neo4j.com/developer/tools-graph-visualization/)
+    * [dev-language-guide](https://neo4j.com/developer/language-guides/)
+    * [dev-importing-csv-data](https://neo4j.com/developer/guide-import-csv/)
+    * [dev-integration](https://neo4j.com/developer/integration/)
+    * [dev-in-production](https://neo4j.com/developer/in-production/)
+- [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2)
+- [Graphacademy](https://neo4j.com/graphacademy/)
+    * [introduction](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
