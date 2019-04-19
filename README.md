@@ -2,8 +2,7 @@
 
 ## Content
 
-1. [Graph Fundamentals](#graph-fundamentals)
-    * [Intro to Graph Databases](#intro-to-graph-databases)
+1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
     * [Application - Movies](#application---movie-graph)
@@ -15,15 +14,24 @@
 
 --------------------
 
-## Graph Fundamentals
-
-###### ***This notes below can be read on neo4J browser sandbox by type the command: :play concepts***
+## Graph Database Fundamentals
 
 A graph database can store any kind of data using a few simple concepts:
 1. **Nodes** - graph data records
-2. **Labels** - specifies the type of the node 
+
+    ![nodes](/resources/nodes.PNG)
+
+2. **Labels** - specifies the type of the node
+
+    ![nodesTypes](/resources/nodesTypes.PNG)
+
 3. **Relationships** - connect nodes
-3. **Properties** - key-value pair properties
+
+    ![nodesTypes](/resources/nodesTypesRelationships.PNG)
+
+4. **Properties** - key-value pair properties
+
+    ![nodesTypes](/resources/nodesTypesRelationshipsProperties.PNG)
 
 The simplest graph has just a single **node** with some named values called **Properties**:
 
@@ -48,13 +56,13 @@ A relationship are data records that need to have two properties: **direction** 
 
 ![relationshipProperties](/resources/relationshipProperties.PNG)
 
-### Intro to Graph Databases 
+A Graph database is an online database management system with Create, Read, Update and Delete (CRUD) operations working on a graph data model. 
+Graph database are generally build for use with [OLTP](#otlp) systems, they are normally optimized for transactional performance, and engineered with transactional integrity and operational availability in mind.
 
-[YouTube playlist](https://www.youtube.com/playlist?list=PL9Hl4pk2FsvWM9GWaguRhlCQ-pa-ERd4U):
-1. Evolution of DBs
-2. Properties of Graph DBs & Use Cases 
-    * Intuitivness, Speed, Agility 
-    * Query language Cypher 
+Unlike the other databases, relationships take first priority in graph databases so the foreign keys or out-of-band processing is no more necessary to link a data to another. 
+
+By assembling the simple abstractions of nodes and relationships into connected structures, graph databases enable us to build sophisticated models that map closely to out problem domain.
+
 
 ----------------
 
@@ -657,14 +665,35 @@ There are two basic approaches to recommendation algorithms:
     
     All of that result can be a movie to recommend.
 
+------------------
+
 ## Index
 
+### ACID consistency model
+
+<!--
+* https://neo4j.com/blog/acid-vs-base-consistency-models-explained/
+* https://en.wikipedia.org/wiki/ACID
+-->
+
+The acronym stands for:
+* Atomic -> All operations in a transaction succeed or every operation is rolled back
+* Consistent -> On the completition of a transaction, the database is structurally sound
+* Isolated -> Transactions do not contend with one another. Contentious access to data is moderated by database so that transactions appear to run sequentially.
+* Durable -> The results of applying a transaction are permanent, even in the presence of failures
+
+This four properties mean that once a transaction is complete, its data is consistent and stable on disk.
+
+Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure data is safe and consistently stored.
+
 ### index-free adjacency
+
 <!-- 
 * https://medium.com/@dmccreary/how-to-explain-index-free-adjacency-to-your-manager-1a8e68ec664a 
 * https://en.wikipedia.org/wiki/Talk:Graph_database#No_indexes?
 * https://www.arangodb.com/2016/04/index-free-adjacency-hybrid-indexes-graph-databases/
 -->
+
 A graph database is any storage system that provides index-free adjacency and this means that every element contains a direct pointer to its adjacent element and no index lookups are necessary. 
 This is one of the most element of distinction from relational databases that are based on a key-value store.
 The idea of an index-free adjacency is analogous to that of a pointer where the time to follow the relationship is O(1) with respect to the size of the graph, and this is not the cost of found a relationship in a relational.
@@ -689,26 +718,41 @@ In a graph database like Neo4j all the nodes are connected to each other by rela
 
 The cost in this case is O(1), a big difference in performance between a classical relational db.
 
-### ACID consistency model
+### OLTP 
 
-<!--
-* https://neo4j.com/blog/acid-vs-base-consistency-models-explained/
-* https://en.wikipedia.org/wiki/ACID
+<!-- 
+* https://docs.oracle.com/database/121/VLDBG/GUID-0BC75680-5BD4-43A9-826F-CD8837D30EB2.htm
+* https://en.wikipedia.org/wiki/Online_transaction_processing
 -->
 
-The acronym stands for:
-* Atomic -> All operations in a transaction succeed or every operation is rolled back
-* Consistent -> On the completition of a transaction, the database is structurally sound
-* Isolated -> Transactions do not contend with one another. Contentious access to data is moderated by database so that transactions appear to run sequentially.
-* Durable -> The results of applying a transaction are permanent, even in the presence of failures
+This is an acronym that stands for Online transaction processing. The term transaction in the realm of database transactions it denotes an atomic change of state. The goals of OLTP applications are availability, speed, cuncurrency and recoverability.
 
-This four properties mean that once a transaction is complete, its data is consistent and stable on disk.
+An OLTP system is a common data processing system like order entry, retail sales and financial transaction systems.
 
-Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure data is safe and consistently stored.
+The main characteristics of an OLTP environment are:
+* Short response time
+* Small transactions
+* Data maintenance operations
+* Large user populations
+* High concurrency
+* Large data volumes
+* High availability
+* Lifecycle-related data usage
+
+The benefits of this environments are:
+* Support for bigger databases
+* Partition maintenance operations for data maintenance
+* Potential higher concurrency through elimination of hot spots
 
 -----------------------
 
 ### References 
+
+[Graph database Fundamentals](#graph-database-fundamentals):
+* [neo4J browser sandbox](https://neo4j.com/sandbox-v2/) by type the command `:play concepts`
+* [graphacademy](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-1/)
+
+Others:
 - [neo4j online course](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
 - [neo4j docs](https://neo4j.com/docs/)
 - [neo4j repository](https://github.com/neo4j/neo4j)
@@ -732,3 +776,4 @@ Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure 
 - [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2)
 - [Graphacademy](https://neo4j.com/graphacademy/)
     * [introduction](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
+    * [YouTube playlist](https://www.youtube.com/playlist?list=PL9Hl4pk2FsvWM9GWaguRhlCQ-pa-ERd4U):
