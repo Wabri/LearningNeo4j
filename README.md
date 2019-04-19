@@ -5,6 +5,7 @@
 1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
+    * [Example](#example---simple-graph)
     * [Application - Movies](#application---movie-graph)
     * [Application - Northwind](#application---northwind-graph)
     * [Recommendations - Movies](#recommendations)
@@ -63,6 +64,22 @@ Unlike the other databases, relationships take first priority in graph databases
 
 By assembling the simple abstractions of nodes and relationships into connected structures, graph databases enable us to build sophisticated models that map closely to out problem domain.
 
+Many applications' data is modeled as relational data, indeed there are some similarities between a relational model nad a graph model:
+|Relational|Graph|
+|----|----|
+|Rows|Nodes|
+|Joins|Relationships|
+|Table names|Labels|
+|columns|Properties|
+
+There are even difference between this two databases:
+|Relational|Graph|
+|----|----|
+|Each column must have field value|Nodes with the same label arent' required to have the same set of properties|
+|Joins are calculated at query time|Relationships are stored on disk when they are created|
+|A row can belong to one table|A node can have many labels|
+|Try to get the schema defined and then make minimal changes to it after that|It's common for the schema to evolve with the application|
+|More abstract focus when modeling|Common to use actual data items when modeling|
 
 ----------------
 
@@ -195,6 +212,48 @@ WHERE js.name = "Johan" AND surfer.hobby = "surfing"
 RETURN DISTINCT surfer
 ```
 The outcome will be a cause effect of how the engine find the result.
+
+### Example - Simple Graph
+
+###### ***This example below is found on [lesson 5 neo4j](https://www.youtube.com/watch?v=l76udM3wB4U)***
+
+Let's create this graph:
+
+![Simple Graph Creation](/resources/simpleGraphTemplate.PNG)
+
+* Creation of the nodes:
+    ```Cypher
+    CREATE (dan:Person {name:"Dan", born:"Dec 5, 1975"})
+    CREATE (ann:Person {name:"Ann", born: "May 29, 1970", twitter: "@ann"})
+    CREATE (car:Car {brand:"Volvo", model:"V70"}) 
+    ```
+    result:
+    
+    ![Create nodes](/resources/simpleGraphCreate.PNG)
+
+* Creation of realtionships:
+    ```Cypher
+    MATCH 
+    	(dan:Person {name: "Dan"}),
+        (ann:Person {name: "Ann"}),
+        (car:Car {model:"V70"})
+    CREATE 
+        (dan)-[:LOVES]->(ann), 
+        (ann)-[:LOVES]->(dan),
+        (ann)-[:LIVES_WITH]->(dan),
+        (dan)-[:OWNS]->(car),
+        (dan)-[:DRIVES]->(car),
+        (ann)-[:DRIVES]->(car)
+    ```
+    result:
+    
+    ![Create relationships](/resources/simpleGraphRelationships.PNG)
+
+To see the graph result you can use this query:
+```Cypher
+MATCH (p)
+RETURN p
+```
 
 ### Application - Movie Graph
 
