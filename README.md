@@ -5,6 +5,15 @@
 1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
+        * [Create](#create)
+        * [Match](#match)
+        * [Where](#where)
+        * [Null](#null)
+        * [More create at once](#more-create-at-once)
+        * [Distinct](#distinct)
+        * [Explain Profile](#explain-profile)
+        * [Set](#set)
+        * [Aggregates](#aggregates)
     * [Example](#example---simple-graph)
     * [Application - Movies](#application---movie-graph)
     * [Application - Northwind](#application---northwind-graph)
@@ -81,6 +90,19 @@ There are even difference between this two databases:
 |Try to get the schema defined and then make minimal changes to it after that|It's common for the schema to evolve with the application|
 |More abstract focus when modeling|Common to use actual data items when modeling|
 
+Here is the relational model:
+
+![relationalModelClubs](resources/relationalModelClubs.PNG)
+
+And here is the correspondig graph model:
+
+![graphModelClubs](resources/graphModelClubs.PNG)
+
+The graph model can be more versatile and can be upgrade without efforts, for example we want to add the confederation and country:
+
+![graphModelClubsExtend](resources/graphModelClubsExtend.PNG)
+
+
 ----------------
 
 ## Neo4J
@@ -90,6 +112,33 @@ There are even difference between this two databases:
 Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model. 
 
 Neo4J is a high performance graph store with all the feature expected of a mature and robust database. The network structure is made by nodes and relationships rather than static tables.
+
+##### Index free adjacency
+
+With index free adjaceny, when a node or relationship is written to the database, it is stored in the database as connected and any subsequent access to the data is done using pointer navigation wich is very fast. Since Neo4j is a native graph database, it supports very large graphs where connected data can be traversed in constant time without the need for an index.
+
+![Neo4j index](resources/neo4jIndex.PNG)
+
+To know more read -> [Index-free adjacency](#index-free-adjacency)
+
+##### ACID
+
+Transactionality is very important for robust applications that require an atomicity, consistency, isolation, and durability guarantees for their data. If a relationship between nodes is created, not only is the relationship created, but the nodes are updated as connected.
+All of these updates to the database must all succeed or fail.
+
+![Neo4j ACID](resources/neo4jACID.PNG)
+
+To know more read -> [ACID](#acid-consistency-model)
+
+##### Clusters
+
+Neo4j supports clusters that provide high availablity, scalability for read access to the data and failover which is important to many enterprises.
+
+<!-- 
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-2/
+-->
+
+------------------------------------------------
 
 ### Cypher
 
@@ -316,6 +365,8 @@ There are a plenty of procedure for aggregations, check for more with apoc refer
 * github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
 * neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
 
+------------------------------------
+
 ### Example - Simple Graph
 
 ###### ***This example below is found on [lesson 5 neo4j](https://www.youtube.com/watch?v=l76udM3wB4U)***
@@ -425,6 +476,8 @@ ON CREATE SET
 MERGE (a)-[:HAS_PET]->(:Dog {name:"Sam"})
 ```
 On create set will be use only if the merge create the node, if you run this query before all the queries above the facebook parameter will not be created.
+
+----------------------------------------
 
 ### Application - Movie Graph
 
@@ -575,6 +628,8 @@ RETURN n
 
 #### ***All the query above is on the source directory of Cypher [here](/Cypher/MovieGraph/)***
 
+---------------------------------------------
+
 ### Application - Northwind Graph
 
 This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
@@ -706,6 +761,8 @@ RETURN DISTINCT
     c.contactName AS CustomerName,
     SUM(o.quantity) AS TotalProductsPurchased
 ```
+
+---------------------------------
 
 ### Recommendations
 
@@ -895,7 +952,7 @@ There are two basic approaches to recommendation algorithms:
     
     All of that result can be a movie to recommend.
 
-------------------
+--------------------------
 
 ## Index
 
