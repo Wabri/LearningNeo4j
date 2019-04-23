@@ -104,12 +104,24 @@ It allow to state what we want to select, insert, update, or delete from our gra
 Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality.
 
 Graph patterns are expressed in Cypher using ASCII-art like syntax:
-* **NODES** are defined within parentheses `()` and optionally we can specify node label(s) like `(:Movie)`
-* **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `(:Movie)<-[:RATED]-(:User)`
-* **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(m:Movie)<-[r:RATED]-(u:User)` where m, r and u are aliases
+* **NODES** are defined within parentheses `()` and optionally we can specify node label(s) like `(:Movie)`.
+* **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `(:Movie)<-[:RATED]-(:User)`.
+* **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(m:Movie)<-[r:RATED]-(u:User)` where m, r and u are aliases.
 * **Predicates** are filters that can be applied to limit the matching paths: boolean logi operators, regular expressions and string comparison operators.
 
+The properties of a node are accessed using `{variable}.{property_key}`, for example `emil.name` or `movie.title`.
+
+The Cypher language are case insensitive and sensitive:
+|Sensitive|Insensitive|
+|---|---|
+|Node labels|Cypher keywords|
+|Relationship type|-----|
+|Property keys|----|
+
+##### Create
+
 Let's create a small social graph using this query language.
+
 To create a new data we use the **CREATE** clause:
 
 ```Cypher
@@ -123,6 +135,8 @@ The output of this query will be:
 ```
 Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
 ```
+
+##### Match
 
 To find a node we can use the **MATCH** clause follow by a filters and conditions of nodes and relationships:
 ```Cypher
@@ -156,6 +170,47 @@ The output of this query can be different:
 └──────────────────────────────────────────┘ 
 ```
 
+##### Where
+
+There are more method to filter the nodes of a match clause: by specify the value of the argumento on the match clause or by using the WHERE caluse.
+This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
+Some examples:
+1. 
+    ```Cypher
+    MATCH (m:Movie {title: "The Matrix"})
+    RETURN m
+    ```
+2. 
+    ```Cypher
+    MATCH (m:Movie)
+    WHERE m.title = "The Matrix"
+    RETURN m
+    ```
+3. 
+    ```Cypher
+    MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
+    WHERE m.released >= 2000
+    RETURN m.released, a.name
+    ```
+
+It can be use several comparison operators: **=**, **<>**, **<**, **>**, **<=**, **>=**, **IS NULL**, **IS NOT NULL**, **=~**.
+There are 4 boolean operators that it can use: **AND**, **OR**, **XOR**, **NOT**.
+An example:
+```Cypher
+MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
+WHERE 
+    m.released > 2000 OR
+    (m.released = 1997 AND m.title='As Good as It Gets')
+RETURN p.name, m.title, m.released
+```
+
+##### Null
+
+Null represents missing or undefined values. You do not store a null value in a property. It just doesen't exist on that particular node.
+**Warning: null=null is not true but the result will be null because we don't know the value of a null propertie**
+
+##### More create at once
+
 **Create** clauses can create many nodes and relationships at once:
 ```Cypher
 MATCH (ee:Person) WHERE ee.name = "Emil"
@@ -170,7 +225,6 @@ CREATE
 (ir)-[:KNOWS]->(js), (ir)-[:KNOWS]->(ally),
 (rvb)-[:KNOWS]->(ally)
 ```
-
 
 If exits in the database a node with **name** property with value **Emil** then create 4 new nodes and 7 relationship between them.
 The relationships are created by defined the left node and the right node:
@@ -193,6 +247,8 @@ The output will be all the relationships between node **ee** with property name 
 
 ![matchEmilFriendsG](/resources/matchEmilFriendsG.PNG)
 
+##### Distinct
+
 Pattern matching can be used to make recommendations, to suggest a new friend or a new film to watch. For example we can make recomandation to johan that is learning to surf, he may want to find a new frend who already does:
 ```Cypher
 MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
@@ -205,6 +261,8 @@ This query return all of the Person who have the hobby "surfing" that are connec
 
 ![matchsurfingrecommendation](/resources/matchSurfingRecommendations.PNG)
 
+##### Explain Profile
+
 To understand how the query works you can use the **EXPLAIN** or **PROFILE** clause put at the beginning of the query, like this:
 ```Cypher
 PROFILE MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
@@ -213,6 +271,51 @@ RETURN DISTINCT surfer
 ```
 The outcome will be a cause effect of how the engine find the result.
 
+##### Set
+
+To change or add properties of a node it's possible to use the SET clause, it can be use 2 format: JSON or OBJECT.
+* Json
+    ```Cypher
+    MATCH
+        (a:Person)-[:DRIVES]->(c:Car)
+    WHERE
+        a.name = 'Ann'
+    SET 
+        c.brand = 'Volvo'
+        c.model = 'V70'
+    RETURN
+        c
+    ```
+* OBJECT
+    ```Cypher
+    MATCH
+        (a:Person)-[:DRIVES]->(c:Car)
+    WHERE
+        a.name = 'Ann'
+    SET 
+        c += {brand: 'Volvo', model:'V70'}
+    RETURN
+        c
+    ```
+
+##### Aggregates
+
+We implicitly group by any non-aggregate fields in the RETURN statement
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+RETURN p.name, count(*) AS numberOfMovies
+```
+This query is grouped by name and aggregate the numberOfMovie associated by the same name of node.
+
+<!--
+https://neo4j.com/docs/cypher-manual/3.5/functions/aggregating/
+https://neo4j.com/docs/cypher-refcard/ <-- table of aggregating functions
+-->
+
+There are a plenty of procedure for aggregations, check for more with apoc reference:
+* github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
+* neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
+
 ### Example - Simple Graph
 
 ###### ***This example below is found on [lesson 5 neo4j](https://www.youtube.com/watch?v=l76udM3wB4U)***
@@ -220,6 +323,12 @@ The outcome will be a cause effect of how the engine find the result.
 Let's create this graph:
 
 ![Simple Graph Creation](/resources/simpleGraphTemplate.PNG)
+
+To see the graph result you can use this query:
+```Cypher
+MATCH (p)
+RETURN p
+```
 
 * Creation of the nodes:
     ```Cypher
@@ -249,11 +358,73 @@ Let's create this graph:
     
     ![Create relationships](/resources/simpleGraphRelationships.PNG)
 
-To see the graph result you can use this query:
+* Basic query 
+    1. "Find how loves Ann":
+        ```Cypher
+        MATCH 
+            (ann:Person {name: "Ann"})<-[:LOVES]-(op)
+        RETURN
+            op
+        ```
+        The result is simple "Dan".
+    
+    2. "Find the Ann's Car":
+        ```Cypher
+        MATCH 
+            (ann:Person {name: "Ann"})-[:DRIVES]-(car:Car)
+        RETURN
+            car
+        ```
+        The result is simple "Volvo".
+    
+    3. "Find the Dan's Volvo car and update value of that car with the number of the wheels":
+        ```Cypher
+        MATCH 
+            (ann:Person {name: "Dan"})-[:OWNS]-(car:Car)
+        WHERE 
+            car.brand="Volvo"
+        SET
+            car.wheels=4
+        RETURN
+            car.wheels
+        ```
+        The result is simple 4.
+
+* Ensuring uniqueness: 
+We don't want a bunch of nodes rapresenting the same object so to prevent this we can use the constraint on and unique properties
 ```Cypher
-MATCH (p)
-RETURN p
+CREATE CONSTRAINT ON (p:Person)
+ASSERT p.name IS UNIQUE
 ```
+If we create a node Person with the same value of name of others than neo4j throws error. 
+An example:
+```Cypher
+CREATE (a:Person {name:"Ann"})
+CREATE (a)-[:HAS_PET]->(:Dog {name:"Sam"})
+```
+Output:
+```
+Neo.ClientError.Schema.ConstraintValidationFailed: Node(1) already exists with label `Person` and property `name` = 'Ann'
+```
+To prevent this error we can use the MERGE clause:
+```Cypher
+MERGE (a:Person {name:"Ann"})
+CREATE (a)-[:HAS_PET]->(:Dog {name:"Sam"})
+```
+The node with name Ann will be created if is not exists and if exists then it not create that.
+The new graph will be:
+
+![merge](resources/simpleGraphMerge.PNG)
+
+In the same way if the dog already exists the above query will give you an error, to prevent is necessary use MERGE instead of CREATE for the Dog creation.
+An example:
+```Cypher
+MERGE (a:Person {name:"Ann"})
+ON CREATE SET
+    a.facebook = "@annie"
+MERGE (a)-[:HAS_PET]->(:Dog {name:"Sam"})
+```
+On create set will be use only if the merge create the node, if you run this query before all the queries above the facebook parameter will not be created.
 
 ### Application - Movie Graph
 
