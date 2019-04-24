@@ -102,10 +102,11 @@ The graph model can be more versatile and can be upgrade without efforts, for ex
 
 ![graphModelClubsExtend](resources/graphModelClubsExtend.PNG)
 
-
 ----------------
 
 ## Neo4J
+
+![HelloWorld](resources/HelloWorld.PNG)
 
 [video youtube](https://www.youtube.com/watch?v=_D19h5s73Co)
 
@@ -113,30 +114,75 @@ Connected information is everywhere in the world around us. Neo4j was build to e
 
 Neo4J is a high performance graph store with all the feature expected of a mature and robust database. The network structure is made by nodes and relationships rather than static tables.
 
-##### Index free adjacency
+Some definitions:
 
-With index free adjaceny, when a node or relationship is written to the database, it is stored in the database as connected and any subsequent access to the data is done using pointer navigation wich is very fast. Since Neo4j is a native graph database, it supports very large graphs where connected data can be traversed in constant time without the need for an index.
+* Index free adjacency
 
-![Neo4j index](resources/neo4jIndex.PNG)
+    With index free adjaceny, when a node or relationship is written to the database, it is stored in the database as connected and any subsequent access to the data is done using pointer navigation wich is very fast. Since Neo4j is a native graph database, it supports very large graphs where connected data can be traversed in constant time without the need for an index.
 
-To know more read -> [Index-free adjacency](#index-free-adjacency)
+    ![Neo4j index](resources/neo4jIndex.PNG)
 
-##### ACID
+    To know more read -> [Index-free adjacency](#index-free-adjacency)
 
-Transactionality is very important for robust applications that require an atomicity, consistency, isolation, and durability guarantees for their data. If a relationship between nodes is created, not only is the relationship created, but the nodes are updated as connected.
-All of these updates to the database must all succeed or fail.
+* ACID
 
-![Neo4j ACID](resources/neo4jACID.PNG)
+    Transactionality is very important for robust applications that require an atomicity, consistency, isolation, and durability guarantees for their data. If a relationship between nodes is created, not only is the relationship created, but the nodes are updated as connected.
+    All of these updates to the database must all succeed or fail.
 
-To know more read -> [ACID](#acid-consistency-model)
+    ![Neo4j ACID](resources/neo4jACID.PNG)
 
-##### Clusters
+    To know more read -> [ACID](#acid-consistency-model)
 
-Neo4j supports clusters that provide high availablity, scalability for read access to the data and failover which is important to many enterprises.
+* Clusters
 
-<!-- 
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-2/
--->
+    Neo4j supports clusters that provide high availablity, scalability for read access to the data and failover which is important to many enterprises.
+
+    ![neo4jCluster](resources/neo4jCluster.PNG)
+
+    To know more read -> [Cluster](#cluster)
+
+* Graph engine
+
+    The Neo4j graph engine is used to interpret Cypher statements and also executes kernel-level code to store and retrive data, whether it is on disk, or cached in memory.
+
+* Bolt
+
+    Neo4j supports Java, JavaScript, Python, C#, and Go drivers that use Neo4j's bolt protocol for binary access to the database layer.
+    Bolt is an efficiant binary protocol that compresses data sent over the wire as well encrypting the data.
+    It's possible to create a java application that uses the bolt driver to access the Neo4j database and the application may use other packages that allow data integration between Neo4j and other data stores or uses as common framework such as spring.
+
+* Tools
+
+    [Neo4j browser](https://neo4j.com/sandbox-v2/) is an application that uses the JavaScript Bolt driver to access the graph engine of the Neo4j database server.
+
+    [Bloom](https://neo4j.com/bloom/) enables you to visualize a graph without knowing much about Cypher ([youtube video](https://www.youtube.com/watch?v=KjINhGbG-So)).
+
+    [ETL](https://neo4j.com/developer/neo4j-etl/) used to importing and exporting data between flat files and a neo4j Database.
+
+![neo4jStructure](resources/neo4jStructure.PNG)
+
+To use Neo4j there are two options: 
+* [desktop application](https://neo4j.com/developer/neo4j-desktop/) 
+
+    " The Neo4j Desktop includes the Neo4j Database server which includes the graph engine and kernel so that Cypher statements can be executed to access a database on your system. It includes an application called Neo4j Browser. Neo4j Browser enables you to access a Neo4j database using Cypher. You can also call built-in procedures that communicate with the database server. There are a number of additional libraries and drivers for accessing the Neo4j database from Cypher or from another programming language that you can install in your development environment. If you are looking to use your system for application development and you want to be able to create multiple Neo4j databases on your machine, you should consider downloading the Neo4j Desktop (free download). The Neo4j Desktop runs on OS X, Linux, and Windows. "
+
+    How to use on:
+
+    * OSX: [youtube video](https://www.youtube.com/watch?v=8yWhuUnPapw)
+
+    * Windows: [youtube video](https://www.youtube.com/watch?v=EO57N03U_sI)
+
+    * Linux: [youtube video](https://www.youtube.com/watch?v=SGH_5x3kfdw)
+
+* [browser sandbox](https://neo4j.com/sandbox-v2/)
+
+    " The Neo4j sandbox is another way that you can begin development with Neo4j. It is a temporary, cloud-based instance of a Neo4j Server with its associated graph that you can access from any Web browser. The database in a Sandbox may be blank or it may be pre-populated. It is started automatically for you when you create the Sandbox.
+    
+    By default, the Neo4j sandbox is available for three days, but you can extend it for up to 10 days. If you do not want to install Neo4j Desktop on your system, consider creating a Neo4j sandbox. You must make sure that you extend your lease of the sandbox, otherwise you will lose your graph and any saved Cypher scripts you have created in the sandbox. However, you can use Neo4j Browser Sync to save Cypher scripts from your sandbox. We recommend you use the Desktop for a real development project. The Sandbox is intended as a temporary environment or for learning about the features of Neo4j as well as specific graph use-cases. "
+
+    [youtube video - Creating a Neo4j Sandbox](https://www.youtube.com/watch?v=rmfgRKPjhl8)
+
+Both of them use Neo4j Browser application to perform querying in the database -> [GettingStartedBrowser](https://www.youtube.com/watch?v=rQTximyaETA) 
 
 ------------------------------------------------
 
@@ -169,6 +215,8 @@ The Cypher language are case insensitive and sensitive:
 
 ##### Create
 
+###### ***on neof4j browser run the command `:help CREATE`***
+
 Let's create a small social graph using this query language.
 
 To create a new data we use the **CREATE** clause:
@@ -186,6 +234,8 @@ Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
 ```
 
 ##### Match
+
+###### ***on neof4j browser run the command `:help MATCH`***
 
 To find a node we can use the **MATCH** clause follow by a filters and conditions of nodes and relationships:
 ```Cypher
@@ -220,6 +270,8 @@ The output of this query can be different:
 ```
 
 ##### Where
+
+###### ***on neof4j browser run the command `:help WHERE`***
 
 There are more method to filter the nodes of a match clause: by specify the value of the argumento on the match clause or by using the WHERE caluse.
 This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
@@ -312,6 +364,8 @@ This query return all of the Person who have the hobby "surfing" that are connec
 
 ##### Explain Profile
 
+###### ***on neof4j browser run the command `:help EXPLAIN`***
+
 To understand how the query works you can use the **EXPLAIN** or **PROFILE** clause put at the beginning of the query, like this:
 ```Cypher
 PROFILE MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
@@ -321,6 +375,8 @@ RETURN DISTINCT surfer
 The outcome will be a cause effect of how the engine find the result.
 
 ##### Set
+
+###### ***on neof4j browser run the command `:help SET`***
 
 To change or add properties of a node it's possible to use the SET clause, it can be use 2 format: JSON or OBJECT.
 * Json
@@ -364,6 +420,10 @@ https://neo4j.com/docs/cypher-refcard/ <-- table of aggregating functions
 There are a plenty of procedure for aggregations, check for more with apoc reference:
 * github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
 * neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
+
+##### Libraries
+
+Neo4j has a published, opnen source Cypher library, Awesome Procedures on Cypher ([APOC](https://github.com/neo4j-contrib/neo4j-apoc-procedures)) that contain many useful procedures you can call from Cypher. [Another Cypher library is the Graph Algorithms library](https://github.com/neo4j-contrib/neo4j-graph-algorithms) to help users to analyze data in graphs.
 
 ------------------------------------
 
@@ -492,6 +552,8 @@ On create set will be use only if the merge create the node, if you run this que
 ----------------------------------------
 
 ### Application - Movie Graph
+
+###### ***on neof4j browser run the command `:play movie graph`***
 
 Let's create a more complex example with a mini application containing actors and directors that are related through the movies they've collaborated on.
 
@@ -643,6 +705,8 @@ RETURN n
 ---------------------------------------------
 
 ### Application - Northwind Graph
+
+###### ***on neof4j browser run the command `:play northwind graph`***
 
 This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
 Pratically how to get this:
@@ -968,6 +1032,11 @@ There are two basic approaches to recommendation algorithms:
 
 ## Index
 
+1. [ACID](#acid-consistency-model)
+2. [Cluster](#cluster)
+2. [index-free adjacency](#index---free-adjacency)
+3. [OLTP](#oltp)
+
 ### ACID consistency model
 
 <!--
@@ -984,6 +1053,16 @@ The acronym stands for:
 This four properties mean that once a transaction is complete, its data is consistent and stable on disk.
 
 Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure data is safe and consistently stored.
+
+### Cluster
+
+A cluster is when data is assembled around one particular value, on graph usually happens when there are several nodes thet seem to gather in a certain area. In other word a cluster is a group that are placed closely next to each other in a certain area, with a few nodes scattered in other places on the graph. 
+
+For example this is a social netowork graph:
+
+![cluster](resources/facebookClusters.png)
+
+There are several aggregations of similar nodes that are colored.
 
 ### index-free adjacency
 
