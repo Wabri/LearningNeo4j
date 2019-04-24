@@ -1034,7 +1034,7 @@ There are two basic approaches to recommendation algorithms:
 
 1. [ACID](#acid-consistency-model)
 2. [Cluster](#cluster)
-2. [index-free adjacency](#index---free-adjacency)
+2. [index-free adjacency](#index-free-adjacency)
 3. [OLTP](#oltp)
 
 ### ACID consistency model
