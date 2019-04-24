@@ -391,6 +391,8 @@ RETURN p
     
     ![Create nodes](/resources/simpleGraphCreate.PNG)
 
+    ***Query find on: [creationNodes](Cypher/SimpleGraph/CreationOfNodes.cql)***
+
 * Creation of realtionships:
     ```Cypher
     MATCH 
@@ -409,8 +411,10 @@ RETURN p
     
     ![Create relationships](/resources/simpleGraphRelationships.PNG)
 
+    ***Query find on: [creationRelationships](Cypher/SimpleGraph/CreationOfRelationships.cql)***
+
 * Basic query 
-    1. "Find how loves Ann":
+    1. "Find who loves Ann":
         ```Cypher
         MATCH 
             (ann:Person {name: "Ann"})<-[:LOVES]-(op)
@@ -419,6 +423,8 @@ RETURN p
         ```
         The result is simple "Dan".
     
+        ***Query find on: [lovesAnn](Cypher/SimpleGraph/lovesAnn.cql)***
+
     2. "Find the Ann's Car":
         ```Cypher
         MATCH 
@@ -428,6 +434,8 @@ RETURN p
         ```
         The result is simple "Volvo".
     
+        ***Query find on: [annCar](Cypher/SimpleGraph/annCar.cql)***
+
     3. "Find the Dan's Volvo car and update value of that car with the number of the wheels":
         ```Cypher
         MATCH 
@@ -440,6 +448,8 @@ RETURN p
             car.wheels
         ```
         The result is simple 4.
+
+        ***Query find on: [updateDanCar](Cypher/SimpleGraph/updateDanCar.cql)***
 
 * Ensuring uniqueness: 
 We don't want a bunch of nodes rapresenting the same object so to prevent this we can use the constraint on and unique properties
@@ -476,6 +486,8 @@ ON CREATE SET
 MERGE (a)-[:HAS_PET]->(:Dog {name:"Sam"})
 ```
 On create set will be use only if the merge create the node, if you run this query before all the queries above the facebook parameter will not be created.
+
+***Query find on: [annDogCreation](Cypher/SimpleGraph/annDogCreation.cql)***
 
 ----------------------------------------
 
