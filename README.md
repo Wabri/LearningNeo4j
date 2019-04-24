@@ -1,24 +1,20 @@
 # LearningDataAnalysis
 
+<!--
+TODO
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
+-->
+
 ## Content
 
 1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
-        * [Create](#create)
-        * [Match](#match)
-        * [Where](#where)
-        * [Null](#null)
-        * [More create at once](#more-create-at-once)
-        * [Distinct](#distinct)
-        * [Explain Profile](#explain-profile)
-        * [Set](#set)
-        * [Aggregates](#aggregates)
-    * [Example](#example---simple-graph)
-    * [Application - Movies](#application---movie-graph)
-    * [Application - Northwind](#application---northwind-graph)
-    * [Recommendations - Movies](#recommendations)
-        - [Personalized recommendations](#personalized-reccomendations)
+        * [Example](#example---simple-graph)
+        * [Application - Movies](#application---movie-graph)
+        * [Application - Northwind](#application---northwind-graph)
+        * [Recommendations - Movies](#recommendations)
+            - [Personalized recommendations](#personalized-reccomendations)
 3. [Index](#index)
 3. [References](#references)
 
@@ -29,19 +25,19 @@
 A graph database can store any kind of data using a few simple concepts:
 1. **Nodes** - graph data records
 
-    ![nodes](/resources/nodes.PNG)
+    ![nodes](resources/nodes.PNG)
 
 2. **Labels** - specifies the type of the node
 
-    ![nodesTypes](/resources/nodesTypes.PNG)
+    ![nodesTypes](resources/nodesTypes.PNG)
 
 3. **Relationships** - connect nodes
 
-    ![nodesTypes](/resources/nodesTypesRelationships.PNG)
+    ![nodesTypes](resources/nodesTypesRelationships.PNG)
 
 4. **Properties** - key-value pair properties
 
-    ![nodesTypes](/resources/nodesTypesRelationshipsProperties.PNG)
+    ![nodesTypes](resources/nodesTypesRelationshipsProperties.PNG)
 
 The simplest graph has just a single **node** with some named values called **Properties**:
 
@@ -53,18 +49,18 @@ Nodes can be grouped together by applying a Label to each member. In the example
 
 To add more records we can simply add more nodes.
 
-![moreNodes](/resources/moreNodes.PNG)
+![moreNodes](resources/moreNodes.PNG)
 
 Similar nodes can have different properties with different type: string, number or even boolean.
 The dimension of a graph like this can be infinite because there is no limit to the number of nodes that can be added.
 
 One of the properties of a database is to connect data, in a graph database the link is made by **Relationships**. To associate two nodes we can add **Relationship** between them wich describe how the records are related.
 
-![relationships](/resources/relationships.PNG)
+![relationships](resources/relationships.PNG)
 
 A relationship are data records that need to have two properties: **direction** and **type**, and can also contains properties like nodes.
 
-![relationshipProperties](/resources/relationshipProperties.PNG)
+![relationshipProperties](resources/relationshipProperties.PNG)
 
 A Graph database is an online database management system with Create, Read, Update and Delete (CRUD) operations working on a graph data model. 
 Graph database are generally build for use with [OLTP](#otlp) systems, they are normally optimized for transactional performance, and engineered with transactional integrity and operational availability in mind.
@@ -251,7 +247,7 @@ Take the nodes label Person and return only the nodes that have a property name 
 The output of this query can be different:
 - by **graph**:
 
-![matchEmilReturnG](/resources/matchEmilReturnG.PNG)
+![matchEmilReturnG](resources/matchEmilReturnG.PNG)
 - by **table**:
 ```Json
 {
@@ -276,17 +272,20 @@ The output of this query can be different:
 There are more method to filter the nodes of a match clause: by specify the value of the argumento on the match clause or by using the WHERE caluse.
 This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
 Some examples:
+
 1. 
     ```Cypher
     MATCH (m:Movie {title: "The Matrix"})
     RETURN m
     ```
+
 2. 
     ```Cypher
     MATCH (m:Movie)
     WHERE m.title = "The Matrix"
     RETURN m
     ```
+
 3. 
     ```Cypher
     MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
@@ -346,7 +345,7 @@ RETURN ee.name, friends
 Analyze this clause `MATCH (ee:Person)-[:KNOWS]-(friends)`, the meaning of `()-[:KNOWS]-()` is to maches **KNOWS** relationship in either direction and takes all nodes with label Person that have a relationship with other nodes.
 The output will be all the relationships between node **ee** with property name set as Emil and nodes **friends**, the query graph result will be:
 
-![matchEmilFriendsG](/resources/matchEmilFriendsG.PNG)
+![matchEmilFriendsG](resources/matchEmilFriendsG.PNG)
 
 ##### Distinct
 
@@ -360,7 +359,7 @@ The clause **DISTINCT** is use to avoid an output of the same nodes because more
 The pattern put on the **MATCH** clause contains 2 relations and the nodes in the center `()` is not important in our recommendation so is ignored and not referred with a name.
 This query return all of the Person who have the hobby "surfing" that are connected to a friend of a friend of Johan. In our database only one node correspond to this filter: "Allison".
 
-![matchsurfingrecommendation](/resources/matchSurfingRecommendations.PNG)
+![matchsurfingrecommendation](resources/matchSurfingRecommendations.PNG)
 
 ##### Explain Profile
 
@@ -433,7 +432,7 @@ Neo4j has a published, opnen source Cypher library, Awesome Procedures on Cypher
 
 Let's create this graph:
 
-![Simple Graph Creation](/resources/simpleGraphTemplate.PNG)
+![Simple Graph Creation](resources/simpleGraphTemplate.PNG)
 
 To see the graph result you can use this query:
 ```Cypher
@@ -449,7 +448,7 @@ RETURN p
     ```
     result:
     
-    ![Create nodes](/resources/simpleGraphCreate.PNG)
+    ![Create nodes](resources/simpleGraphCreate.PNG)
 
     ***Query find on: [creationNodes](Cypher/SimpleGraph/CreationOfNodes.cql)***
 
@@ -469,7 +468,7 @@ RETURN p
     ```
     result:
     
-    ![Create relationships](/resources/simpleGraphRelationships.PNG)
+    ![Create relationships](resources/simpleGraphRelationships.PNG)
 
     ***Query find on: [creationRelationships](Cypher/SimpleGraph/CreationOfRelationships.cql)***
 
@@ -623,7 +622,7 @@ The script add lot of nodes with relative relationships and properties, with thi
     ```
     graph result:
 
-    ![Tom Hanks](/resources/movieGraphTomHanks.PNG)
+    ![Tom Hanks](resources/movieGraphTomHanks.PNG)
 3. List of Tom Hanks movies
     ```Cypher
     MATCH (tom:Person {name: "Tom Hanks"})-[:ACTED_IN]->(movie)
@@ -631,7 +630,7 @@ The script add lot of nodes with relative relationships and properties, with thi
     ```
     graph result:
 
-    ![Tom Hanks Acted](/resources/movieGraphTomHanksActed.PNG)
+    ![Tom Hanks Acted](resources/movieGraphTomHanksActed.PNG)
 3. Who directed "Cloud Atlas"
     ```Cypher
     MATCH (dir:Person)-[:DIRECTED]->(movie)
@@ -665,7 +664,7 @@ The script add lot of nodes with relative relationships and properties, with thi
     ```
     Result graph:
 
-    ![movieGraphKevinToMeg](/resources/movieGraphKevinToMeg.PNG)
+    ![movieGraphKevinToMeg](resources/movieGraphKevinToMeg.PNG)
 
     The **shortestPath({}-[]-{})** is a function that take a relation of 2 nodes and return the shortest path from them.
 
@@ -685,7 +684,7 @@ The script add lot of nodes with relative relationships and properties, with thi
     ```
     Result graph:
 
-    ![movieGraphHanksCruise](/resources/movieGraphHanksCruise.PNG)
+    ![movieGraphHanksCruise](resources/movieGraphHanksCruise.PNG)
 
 Let's now clean the graph by delete all the nodes and relationships:
 ```Cypher
@@ -711,11 +710,11 @@ RETURN n
 This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
 Pratically how to get this:
 
-![northGraphNodes](/resources/northGraphNodes.PNG)
+![northGraphNodes](resources/northGraphNodes.PNG)
 
 From this:
 
-![northGraphTables](/resources/northGraphTables.PNG)
+![northGraphTables](resources/northGraphTables.PNG)
 
 This example is a sellers of food products for a few categories provided by suppliers. The database actually in use is a relational table of product catalog. The first step to transform this is with the `LOAD CSV` clause that retrive a CSV file from a valid URL and create a named map:
 * Products nodes:
@@ -785,7 +784,7 @@ We can now test what we crated:
 
 We can expand this graph with more datas and infos about Orders and Costumers:
 
-![northGraphNewTables](/resources/northGraphNewTables.PNG)
+![northGraphNewTables](resources/northGraphNewTables.PNG)
 
 We can do the same thing we had before to load and index the records:
 * Customers nodes
@@ -856,7 +855,7 @@ Generating personalized recommendations is one of the most common use cases for 
 
 For this paragraph will use a graph movie with default node-relationships-node template:
 
-![recommendationsGraphTemplate](/resources/recommendationsGraphTemplate.PNG)
+![recommendationsGraphTemplate](resources/recommendationsGraphTemplate.PNG)
 
 In this use case, we are using graphs to combine data from multiple silos:
 * Product catalog -> data describing movies comes from the product catalog silo
@@ -869,7 +868,7 @@ The graph result is made by:
 * Relationships -> ACTED_IN, IN_GENERE, DIRECTED, RATED
 * Properties -> title, name, year, rating
 
-![recommendationsGraph](/resources/recommendationsGraph.PNG)
+![recommendationsGraph](resources/recommendationsGraph.PNG)
 
 ###### From now on i will use Cypher -> [Query Language](#cypher)
 
@@ -910,7 +909,7 @@ There are two basic approaches to recommendation algorithms:
     RETURN p LIMIT 25
     ```
 
-    ![recommendationsGraphContentBased](/resources/recommendationsGraphContentBased.PNG)
+    ![recommendationsGraphContentBased](resources/recommendationsGraphContentBased.PNG)
 
     All of that result can be a movie to recommend.
 
@@ -1080,7 +1079,7 @@ With Neo4j tipically a query will find the node to start from with an index and 
 When create a new set of nodes it's typical to create an index of that type, see [northwind graph](#Application-Northwind-Graph), this reduce the cost of every query run.
 Example:
 
-![simple graph](/resources/simpleGraph.jpeg)
+![simple graph](resources/simpleGraph.jpeg)
 
 In a relational database if we want to switch from data **A** to data **B** the step are:
 1. The db prohibited you to access direct items via pointers, so you need to ask for the permission.
@@ -1135,12 +1134,6 @@ Others:
 - [neo4j docs](https://neo4j.com/docs/)
 - [neo4j repository](https://github.com/neo4j/neo4j)
 - [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
-    * :play concepts
-    * :play intro
-    * :play cypher
-    * :play movie-graph
-    * :play northwind-graph
-    * Racommendations -> :play https://guides.neo4j.com/sandbox/recommendations/index.html
 - [neo4j developer get started](https://neo4j.com/developer/get-started/)
     * [dev-cypher](https://neo4j.com/developer/cypher/)
     * [dev-graph-database](https://neo4j.com/developer/graph-database/)
