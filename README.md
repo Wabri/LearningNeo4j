@@ -11,6 +11,7 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
         * [Part one](#part-one)
+        * [Part two](#part-two)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
