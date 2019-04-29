@@ -187,17 +187,23 @@ Both of them use Neo4j Browser application to perform querying in the database -
 ###### ***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
 ###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
 
-Neo4J's Cypher language is purpose built for working with graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
-This query language allows users to store and retrive data from the graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs. 
+Neo4J's Cypher language is purpose built for working with graph data, is a declarative query language that allows for expressive and efficient querying and updating of graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
+This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs. 
 It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it: 
+
 **" Describing what to find and not how to find it "**
 
-Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality.
+This means that complex database queries can easily be expressed through Cypher, allowing you to focus on your domain instead of getting lost in the syntax of database access. Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality (also know as CRUD operations).
 
-Graph patterns are expressed in Cypher using ASCII-art like syntax:
-* **NODES** are defined within parentheses `()` and optionally we can specify node label(s) like `(:Movie)`.
-* **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `(:Movie)<-[:RATED]-(:User)`.
-* **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(m:Movie)<-[r:RATED]-(u:User)` where m, r and u are aliases.
+The unwritten rule wants to rappresents the nouns as the nodes of the graph, the verbs as the relationships, the adjectives and adverbs are the properties:
+
+![unwrittenRule](resources/unwrittenRule.PNG)
+
+Graph patterns are expressed in Cypher using ASCII-art like syntax to make queries more self-explanatory:
+* **NODES** uses a pair of parentheses like `()` or `(node)` to rapresent a node, similar to a circle on witheboard. An anonymous node `()` represents one or more nodes during a query processing where there are no restrictions of the type of the node, a name inside the parentheses `(node)` tells the query processor that for this query is used the variable called `node` to rapresents all the nodes of the graph.
+* **LABELS** are used to group nodes and filter queries against the graph and is defined with a colon `(:Label)`. A node can have zero or more labels for example `(node)`, `(node:Label)`, `(node:Label1:Label2)`, `(:Label)`, `(:Label1:Label2)`.
+* **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `()<-[:RELATIONSHIP]-()`.
+* **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(node1:Label1)<-[relationship:RELATIONSHIP]-(node2:Label2)` where node1, node2 and relationship are aliases.
 * **Predicates** are filters that can be applied to limit the matching paths: boolean logi operators, regular expressions and string comparison operators.
 
 The properties of a node are accessed using `{variable}.{property_key}`, for example `emil.name` or `movie.title`.
@@ -209,61 +215,39 @@ The Cypher language are case insensitive and sensitive:
 |Relationship type|-----|
 |Property keys|----|
 
-##### Create
+Later on the cypher keywords are upper-case, this is a coding convention and is described in the [Cypher Style Guyide](https://neo4j.com/developer/cypher-style-guide/).
 
-###### ***on neof4j browser run the command `:help CREATE`***
+--------------------------
+###### Start part one
+--------------------------
 
-Let's create a small social graph using this query language.
+##### Comments
 
-To create a new data we use the **CREATE** clause:
+You can place comments anywhere in the query and to specify that the rest of the line is interpreted as a comment you need to put a double slash `// comment`.
 
-```Cypher
-CREATE (ee:Person {name: "Emil", from: "Sweden", klout:99})
-```
-***klout = influence based on the ability to drive action across the social web***
-
-With this query we create a node **ee** of type Person that have 3 properties: name, from and klout.
-
-The output of this query will be:
-```
-Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
-```
 
 ##### Match
 
 ###### ***on neof4j browser run the command `:help MATCH`***
 
-To find a node we can use the **MATCH** clause follow by a filters and conditions of nodes and relationships:
+[youtube video - how to execute a MATCH statement](https://www.youtube.com/watch?v=Sz2C618QKN8)
+
+The most widely used Cypher clause is **MATCH**, this performs a pattern match against the data in the graph. During the query processing, the graph engine traverses the graph to find all nodes that match the graph pattern. 
+
+A query with match need to be present with the **RETURN** clause. This clause must be the last of a query to the graph. Here some examples:
 ```Cypher
-MATCH (ee:Person) WHERE ee.name = "Emil" RETURN ee;
+// returns all nodes in the graph
+MATCH (variable)
+RETURN variable 
 ```
-Take the nodes label Person and return only the nodes that have a property name with the value **Emil**. To explain step by step:
-- **MATCH** -> clause to specify a pattern of nodes and relationships
-- **(ee:Person)** -> a single node pattern with label Person which will assign matches to the variable **ee**
-- **WHERE** -> clause to filter the results
-- **ee.name = "Emil"** -> compare name property to the value "Emil"
-- **RETURN** -> clause used to request particular results
 
-The output of this query can be different:
-- by **graph**:
+```Cypher
+// returns all Label nodes in the graph
+MATCH (variable:Label)
+RETURN variable // returns
+```
 
-![matchEmilReturnG](resources/matchEmilReturnG.PNG)
-- by **table**:
-```Json
-{
-    "name": "Emil",
-    "from": "Sweden",
-    "klout": 99
-} 
-```
-- by **text**:
-```
-╒══════════════════════════════════════════╕
-│"ee"                                      │
-╞══════════════════════════════════════════╡
-│{"name":"Emil","from":"Sweden","klout":99}│
-└──────────────────────────────────────────┘ 
-```
+When you specify a pattern for a **MATCH** clause, you should always specify a node label if possible. In doing so, the graph engine uses an index to retrive the nodes which will perform better than not using a label for the **MATCH**.
 
 ##### Where
 
@@ -302,6 +286,66 @@ WHERE
     m.released > 2000 OR
     (m.released = 1997 AND m.title='As Good as It Gets')
 RETURN p.name, m.title, m.released
+```
+
+##### Type of query output
+
+To find a node we can use the **MATCH** clause follow by a filters and conditions of nodes and relationships:
+```Cypher
+MATCH (ee:Person) WHERE ee.name = "Emil" RETURN ee;
+```
+Take the nodes label Person and return only the nodes that have a property name with the value **Emil**. To explain step by step:
+- **MATCH** -> clause to specify a pattern of nodes and relationships
+- **(ee:Person)** -> a single node pattern with label Person which will assign matches to the variable **ee**
+- **WHERE** -> clause to filter the results
+- **ee.name = "Emil"** -> compare name property to the value "Emil"
+- **RETURN** -> clause used to request particular results
+
+The output of this query can be different:
+- by **graph**:
+
+![matchEmilReturnG](resources/matchEmilReturnG.PNG)
+
+- by **table**:
+```Json
+{
+    "name": "Emil",
+    "from": "Sweden",
+    "klout": 99
+} 
+```
+- by **text**:
+```
+╒══════════════════════════════════════════╕
+│"ee"                                      │
+╞══════════════════════════════════════════╡
+│{"name":"Emil","from":"Sweden","klout":99}│
+└──────────────────────────────────────────┘ 
+```
+
+---------------
+###### End of part one.
+###### If you want to prove what you have learned execute the browser command: `:play intro-neo4j-exercises`
+---------------
+
+##### Create
+
+###### ***on neof4j browser run the command `:help CREATE`***
+
+Let's create a small social graph using this query language.
+
+To create a new data we use the **CREATE** clause:
+
+```Cypher
+CREATE (ee:Person {name: "Emil", from: "Sweden", klout:99})
+```
+***klout = influence based on the ability to drive action across the social web***
+
+With this query we create a node **ee** of type Person that have 3 properties: name, from and klout.
+
+The output of this query will be:
+```
+Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
 ```
 
 ##### Null
@@ -419,6 +463,13 @@ https://neo4j.com/docs/cypher-refcard/ <-- table of aggregating functions
 There are a plenty of procedure for aggregations, check for more with apoc reference:
 * github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
 * neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
+
+##### Examining the data model
+
+It is helpful to examine the data model of the graph, it can be done by executing `CALL db.schema` which calls the Neo4j procedure that returns information about the nodes, labels, and relationship in the graph.
+If we run this command in the movie graph the result will be:
+
+![dataModel](resources/examiningDataModel.PNG)
 
 ##### Libraries
 
