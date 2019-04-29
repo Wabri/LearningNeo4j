@@ -10,7 +10,7 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
 1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
-        * [Part one](#start-part-one)
+        * [Part one](#part-one)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -219,15 +219,14 @@ The Cypher language are case insensitive and sensitive:
 Later on the cypher keywords are upper-case, this is a coding convention and is described in the [Cypher Style Guyide](https://neo4j.com/developer/cypher-style-guide/).
 
 --------------------------
-###### Start part one
+###### Part one
 --------------------------
 
-##### Comments
+#### Comments
 
 You can place comments anywhere in the query and to specify that the rest of the line is interpreted as a comment you need to put a double slash `// comment`.
 
-
-##### Match
+#### Match
 
 ###### ***on neof4j browser run the command `:help MATCH`***
 
@@ -250,10 +249,33 @@ RETURN variable // returns
 
 When you specify a pattern for a **MATCH** clause, you should always specify a node label if possible. In doing so, the graph engine uses an index to retrive the nodes which will perform better than not using a label for the **MATCH**.
 
+#### Type of query output
 
-##### Exercises part one
+The output of a query can be different:
+- by **graph**:
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises`***
+![matchEmilReturnG](resources/matchEmilReturnG.PNG)
+
+- by **table**:
+```Json
+{
+    "name": "Emil",
+    "from": "Sweden",
+    "klout": 99
+} 
+```
+- by **text**:
+```
+╒══════════════════════════════════════════╕
+│"ee"                                      │
+╞══════════════════════════════════════════╡
+│{"name":"Emil","from":"Sweden","klout":99}│
+└──────────────────────────────────────────┘ 
+```
+
+### Exercises part one
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions*** 
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 ```Text
@@ -296,10 +318,139 @@ RETURN m
 ![1.4](resources/partOneExercise_1_4.PNG)
 
 ---------------
-###### End of part one.
+###### Part two
 ---------------
 
-##### Where
+#### Properties
+
+In Neo4j a node can have properties that are used for further define a node.
+A property is identified with a key and defined for a node and not for a type of node. 
+All nodes of the same type need not have the same properties.
+
+For example in the Movie graph all Movie nodes have both title and released properties, however it is not requirement that every Movie node has a property tagline:
+
+![taglineMovie](resources/taglineMovie.PNG)
+
+Properties can be used to filter queries so that a subset of the graph is retrived. In addition, with the `RETURN` clause, you can return property values from the retrived nodes, rather than the nodes.
+
+The propertiy keys of a graph can be view by execute `CALL db.propertyKeys` which call the Neo4j library method that returns the property keys for the graph.
+For example run this command in the movie graph returns the result stream contains all property keys in the graph:
+
+![propertyKeys](resources/propertyKeys.PNG)
+
+#### Nodes properties filtering
+
+[youtube video - using match to return propery values](https://www.youtube.com/watch?v=Nb9tSFVrQuc)
+
+It's possible to filter the nodes of the graph to a specify a value for a property, any node that matches the value will be retrived.
+Here some examples:
+
+```Cypher
+MATCH (variable {propertyKey: propertyValue})
+RETURN variable
+```
+```Cypher
+MATCH (variable:Label {propertyKey: propertyValue})
+RETURN variable
+```
+```Cypher
+MATCH (variable:Label {propertyKey1: propertyValue1, propertyKey2: propertyValue2})
+RETURN variable
+```
+
+It's possible to retrive a property values of nodes in a query and return on output:
+```Cypher
+MATCH (variable {property1: value})
+RETURN variable.property2
+```
+```Cypher
+MATCH (variable:Label {property1: value})
+RETURN variable.property2
+```
+```Cypher
+MATCH (variable:Label {property1: value, property2: value})
+RETURN variable.property2, variable.property3
+```
+
+In the graph database we can filter the person born on 1970:
+```Cypher
+MATCH (p:Person {born: 1970})
+RETURN p.name, p.born
+```
+
+#### Aliases
+
+To customize the headings for a table containing property value it can be use aliases:
+```Cypher
+MATCH (variable:Label {property1: value, property2: value})
+RETURN variable.property2 AS alias1, variable.property3 AS alias2
+```
+
+In the graph database we can specify aliases for the returned property values:
+```Cypher
+MATCH (p:Person {born: 1970})
+RETURN p.name AS name, p.born AS `birth year`
+```
+
+### Exercises part two
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions*** 
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 2.1: Retrieve all Movie nodes that have a released property value of 2003.
+
+```Cypher
+MATCH (m:Movie {released: 2003})
+RETURN m
+```
+
+Exercise 2.2: View the retrieved results as a table.
+
+```Cypher
+MATCH (m:Movie {released: 2003})
+RETURN m
+```
+
+Exercise 2.3: Query the database for all property keys.
+
+```Cypher
+CALL db.propertyKeys
+```
+
+Exercise 2.4: Retrieve all Movies released in a specific year, returning their titles.
+
+```Cypher
+MATCH (m:Movie {released: 2006})
+RETURN m.title
+```
+
+Exercise 2.5: Display title, released, and tagline values for every Movie node in the graph.
+
+```Cypher
+MATCH (m:Movie)
+RETURN m.title, m.released, m.tagline
+```
+
+Exercise 2.6: Display more user-friendly headers in the table.
+
+```Cypher
+MATCH (m:Movie)
+RETURN m.title AS `Movie title`, m.released AS `Released date`, m.tagline AS `Tag line`
+```
+
+-----------
+###### Part three
+-----------
+<!-- 
+done with part two
+relationships
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
+-->
+#### Where
 
 ###### ***on neof4j browser run the command `:help WHERE`***
 
@@ -338,42 +489,8 @@ WHERE
 RETURN p.name, m.title, m.released
 ```
 
-##### Type of query output
 
-To find a node we can use the **MATCH** clause follow by a filters and conditions of nodes and relationships:
-```Cypher
-MATCH (ee:Person) WHERE ee.name = "Emil" RETURN ee;
-```
-Take the nodes label Person and return only the nodes that have a property name with the value **Emil**. To explain step by step:
-- **MATCH** -> clause to specify a pattern of nodes and relationships
-- **(ee:Person)** -> a single node pattern with label Person which will assign matches to the variable **ee**
-- **WHERE** -> clause to filter the results
-- **ee.name = "Emil"** -> compare name property to the value "Emil"
-- **RETURN** -> clause used to request particular results
-
-The output of this query can be different:
-- by **graph**:
-
-![matchEmilReturnG](resources/matchEmilReturnG.PNG)
-
-- by **table**:
-```Json
-{
-    "name": "Emil",
-    "from": "Sweden",
-    "klout": 99
-} 
-```
-- by **text**:
-```
-╒══════════════════════════════════════════╕
-│"ee"                                      │
-╞══════════════════════════════════════════╡
-│{"name":"Emil","from":"Sweden","klout":99}│
-└──────────────────────────────────────────┘ 
-```
-
-##### Create
+#### Create
 
 ###### ***on neof4j browser run the command `:help CREATE`***
 
@@ -393,12 +510,12 @@ The output of this query will be:
 Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
 ```
 
-##### Null
+#### Null
 
 Null represents missing or undefined values. You do not store a null value in a property. It just doesen't exist on that particular node.
 **Warning: null=null is not true but the result will be null because we don't know the value of a null propertie**
 
-##### More create at once
+#### More create at once
 
 **Create** clauses can create many nodes and relationships at once:
 ```Cypher
@@ -436,7 +553,7 @@ The output will be all the relationships between node **ee** with property name 
 
 ![matchEmilFriendsG](resources/matchEmilFriendsG.PNG)
 
-##### Distinct
+#### Distinct
 
 Pattern matching can be used to make recommendations, to suggest a new friend or a new film to watch. For example we can make recomandation to johan that is learning to surf, he may want to find a new frend who already does:
 ```Cypher
@@ -450,7 +567,7 @@ This query return all of the Person who have the hobby "surfing" that are connec
 
 ![matchsurfingrecommendation](resources/matchSurfingRecommendations.PNG)
 
-##### Explain Profile
+#### Explain Profile
 
 ###### ***on neof4j browser run the command `:help EXPLAIN`***
 
@@ -462,7 +579,7 @@ RETURN DISTINCT surfer
 ```
 The outcome will be a cause effect of how the engine find the result.
 
-##### Set
+#### Set
 
 ###### ***on neof4j browser run the command `:help SET`***
 
@@ -491,7 +608,7 @@ To change or add properties of a node it's possible to use the SET clause, it ca
         c
     ```
 
-##### Aggregates
+#### Aggregates
 
 We implicitly group by any non-aggregate fields in the RETURN statement
 ```Cypher
@@ -509,14 +626,14 @@ There are a plenty of procedure for aggregations, check for more with apoc refer
 * github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
 * neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
 
-##### Examining the data model
+#### Examining the data model
 
 It is helpful to examine the data model of the graph, it can be done by executing `CALL db.schema` which calls the Neo4j procedure that returns information about the nodes, labels, and relationship in the graph.
 If we run this command in the movie graph the result will be:
 
 ![dataModel](resources/examiningDataModel.PNG)
 
-##### Libraries
+#### Libraries
 
 Neo4j has a published, opnen source Cypher library, Awesome Procedures on Cypher ([APOC](https://github.com/neo4j-contrib/neo4j-apoc-procedures)) that contain many useful procedures you can call from Cypher. [Another Cypher library is the Graph Algorithms library](https://github.com/neo4j-contrib/neo4j-graph-algorithms) to help users to analyze data in graphs.
 
