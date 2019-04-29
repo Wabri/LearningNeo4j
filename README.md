@@ -10,6 +10,7 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
 1. [Graph Database Fundamentals](#graph-database-fundamentals)
 2. [Neo4J](#neo4j)
     * [Query Language Cypher](#cypher)
+        * [Part one](#start-part-one)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -249,6 +250,55 @@ RETURN variable // returns
 
 When you specify a pattern for a **MATCH** clause, you should always specify a node label if possible. In doing so, the graph engine uses an index to retrive the nodes which will perform better than not using a label for the **MATCH**.
 
+
+##### Exercises part one
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises`***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 1.1 Retrive all nodes from the database
+
+```Cypher
+MATCH (n)
+RETURN n
+```
+
+![1.1](resources/partOneExercise_1_1.PNG)
+
+Exercise 1.2 Examine the schema of your database
+
+```Cypher
+CALL db.schema()
+```
+
+![1.2](resources/partOneExercise_1_2.PNG)
+
+Exercise 1.3 Retrive all Person nodes
+
+```Cypher
+MATCH (p:Person)
+RETURN p
+```
+
+![1.3](resources/partOneExercise_1_3.PNG)
+
+Exercise 1.4 Retrive all Movie nodes
+
+```Cypher
+MATCH (m:Movie)
+RETURN m
+```
+
+![1.4](resources/partOneExercise_1_4.PNG)
+
+---------------
+###### End of part one.
+---------------
+
 ##### Where
 
 ###### ***on neof4j browser run the command `:help WHERE`***
@@ -322,11 +372,6 @@ The output of this query can be different:
 │{"name":"Emil","from":"Sweden","klout":99}│
 └──────────────────────────────────────────┘ 
 ```
-
----------------
-###### End of part one.
-###### If you want to prove what you have learned execute the browser command: `:play intro-neo4j-exercises`
----------------
 
 ##### Create
 
