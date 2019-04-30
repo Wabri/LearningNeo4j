@@ -1,8 +1,9 @@
 # LearningDataAnalysis
 
-<!--
-TODO
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
+<!-- 
+part four
+Testing with regular expressions
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
 -->
 
 ## Content
@@ -12,6 +13,9 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
     * [Query Language Cypher](#cypher)
         * [Part one](#part-one)
         * [Part two](#part-two)
+        * [Part three](#part-three)
+        * [Part four](#part-four)
+        * [Part five](#part-five)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -446,50 +450,251 @@ RETURN m.title AS `Movie title`, m.released AS `Released date`, m.tagline AS `Ta
 -----------
 ###### Part three
 -----------
-<!-- 
-done with part two
-relationships
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-4/
--->
+
+#### Relationships
+
+A relationship is a directed connection between two nodes that has a relationship type (name). In addiction, a relationship can have properties, just like nodes.
+In a match clause it's possible to specify nodes and their relationships to traverse the graph and quickly find the data of interest:
+* `() // a node`
+* `()--() // 2 nodes have some type of relationship`
+* `()-->() // the first node has a relationship to the second node`
+* `()<--() // the second node has a relationship to the first node`
+The relationship can be specified with or without direction.
+
+Here some examples for retrieving a set of nodes that satisfy one or more directed and type relationships:
+```Cypher
+MATCH (node1)-[:REL_TYPE]->(node2)
+RETURN node1, node2
+```
+```Cypher
+MATCH (node1)-[:REL_TYPEA | :REL_TYPEB]->(node2)
+RETURN node1, node2
+```
+
+Where:
+| | |
+| ---- | ---- |
+| node1, node2 | is a specification of a node where you may include node labels and property values for filtering |
+| :REL_TYPE | is the type for the relationship from node1 to node2 |
+| :REL_TYPEA, :REL_TYPEB | are the relationships from node1 to node2, the nodes are returned if at least one of the relationships exists |
+
+In the movie graph to retrive the nodes Person that have acted in the Movie "The Matrix" we need to use relationships:
+```Cypher
+MATCH (node1:Person)-[relation:ACTED_IN]->(node2:Movie {title: "The Matrix"})
+RETURN node1, relation, node2
+```
+
+![relationshipActorMatrix](resources/relationshipActorMatrix.PNG)
+
+There is a build-in function `type()` that returns the relationship type of a relationship.
+Here is an example where we use the rel variable to hold the relationships retrived:
+```Cypher
+MATCH (p:Person)-[rel]->(:Movie {title: "The Matrix"})
+RETURN p.name, type(rel)
+```
+The output list will be:
+|p.name|type(rel)|
+|---|---|
+|"Hugo Weaving"|"ACTED_IN"|
+|"Lilly Wachowski"|"DIRECTED"|
+|"Laurence Fishburne"|"ACTED_IN"|
+|"Lana Wachowski"|"DIRECTED"|
+|"Keanu Reeves"|"ACTED_IN"|
+|"Carrie-Anne Moss"|"ACTED_IN"|
+|"Joel Silver"|"PRODUCED"|
+|"Emil Eifrem"|"ACTED_IN"|
+
+Even relationships can have properties, this enables the graph model to provide more data about the relationships between the nodes. Just as can be specify property values for filtering nodes for a query, you can specify property values for a relationships. 
+Here is an example with the movie graph: 
+```Cypher
+// Returns the name of the person who gave the movie "the da vinci code" a rating of 65
+MATCH (p:Person)-[:REVIEWED {rating: 65}]->(:Movie {title: "The Da Vinci Code"})
+RETURN p.name
+```
+
+Since relationships are directionals queries can have multiple type of matching:
+
+* right direction
+    ```Cypher
+    MATCH (n)-[r]->(m)
+    RETURN n, r, m
+    ```
+
+* left direction
+    ```Cypher
+    MATCH (n)<-[r]-(m)
+    RETURN n, r, m
+    ```
+
+* both direction
+    ```Cypher
+    MATCH (n)-[r]-(m)
+    RETURN n, r, m
+    ```
+
+* traversing relationships
+    ```Cypher
+    MATCH (n)-[r]->(m)-[p]->(o)
+    RETURN n, m, o
+    ```
+    with query like this it can be usefull to assign a variable to the path and return the path:
+    ```Cypher
+    MATCH path = (n)-[r]->(m)-[p]->(o)
+    RETURN path
+    ```
+
+* Centralising relationships
+    ```Cypher
+    MATCH (n)-[r]->(m)<-[p]-(o)
+    RETURN n, m, o
+    ```
+
+#### Style recommendations
+
+* Node labels are CamelCase and begin with an upper-case letter, like Person or NetworkAddress.
+* Property keys, variables, parameters, aliases, and functions are camelCase and begin with a lower-case letter, like title or businessAddress.
+* Relationship type are in upper-case and can use the underscore, like ACTED_IN or FOLLOWS.
+* Cypher keywords are upper-case, like MATCH or RETURN.
+* String constats are in single quotes, unless the string contains a quote or apostrophe, like 'The Matrix' or "Something's Gotta Give".
+* Specify variables only when needed for use later in the cypher statement.
+* Place named nodes and relationships before anonymous nodes and relationships in the MATCH clauses when possible.
+* Specify anonymous relationships with `-->`, `--`, or `<--`.
+
+### Exercises part three
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions*** 
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 3.1: Display the schema of the database.
+
+```Cypher
+CALL db.schema
+```
+
+Exercise 3.2: Retrieve all people who wrote the movie Speed Racer.
+
+```Cypher
+MATCH (p:Person)-[:WROTE]->(:Movie {title: "Speed Racer"})
+RETURN p
+```
+
+Exercise 3.3: Retrieve all movies that are connected to the person, Tom Hanks.
+
+```Cypher
+MATCH (m:Movie)--(:Person {name: 'Tom Hanks'})
+RETURN m
+```
+
+Exercise 3.4: Retrieve information about the relationships Tom Hanks had with the set of movies retrieved earlier.
+
+```Cypher
+MATCH (m:Movie)-[relation]-(:Person {name: 'Tom Hanks'})
+RETURN m.title, type(relation)
+```
+
+Exercise 3.5: Retrieve information about the roles that Tom Hanks acted in
+
+```Cypher
+MATCH (m:Movie)-[acted:ACTED_IN]-(:Person {name: 'Tom Hanks'})
+RETURN m.title, acted.roles
+```
+
+-----------
+###### Part four
+-----------
+
 #### Where
 
 ###### ***on neof4j browser run the command `:help WHERE`***
 
-There are more method to filter the nodes of a match clause: by specify the value of the argumento on the match clause or by using the WHERE caluse.
+The most common clause to filter queries is `WHERE` that follows a `MATCH` clause. 
 This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
+In the `WHERE` clause it is possible to place conditions that are evaluated at runtime to filter the query. The potential of this clause is that is possible to specify complex conditions for the query.
+
 Some examples:
 
 1. 
-    ```Cypher
-    MATCH (m:Movie {title: "The Matrix"})
-    RETURN m
-    ```
-
-2. 
     ```Cypher
     MATCH (m:Movie)
     WHERE m.title = "The Matrix"
     RETURN m
     ```
 
-3. 
+2. 
     ```Cypher
-    MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
-    WHERE m.released >= 2000
-    RETURN m.released, a.name
+    MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+    WHERE m.released = 2008
+    RETURN p, m
     ```
 
+3.
+    ```Cypher
+    MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+    WHERE m.released = 2008 OR m.released = 2009
+    RETURN p, m
+    ```
+
+This clause accept conditions that return a boolean value of true or false. 
 It can be use several comparison operators: **=**, **<>**, **<**, **>**, **<=**, **>=**, **IS NULL**, **IS NOT NULL**, **=~**.
 There are 4 boolean operators that it can use: **AND**, **OR**, **XOR**, **NOT**.
+
 An example:
 ```Cypher
 MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
 WHERE 
     m.released > 2000 OR
-    (m.released = 1997 AND m.title='As Good as It Gets')
+    (1994 < m.released <= 1997 AND m.title='As Good as It Gets')
 RETURN p.name, m.title, m.released
 ```
 
+It is opssible to filter node labels in the WHERE clause, for example this two queries:
+```Cypher
+MATCH (p:Person)
+RETURN p.name
+```
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(:Movie {title: 'The Matrix'})
+RETURN p.name
+```
+can be rewritten usign WHERE clauses:
+```Cypher
+MATCH (p)
+WHERE p:Person
+RETURN p.name
+```
+```Cypher
+MATCH (p)-[:ACTED_IN]->(m)
+WHERE p:Person AND m:Movie AND m.title = 'The Matrix'
+RETURN p.name
+```
+
+Since we are talking about graph database not all the nodes with the same label have the same properties, with the WHERE clause and the build-in function `exists(property)` we can filter the nodes that doesn't have value for the property requested.
+For example:
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE p.name='Jack Nicholson' AND exists(m.tagline)
+RETURN m.title, m.tagline
+```
+
+There are also a set of string-related keywords to test string property values: `STARTS WITH`, `ENDS WITH`, and `CONTAINS`.
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->()
+WHERE p.name STARTS WITH 'Michael'
+RETURN p.name
+```
+
+<!-- 
+Testing with regular expressions
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
+-->
+
+-----------
+###### Part five
+-----------
 
 #### Create
 
