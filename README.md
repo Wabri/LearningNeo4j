@@ -224,8 +224,7 @@ The Cypher language are case insensitive and sensitive:
 Later on the cypher keywords are upper-case, this is a coding convention and is described in the [Cypher Style Guyide](https://neo4j.com/developer/cypher-style-guide/).
 
 --------------------------
-###### Part one
---------------------------
+### Part one
 
 #### Comments
 
@@ -278,7 +277,7 @@ The output of a query can be different:
 └──────────────────────────────────────────┘ 
 ```
 
-### Exercises part one
+#### Exercises part one
 
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions*** 
 
@@ -323,8 +322,7 @@ RETURN m
 ![1.4](resources/partOneExercise_1_4.PNG)
 
 ---------------
-###### Part two
----------------
+### Part two
 
 #### Properties
 
@@ -397,7 +395,7 @@ MATCH (p:Person {born: 1970})
 RETURN p.name AS name, p.born AS `birth year`
 ```
 
-### Exercises part two
+#### Exercises part two
 
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions*** 
 
@@ -448,8 +446,7 @@ RETURN m.title AS `Movie title`, m.released AS `Released date`, m.tagline AS `Ta
 ```
 
 -----------
-###### Part three
------------
+### Part three
 
 #### Relationships
 
@@ -560,7 +557,7 @@ Since relationships are directionals queries can have multiple type of matching:
 * Place named nodes and relationships before anonymous nodes and relationships in the MATCH clauses when possible.
 * Specify anonymous relationships with `-->`, `--`, or `<--`.
 
-### Exercises part three
+#### Exercises part three
 
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions*** 
 
@@ -604,8 +601,7 @@ RETURN m.title, acted.roles
 ```
 
 -----------
-###### Part four
------------
+### Part four
 
 #### Where
 
@@ -693,8 +689,7 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
 -->
 
 -----------
-###### Part five
------------
+### Part five
 
 #### Create
 
