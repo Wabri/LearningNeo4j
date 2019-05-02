@@ -1,6 +1,6 @@
 # LearningDataAnalysis
 
-<!-- 
+<!--
 part four
 Testing with regular expressions
 https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
@@ -68,10 +68,10 @@ A relationship are data records that need to have two properties: **direction** 
 
 ![relationshipProperties](resources/relationshipProperties.PNG)
 
-A Graph database is an online database management system with Create, Read, Update and Delete (CRUD) operations working on a graph data model. 
+A Graph database is an online database management system with Create, Read, Update and Delete (CRUD) operations working on a graph data model.
 Graph database are generally build for use with [OLTP](#otlp) systems, they are normally optimized for transactional performance, and engineered with transactional integrity and operational availability in mind.
 
-Unlike the other databases, relationships take first priority in graph databases so the foreign keys or out-of-band processing is no more necessary to link a data to another. 
+Unlike the other databases, relationships take first priority in graph databases so the foreign keys or out-of-band processing is no more necessary to link a data to another.
 
 By assembling the simple abstractions of nodes and relationships into connected structures, graph databases enable us to build sophisticated models that map closely to out problem domain.
 
@@ -112,7 +112,7 @@ The graph model can be more versatile and can be upgrade without efforts, for ex
 
 [video youtube](https://www.youtube.com/watch?v=_D19h5s73Co)
 
-Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model. 
+Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model.
 
 Neo4J is a high performance graph store with all the feature expected of a mature and robust database. The network structure is made by nodes and relationships rather than static tables.
 
@@ -163,8 +163,8 @@ Some definitions:
 
 ![neo4jStructure](resources/neo4jStructure.PNG)
 
-To use Neo4j there are two options: 
-* [desktop application](https://neo4j.com/developer/neo4j-desktop/) 
+To use Neo4j there are two options:
+* [desktop application](https://neo4j.com/developer/neo4j-desktop/)
 
     " The Neo4j Desktop includes the Neo4j Database server which includes the graph engine and kernel so that Cypher statements can be executed to access a database on your system. It includes an application called Neo4j Browser. Neo4j Browser enables you to access a Neo4j database using Cypher. You can also call built-in procedures that communicate with the database server. There are a number of additional libraries and drivers for accessing the Neo4j database from Cypher or from another programming language that you can install in your development environment. If you are looking to use your system for application development and you want to be able to create multiple Neo4j databases on your machine, you should consider downloading the Neo4j Desktop (free download). The Neo4j Desktop runs on OS X, Linux, and Windows. "
 
@@ -179,12 +179,12 @@ To use Neo4j there are two options:
 * [browser sandbox](https://neo4j.com/sandbox-v2/)
 
     " The Neo4j sandbox is another way that you can begin development with Neo4j. It is a temporary, cloud-based instance of a Neo4j Server with its associated graph that you can access from any Web browser. The database in a Sandbox may be blank or it may be pre-populated. It is started automatically for you when you create the Sandbox.
-    
+
     By default, the Neo4j sandbox is available for three days, but you can extend it for up to 10 days. If you do not want to install Neo4j Desktop on your system, consider creating a Neo4j sandbox. You must make sure that you extend your lease of the sandbox, otherwise you will lose your graph and any saved Cypher scripts you have created in the sandbox. However, you can use Neo4j Browser Sync to save Cypher scripts from your sandbox. We recommend you use the Desktop for a real development project. The Sandbox is intended as a temporary environment or for learning about the features of Neo4j as well as specific graph use-cases. "
 
     [youtube video - Creating a Neo4j Sandbox](https://www.youtube.com/watch?v=rmfgRKPjhl8)
 
-Both of them use Neo4j Browser application to perform querying in the database -> [GettingStartedBrowser](https://www.youtube.com/watch?v=rQTximyaETA) 
+Both of them use Neo4j Browser application to perform querying in the database -> [GettingStartedBrowser](https://www.youtube.com/watch?v=rQTximyaETA)
 
 ------------------------------------------------
 
@@ -194,8 +194,8 @@ Both of them use Neo4j Browser application to perform querying in the database -
 ###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
 
 Neo4J's Cypher language is purpose built for working with graph data, is a declarative query language that allows for expressive and efficient querying and updating of graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
-This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs. 
-It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it: 
+This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs.
+It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it:
 
 **" Describing what to find and not how to find it "**
 
@@ -236,13 +236,13 @@ You can place comments anywhere in the query and to specify that the rest of the
 
 [youtube video - how to execute a MATCH statement](https://www.youtube.com/watch?v=Sz2C618QKN8)
 
-The most widely used Cypher clause is **MATCH**, this performs a pattern match against the data in the graph. During the query processing, the graph engine traverses the graph to find all nodes that match the graph pattern. 
+The most widely used Cypher clause is **MATCH**, this performs a pattern match against the data in the graph. During the query processing, the graph engine traverses the graph to find all nodes that match the graph pattern.
 
 A query with match need to be present with the **RETURN** clause. This clause must be the last of a query to the graph. Here some examples:
 ```Cypher
 // returns all nodes in the graph
 MATCH (variable)
-RETURN variable 
+RETURN variable
 ```
 
 ```Cypher
@@ -266,7 +266,7 @@ The output of a query can be different:
     "name": "Emil",
     "from": "Sweden",
     "klout": 99
-} 
+}
 ```
 - by **text**:
 ```
@@ -274,12 +274,12 @@ The output of a query can be different:
 │"ee"                                      │
 ╞══════════════════════════════════════════╡
 │{"name":"Emil","from":"Sweden","klout":99}│
-└──────────────────────────────────────────┘ 
+└──────────────────────────────────────────┘
 ```
 
 #### Exercises part one
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions*** 
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 ```Text
@@ -327,7 +327,7 @@ RETURN m
 #### Properties
 
 In Neo4j a node can have properties that are used for further define a node.
-A property is identified with a key and defined for a node and not for a type of node. 
+A property is identified with a key and defined for a node and not for a type of node.
 All nodes of the same type need not have the same properties.
 
 For example in the Movie graph all Movie nodes have both title and released properties, however it is not requirement that every Movie node has a property tagline:
@@ -397,7 +397,7 @@ RETURN p.name AS name, p.born AS `birth year`
 
 #### Exercises part two
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions*** 
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 ```Text
@@ -501,8 +501,8 @@ The output list will be:
 |"Joel Silver"|"PRODUCED"|
 |"Emil Eifrem"|"ACTED_IN"|
 
-Even relationships can have properties, this enables the graph model to provide more data about the relationships between the nodes. Just as can be specify property values for filtering nodes for a query, you can specify property values for a relationships. 
-Here is an example with the movie graph: 
+Even relationships can have properties, this enables the graph model to provide more data about the relationships between the nodes. Just as can be specify property values for filtering nodes for a query, you can specify property values for a relationships.
+Here is an example with the movie graph:
 ```Cypher
 // Returns the name of the person who gave the movie "the da vinci code" a rating of 65
 MATCH (p:Person)-[:REVIEWED {rating: 65}]->(:Movie {title: "The Da Vinci Code"})
@@ -559,7 +559,7 @@ Since relationships are directionals queries can have multiple type of matching:
 
 #### Exercises part three
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions*** 
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 ```Text
@@ -607,20 +607,20 @@ RETURN m.title, acted.roles
 
 ###### ***on neof4j browser run the command `:help WHERE`***
 
-The most common clause to filter queries is `WHERE` that follows a `MATCH` clause. 
+The most common clause to filter queries is `WHERE` that follows a `MATCH` clause.
 This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
 In the `WHERE` clause it is possible to place conditions that are evaluated at runtime to filter the query. The potential of this clause is that is possible to specify complex conditions for the query.
 
 Some examples:
 
-1. 
+1.
     ```Cypher
     MATCH (m:Movie)
     WHERE m.title = "The Matrix"
     RETURN m
     ```
 
-2. 
+2.
     ```Cypher
     MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
     WHERE m.released = 2008
@@ -634,14 +634,14 @@ Some examples:
     RETURN p, m
     ```
 
-This clause accept conditions that return a boolean value of true or false. 
+This clause accept conditions that return a boolean value of true or false.
 It can be use several comparison operators: **=**, **<>**, **<**, **>**, **<=**, **>=**, **IS NULL**, **IS NOT NULL**, **=~**.
 There are 4 boolean operators that it can use: **AND**, **OR**, **XOR**, **NOT**.
 
 An example:
 ```Cypher
 MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
-WHERE 
+WHERE
     m.released > 2000 OR
     (1994 < m.released <= 1997 AND m.title='As Good as It Gets')
 RETURN p.name, m.title, m.released
@@ -705,6 +705,22 @@ RETURN p.name, m.title
 ```
 This query exclude Person who directed and not wrote the movie.
 
+One more filtering is `IN` that can be used to compare each property with values on the list:
+```Cypher
+MATCH (p:Person)
+WHERE p.born IN [1965, 1970]
+RETURN p.name as name, p.born as yearBorn
+```
+and the return is:
+|name|yearBorn|
+| --- | --- |
+| "Lana Wachowsky" | 1965 |
+| "Jay Mohr" | 1970 |
+| "River Phoenix" | 1970 |
+| "Brooke Langton" | 1970 |
+| ... | ... |
+
+
 -----------
 ### Part five
 
@@ -738,7 +754,7 @@ Null represents missing or undefined values. You do not store a null value in a 
 **Create** clauses can create many nodes and relationships at once:
 ```Cypher
 MATCH (ee:Person) WHERE ee.name = "Emil"
-CREATE 
+CREATE
 (js:Person {name:"Johan", from:"Sweden", learn:"surfing"}),
 (ir:Person {name:"Ian", from:"England", title:"author"}),
 (rvb:Person {name:"Rik", from:"Belgium", pet:"Orval"}),
@@ -762,7 +778,7 @@ Added 4 labels, created 4 nodes, set 14 properties, created 7 relationships, com
 
 To see what we created we need to run a new query that take all of the nodes in relationship with **Emil**:
 ```Cypher
-MATCH (ee:Person)-[:KNOWS]-(friends) 
+MATCH (ee:Person)-[:KNOWS]-(friends)
 WHERE ee.name="Emil"
 RETURN ee.name, friends
 ```
@@ -808,7 +824,7 @@ To change or add properties of a node it's possible to use the SET clause, it ca
         (a:Person)-[:DRIVES]->(c:Car)
     WHERE
         a.name = 'Ann'
-    SET 
+    SET
         c.brand = 'Volvo'
         c.model = 'V70'
     RETURN
@@ -820,7 +836,7 @@ To change or add properties of a node it's possible to use the SET clause, it ca
         (a:Person)-[:DRIVES]->(c:Car)
     WHERE
         a.name = 'Ann'
-    SET 
+    SET
         c += {brand: 'Volvo', model:'V70'}
     RETURN
         c
@@ -875,22 +891,22 @@ RETURN p
     ```Cypher
     CREATE (dan:Person {name:"Dan", born:"Dec 5, 1975"})
     CREATE (ann:Person {name:"Ann", born: "May 29, 1970", twitter: "@ann"})
-    CREATE (car:Car {brand:"Volvo", model:"V70"}) 
+    CREATE (car:Car {brand:"Volvo", model:"V70"})
     ```
     result:
-    
+
     ![Create nodes](resources/simpleGraphCreate.PNG)
 
     ***Query find on: [creationNodes](Cypher/SimpleGraph/CreationOfNodes.cql)***
 
 * Creation of realtionships:
     ```Cypher
-    MATCH 
+    MATCH
     	(dan:Person {name: "Dan"}),
         (ann:Person {name: "Ann"}),
         (car:Car {model:"V70"})
-    CREATE 
-        (dan)-[:LOVES]->(ann), 
+    CREATE
+        (dan)-[:LOVES]->(ann),
         (ann)-[:LOVES]->(dan),
         (ann)-[:LIVES_WITH]->(dan),
         (dan)-[:OWNS]->(car),
@@ -898,39 +914,39 @@ RETURN p
         (ann)-[:DRIVES]->(car)
     ```
     result:
-    
+
     ![Create relationships](resources/simpleGraphRelationships.PNG)
 
     ***Query find on: [creationRelationships](Cypher/SimpleGraph/CreationOfRelationships.cql)***
 
-* Basic query 
+* Basic query
     1. "Find who loves Ann":
         ```Cypher
-        MATCH 
+        MATCH
             (ann:Person {name: "Ann"})<-[:LOVES]-(op)
         RETURN
             op
         ```
         The result is simple "Dan".
-    
+
         ***Query find on: [lovesAnn](Cypher/SimpleGraph/lovesAnn.cql)***
 
     2. "Find the Ann's Car":
         ```Cypher
-        MATCH 
+        MATCH
             (ann:Person {name: "Ann"})-[:DRIVES]-(car:Car)
         RETURN
             car
         ```
         The result is simple "Volvo".
-    
+
         ***Query find on: [annCar](Cypher/SimpleGraph/annCar.cql)***
 
     3. "Find the Dan's Volvo car and update value of that car with the number of the wheels":
         ```Cypher
-        MATCH 
+        MATCH
             (ann:Person {name: "Dan"})-[:OWNS]-(car:Car)
-        WHERE 
+        WHERE
             car.brand="Volvo"
         SET
             car.wheels=4
@@ -941,13 +957,13 @@ RETURN p
 
         ***Query find on: [updateDanCar](Cypher/SimpleGraph/updateDanCar.cql)***
 
-* Ensuring uniqueness: 
+* Ensuring uniqueness:
 We don't want a bunch of nodes rapresenting the same object so to prevent this we can use the constraint on and unique properties
 ```Cypher
 CREATE CONSTRAINT ON (p:Person)
 ASSERT p.name IS UNIQUE
 ```
-If we create a node Person with the same value of name of others than neo4j throws error. 
+If we create a node Person with the same value of name of others than neo4j throws error.
 An example:
 ```Cypher
 CREATE (a:Person {name:"Ann"})
@@ -1015,7 +1031,7 @@ The script add lot of nodes with relative relationships and properties, with thi
     MATCH (tom {name: "Tom Hanks"})
     RETURN tom
     ```
-    or 
+    or
     ```Cypher
     MATCH (tom:Person)
     WHERE tom.name="Tom Hanks"
@@ -1119,14 +1135,14 @@ The script add lot of nodes with relative relationships and properties, with thi
 
 Let's now clean the graph by delete all the nodes and relationships:
 ```Cypher
-MATCH (n) 
-DETACH 
+MATCH (n)
+DETACH
 DELETE n
 ```
 With this the engine take all the nodes, for every one it detach from any relationships and then delete it.
 To be sure and prove that the graph is gone the query is:
 ```Cypher
-MATCH (n) 
+MATCH (n)
 RETURN n
 ```
 
@@ -1202,7 +1218,7 @@ We can now test what we crated:
 1. List the product categories proviced by each supplier:
     ```Cypher
     MATCH (s:Supplier)-[*]->(c:Category)
-    RETURN 
+    RETURN
         s.companyName as Company,
         collect(distinct c.categoryName) as Categories
     ORDER BY Company DESC
@@ -1240,7 +1256,7 @@ We can do the same thing we had before to load and index the records:
     ```
 * Create relationship customer-purchased-order
     ```Cypher
-    MATCH 
+    MATCH
         (c:Customer),
         (o:Order)
     WHERE c.customerID = o.customerID
@@ -1250,7 +1266,7 @@ Notice that the Order Details are always part of an Order and are the descriptio
 ```Cypher
 LOAD CSV WITH HEADERS FROM "http://data.neo4j.com/northwind/order-details.csv" AS row
 MATCH (p:Product), (o:Order)
-WHERE 
+WHERE
     p.productID = row.productID AND
     row.orderID = o.orderID
 CREATE (o)-[details:ORDERS]->(p)
@@ -1260,7 +1276,7 @@ set details = row,
 Example of query:
 * List of costumers with the number of products purchased for the Produce category:
 ```Cypher
-MATCH 
+MATCH
     (c:Customer)-[:PURCHASED]->(:Order)-[o:ORDERS]->(p:Product),
     (p)-[:PART_OF]->(cat:Category {categoryName: "Produce"})
 RETURN DISTINCT
@@ -1276,7 +1292,7 @@ RETURN DISTINCT
 ###### It is possible to recreate this database using the open movie database here -> [www.omdbapi.com](https://www.omdbapi.com/)
 ###### for more -> [https://movielens.org/](https://movielens.org/) and [https://grouplens.org/datasets/movielens/](https://grouplens.org/datasets/movielens/)
 
-Personalized product recommendations can increase conversions, improve sales rates and provide a better experice for users. 
+Personalized product recommendations can increase conversions, improve sales rates and provide a better experice for users.
 This paragraph take a look at how generate graph-based real-time personalized product recommendations using a dataset of movies and movie ratings.
 All of this techniques can also apply through many different types of products or content.
 
@@ -1307,8 +1323,8 @@ Let's look at a Cypher query that answers the question "How many reviews does ea
 ```Cypher
 MATCH (movie:Movie)<-[:RATED]-(user:User)
 WHERE movie.title CONTAINS "Matrix"
-WITH 
-    movie.title AS movie, 
+WITH
+    movie.title AS movie,
     COUNT(*) AS reviews
 RETURN movie, reviews
 ORDER BY reviews DESC
@@ -1355,7 +1371,7 @@ There are two basic approaches to recommendation algorithms:
         ORDER BY commonGenres DESC
         LIMIT 10;
         ```
-    
+
         |title|genres|commonGenres|
         |---|---|---|
         |"Patlabor: The Movie (Kidô keisatsu patorebâ: The Movie)"|["Drama", "Action", "Crime", "Thriller", "Mystery", "Sci-Fi"]|6|
@@ -1379,19 +1395,19 @@ There are two basic approaches to recommendation algorithms:
         To recommend the best element of all, we necessary do some sort of rating: count the common genres between the movies watch by the user and the movie on the list `WITH other, [genre.name, COUNT(*)] AS scores`.
         The single score of the movie to recommend is the sum of the scores of the genres to do this we can use the REDUCE expression `REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score`.
         ```Cypher
-        MATCH 
+        MATCH
             (user:User {name: "Angelica Rodriguez"})-[rated:RATED]->(movie:Movie),
             (movie)-[:IN_GENRE]->(genre:Genre)<-[:IN_GENRE]-(other:Movie)
         WHERE NOT EXISTS( (user)-[:RATED]->(other) )
-        WITH 
-            other, 
+        WITH
+            other,
             [genre.name, COUNT(*)] AS scores
-        RETURN 
-            other.title AS recommendation, 
+        RETURN
+            other.title AS recommendation,
             other.year AS year,
             COLLECT(scores) AS scoreComponents,
             REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score
-        ORDER BY score DESC 
+        ORDER BY score DESC
         LIMIT 20
         ```
 
@@ -1402,7 +1418,7 @@ There are two basic approaches to recommendation algorithms:
         WHERE m.title = "Wizard of Oz, The"
         MATCH (m)-[:IN_GENRE]->(g:Genre)<-[:IN_GENRE]-(o:Movie)
         WITH m, o, COUNT(*) AS gs
-       
+
         // Find similar movies by common actors
         OPTIONAL MATCH (m)<-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]->(o)
         WITH m, o, gs, COUNT(a) AS as
@@ -1416,7 +1432,7 @@ There are two basic approaches to recommendation algorithms:
         ORDER BY score DESC
         LIMIT 100
         ```
-        
+
     These method used to find similar nodes are not so consistent and robust, so we need a new way to quantify usign a similarity metric. Similarity metrics are an important component used in generating personalized recommendations that allow us to quantify how similar two items are, the method we used is the Jaccard Index:
 
     ![Jaccard Index](https://latex.codecogs.com/gif.latex?J(A,B)=\frac{\mid&space;A&space;\cap&space;B&space;\mid}{\mid&space;A&space;\cup&space;B&space;\mid}&space;\bigg&space;|)
@@ -1435,7 +1451,7 @@ There are two basic approaches to recommendation algorithms:
     An example can be "Users who bought this thing, also bought that other thing":
     ```Cypher
     MATCH (m:Movie {title: "Crimson Tide"})<-[:RATED]-(u:User)-[:RATED]->(rec:Movie)
-    RETURN 
+    RETURN
         rec.title AS recommendation,
         COUNT(*) as usersWhoAlsoWatched
     ORDER BY usersWhoAlsoWatched DESC
@@ -1455,7 +1471,7 @@ There are two basic approaches to recommendation algorithms:
     |"Batman"|61|
     |"Aladdin"|58|
     | ... | ... |
-    
+
     All of that result can be a movie to recommend.
 
 --------------------------
@@ -1486,7 +1502,7 @@ Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure 
 
 ### Cluster
 
-A cluster is when data is assembled around one particular value, on graph usually happens when there are several nodes thet seem to gather in a certain area. In other word a cluster is a group that are placed closely next to each other in a certain area, with a few nodes scattered in other places on the graph. 
+A cluster is when data is assembled around one particular value, on graph usually happens when there are several nodes thet seem to gather in a certain area. In other word a cluster is a group that are placed closely next to each other in a certain area, with a few nodes scattered in other places on the graph.
 
 For example this is a social netowork graph:
 
@@ -1496,13 +1512,13 @@ There are several aggregations of similar nodes that are colored.
 
 ### index-free adjacency
 
-<!-- 
-* https://medium.com/@dmccreary/how-to-explain-index-free-adjacency-to-your-manager-1a8e68ec664a 
+<!--
+* https://medium.com/@dmccreary/how-to-explain-index-free-adjacency-to-your-manager-1a8e68ec664a
 * https://en.wikipedia.org/wiki/Talk:Graph_database#No_indexes?
 * https://www.arangodb.com/2016/04/index-free-adjacency-hybrid-indexes-graph-databases/
 -->
 
-A graph database is any storage system that provides index-free adjacency and this means that every element contains a direct pointer to its adjacent element and no index lookups are necessary. 
+A graph database is any storage system that provides index-free adjacency and this means that every element contains a direct pointer to its adjacent element and no index lookups are necessary.
 This is one of the most element of distinction from relational databases that are based on a key-value store.
 The idea of an index-free adjacency is analogous to that of a pointer where the time to follow the relationship is O(1) with respect to the size of the graph, and this is not the cost of found a relationship in a relational.
 To be more precise a relational database use indexes but the aren't used for adjacency or link purposes.
@@ -1526,9 +1542,9 @@ In a graph database like Neo4j all the nodes are connected to each other by rela
 
 The cost in this case is O(1), a big difference in performance between a classical relational db.
 
-### OLTP 
+### OLTP
 
-<!-- 
+<!--
 * https://docs.oracle.com/database/121/VLDBG/GUID-0BC75680-5BD4-43A9-826F-CD8837D30EB2.htm
 * https://en.wikipedia.org/wiki/Online_transaction_processing
 -->
@@ -1554,7 +1570,7 @@ The benefits of this environments are:
 
 -----------------------
 
-### References 
+### References
 
 [Graph database Fundamentals](#graph-database-fundamentals):
 * [neo4J browser sandbox](https://neo4j.com/sandbox-v2/) by type the command `:play concepts`
