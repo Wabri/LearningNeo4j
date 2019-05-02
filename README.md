@@ -687,10 +687,27 @@ WHERE p.name STARTS WITH 'Michael'
 RETURN p.name
 ```
 
-<!-- 
-Testing with regular expressions
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
--->
+Regular expressions can be used to test property values, to specify the request it's necessary to use the **=~** in the condition:
+```Cypher
+MATCH (p:Person)
+WHERE p.name =~'Tom.*'
+RETURN p.name
+```
+The query above retrive all Person nodes with a name property that begins with Tom, the result can be something like this:
+|p.name|
+|----|
+|"Tom Cruise"|
+|"Tom Hanks"|
+|"Tom Skerritt"|
+|"Tom Tykwer"|
+
+Some more filtering for relationships can be used during a query, for example can be possible to use the `NOT` in a `WHERE` clause:
+```Cypher
+MATCH (p:Person)-[:WROTE]->(m:Movie)
+WHERE NOT exists( (p)-[:DIRECTED]->() )
+RETURN p.name, m.title
+```
+This query exclude Person who directed and not wrote the movie.
 
 -----------
 ###### Part five
