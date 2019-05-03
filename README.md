@@ -1649,8 +1649,9 @@ There are two basic approaches to recommendation algorithms:
 
 1. [ACID](#acid-consistency-model)
 2. [Cluster](#cluster)
-2. [index-free adjacency](#index-free-adjacency)
-3. [OLTP](#oltp)
+3. [index-free adjacency](#index-free-adjacency)
+4. [OLTP](#oltp)
+5. [Regular expression](#regular-expression)
 
 ### ACID consistency model
 
@@ -1736,6 +1737,10 @@ The benefits of this environments are:
 * Support for bigger databases
 * Partition maintenance operations for data maintenance
 * Potential higher concurrency through elimination of hot spots
+
+### Regular expression
+
+<!--https://en.wikipedia.org/wiki/Regular_expression-->
 
 -----------------------
 
