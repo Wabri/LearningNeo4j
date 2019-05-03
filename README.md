@@ -1,8 +1,8 @@
 # LearningDataAnalysis
 
 <!--
-part four
-Testing with regular expressions
+part five
+Specifying optional pattern matching
 https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
 -->
 
@@ -718,11 +718,180 @@ and the return is:
 | "Jay Mohr" | 1970 |
 | "River Phoenix" | 1970 |
 | "Brooke Langton" | 1970 |
-| ... | ... |
 
+#### Exercises part four
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 4 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 4.1: Retrieve all movies that Tom Cruise acted in.
+```Cypher
+MATCH (tom:Person {name: 'Tom Cruise'})-[:ACTED_IN]-(movie:Movie)
+RETURN movie.title
+```
+or
+```Cypher
+MATCH (tom:Person)-[:ACTED_IN]-(movie:Movie)
+WHERE tom.name = 'Tom Cruise'
+RETURN movie.title
+```
+
+Exercise 4.2: Retrieve all actors that were born in the 70’s, return name and year born.
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(:Movie)
+WHERE 1970 <= p.born <= 1979
+RETURN p.name AS Name, p.born AS `Year Born`
+```
+
+Exercise 4.3: Retrieve the actors who acted in the movie The Matrix who were born after 1960, return name and year born.
+```Cypher
+MATCH (act:Person)-[:ACTED_IN]->(m:Movie)
+WHERE m.title = 'The Matrix' AND act.born > 1960
+RETURN act.name as Name, act.born as `Year Born`
+```
+
+Exercise 4.4: Retrieve all movies released in 2000 by testing the node label and released property, return the title of the movie.
+```Cypher
+MATCH (mov:Movie)
+WHERE mov.released = 2000
+RETURN mov.title
+```
+
+Exercise 4.5: Retrieve all people that wrote movies by testing the relationship between two nodes, return the name of the people and the title of the movie.
+```Cypher
+MATCH (p)-[rel]->(mov)
+WHERE p:Person AND type(rel) ='WROTE' AND mov:Movie
+RETURN p.name AS Name, mov.title AS `Movie title`
+```
+
+Exercise 4.6: Retrieve all people in the graph that do not have a the born property and return there name.
+```Cypher
+MATCH (p)
+WHERE p:Person AND NOT exists(p.born)
+RETURN p.name AS Name
+```
+
+Exercise 4.7: Retrieve all people related to movies where the relationship has the rating property, than return their name, movie, title and the rating.
+```Cypher
+MATCH (p:Person)-[rel]-(m:Movie)
+WHERE exists(rel.rating)
+RETURN
+	p.name AS Name,
+    m.title AS `Movie title`,
+    rel.rating AS Rating
+```
+
+Exercise 4.8: Retrieve all actors whose name begins with James.
+```Cypher
+MATCH (p:Person)
+WHERE p.name =~'James.*'
+RETURN p.name
+```
+or
+```Cypher
+MATCH (p:Person)
+WHERE p.name STARTS WITH 'James'
+RETURN p.name
+```
+
+Exercise 4.9: Retrieve all all REVIEW relationships from the graph with filtered results.
+```Cypher
+MATCH ()-[rel:REVIEWED]->(movie:Movie)
+WHERE toLower(rel.summary) CONTAINS 'fun'
+RETURN
+	movie.title as `Movie Title`,
+	rel.rating as `Rating`,
+    rel.summary as `Summary`
+```
+
+Exercise 4.10: Retrieve all people who have produced a movie, but have not directed a movie.
+```Cypher
+MATCH (a:Person)-[:PRODUCED]->(m:Movie)
+WHERE NOT ((a)-[:DIRECTED]->(:Movie))
+RETURN a.name, m.title
+```
+
+Exercise 4.11: Retrieve the movies and their actors where one of the actors also directed the movie.
+```Cypher
+MATCH (actor:Person)-[:ACTED_IN]->(mov:Movie)<-[:DIRECTED]-(dir:Person)
+WHERE (dir)-[:ACTED_IN]->(mov)
+RETURN actor.name, dir.name, mov.title
+```
+
+Exercise 4.12: Retrieve all movies that were released in a set of years.
+```Cypher
+MATCH (m)
+WHERE
+	m:Movie AND
+    m.released IN [2004, 2008, 2000]
+RETURN m.title, m.released
+```
+
+Exercise 4.13: Retrieve the movies that have an actor’s role that is the name of the movie.
+```Cypher
+MATCH (act:Person)-[rel:ACTED_IN]->(mov:Movie)
+WHERE mov.title in rel.roles
+RETURN mov.title, rel.roles
+```
 
 -----------
 ### Part five
+
+
+#### Multiple Match patterns
+
+The `MATCH` clause includes a pattern specified by two paths separated by a comma:
+```
+MATCH (a:Person)-[:ACTED_IN]->(m:Movie),
+    (m:Movie)<-[:DIRECTED]-(d:Person)
+WHERE m.released = 2000
+RETURN a.name, m.title, d.name
+```
+
+#### Setting path variables
+
+It's possible to assign to a variable a path that can be reuse later in the same query or if it's needed to return that path:
+```Cypher
+MATCH megPath = (meg:Person)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Person),
+    (other:Person)-[:ACTED_IN]->(m)
+WHERE meg.name = 'Meg Ryan'
+RETURN megPath
+```
+
+#### Varying lenght paths
+
+Any graph that represents social networking, trees, or hierarchies will most likely have multiple paths of varying lengths.
+
+To get this far you need to use this format `(nodeA)-[:REALTYPE*<number_of_hops>]->(nodeB)` or `(nodeA)-[:REALTYPE*n..m]->(nodeB)` where n and m are the extremes of an interval.
+
+#### Finding the shortest path
+
+A built-in function that you may find useful in a graph that has many ways of traversing the graph to get to the same node is the `shortestPath()` function. Using the shortest path between two nodes improves the performance of the query.
+
+Here an example:
+```Cypher
+MATCH p = shortestPath((m1:Movie)-[*]-(m2:Movie))
+WHERE m1.title = 'A Few Good Men' AND
+    m2.title = 'The Matrix'
+RETURN p
+```
+
+When you use the shortestPath() function, the query editor will show a warning that this type of query could potentially run for a long time. You should heed the warning, especially for large graphs. Read the Graph Algorithms documentation about the shortest path algorithm.
+
+When you use ShortestPath(), you can specify a upper limits for the shortest path. In addition, you should aim to provide the patterns for the from an to nodes that execute efficiently. For example, use labels and indexes.
+
+#### Optional pattern matching
+
+This clause `OPTIONAL MATCH` is just like the `MATCH` but if no matches are found, this clause will use null for missing parts of the pattern.
+
+<!--
+Specifying optional pattern matching
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
+-->
 
 #### Create
 
