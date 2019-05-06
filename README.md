@@ -210,7 +210,7 @@ Graph patterns are expressed in Cypher using ASCII-art like syntax to make queri
 * **LABELS** are used to group nodes and filter queries against the graph and is defined with a colon `(:Label)`. A node can have zero or more labels for example `(node)`, `(node:Label)`, `(node:Label1:Label2)`, `(:Label)`, `(:Label1:Label2)`.
 * **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `()<-[:RELATIONSHIP]-()`.
 * **ALIASES** are used to referred elements to later in the query defined by a name before a name like `(node1:Label1)<-[relationship:RELATIONSHIP]-(node2:Label2)` where node1, node2 and relationship are aliases.
-* **Predicates** are filters that can be applied to limit the matching paths: boolean logi operators, regular expressions and string comparison operators.
+* **Predicates** are filters that can be applied to limit the matching paths: boolean logi operators, [regular expressions](#regular-expressions) and string comparison operators.
 
 The properties of a node are accessed using `{variable}.{property_key}`, for example `emil.name` or `movie.title`.
 
@@ -683,13 +683,16 @@ WHERE p.name STARTS WITH 'Michael'
 RETURN p.name
 ```
 
-Regular expressions can be used to test property values, to specify the request it's necessary to use the **=~** in the condition:
+[Regular expressions](#regular-expression) can be used to test property values, to specify the request it's necessary to use the **=~** in the condition:
+
 ```Cypher
 MATCH (p:Person)
 WHERE p.name =~'Tom.*'
 RETURN p.name
 ```
+
 The query above retrive all Person nodes with a name property that begins with Tom, the result can be something like this:
+
 |p.name|
 |----|
 |"Tom Cruise"|
@@ -698,19 +701,23 @@ The query above retrive all Person nodes with a name property that begins with T
 |"Tom Tykwer"|
 
 Some more filtering for relationships can be used during a query, for example can be possible to use the `NOT` in a `WHERE` clause:
+
 ```Cypher
 MATCH (p:Person)-[:WROTE]->(m:Movie)
 WHERE NOT exists( (p)-[:DIRECTED]->() )
 RETURN p.name, m.title
 ```
+
 This query exclude Person who directed and not wrote the movie.
 
 One more filtering is `IN` that can be used to compare each property with values on the list:
+
 ```Cypher
 MATCH (p:Person)
 WHERE p.born IN [1965, 1970]
 RETURN p.name as name, p.born as yearBorn
 ```
+
 and the return is:
 |name|yearBorn|
 | --- | --- |
@@ -724,6 +731,7 @@ and the return is:
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 4 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
 ```Text
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
@@ -799,16 +807,18 @@ RETURN p.name
 ```
 
 Exercise 4.9: Retrieve all all REVIEW relationships from the graph with filtered results.
+
 ```Cypher
 MATCH ()-[rel:REVIEWED]->(movie:Movie)
 WHERE toLower(rel.summary) CONTAINS 'fun'
 RETURN
-	movie.title as `Movie Title`,
-	rel.rating as `Rating`,
+    movie.title as `Movie Title`,
+    rel.rating as `Rating`,
     rel.summary as `Summary`
 ```
 
 Exercise 4.10: Retrieve all people who have produced a movie, but have not directed a movie.
+
 ```Cypher
 MATCH (a:Person)-[:PRODUCED]->(m:Movie)
 WHERE NOT ((a)-[:DIRECTED]->(:Movie))
@@ -816,6 +826,7 @@ RETURN a.name, m.title
 ```
 
 Exercise 4.11: Retrieve the movies and their actors where one of the actors also directed the movie.
+
 ```Cypher
 MATCH (actor:Person)-[:ACTED_IN]->(mov:Movie)<-[:DIRECTED]-(dir:Person)
 WHERE (dir)-[:ACTED_IN]->(mov)
@@ -823,28 +834,31 @@ RETURN actor.name, dir.name, mov.title
 ```
 
 Exercise 4.12: Retrieve all movies that were released in a set of years.
+
 ```Cypher
 MATCH (m)
 WHERE
-	m:Movie AND
+    m:Movie AND
     m.released IN [2004, 2008, 2000]
 RETURN m.title, m.released
 ```
 
 Exercise 4.13: Retrieve the movies that have an actor’s role that is the name of the movie.
+
 ```Cypher
 MATCH (act:Person)-[rel:ACTED_IN]->(mov:Movie)
 WHERE mov.title in rel.roles
 RETURN mov.title, rel.roles
 ```
 
------------
-### Part five
+--------------------
 
+### Part five
 
 #### Multiple Match patterns
 
 The `MATCH` clause includes a pattern specified by two paths separated by a comma:
+
 ```
 MATCH (a:Person)-[:ACTED_IN]->(m:Movie),
     (m:Movie)<-[:DIRECTED]-(d:Person)
@@ -855,6 +869,7 @@ RETURN a.name, m.title, d.name
 #### Setting path variables
 
 It's possible to assign to a variable a path that can be reuse later in the same query or if it's needed to return that path:
+
 ```Cypher
 MATCH megPath = (meg:Person)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Person),
     (other:Person)-[:ACTED_IN]->(m)
@@ -873,6 +888,7 @@ To get this far you need to use this format `(nodeA)-[:REALTYPE*<number_of_hops>
 A built-in function that you may find useful in a graph that has many ways of traversing the graph to get to the same node is the `shortestPath()` function. Using the shortest path between two nodes improves the performance of the query.
 
 Here an example:
+
 ```Cypher
 MATCH p = shortestPath((m1:Movie)-[*]-(m2:Movie))
 WHERE m1.title = 'A Few Good Men' AND
@@ -887,11 +903,232 @@ When you use ShortestPath(), you can specify a upper limits for the shortest pat
 #### Optional pattern matching
 
 This clause `OPTIONAL MATCH` is just like the `MATCH` but if no matches are found, this clause will use null for missing parts of the pattern.
+Here is an examples:
 
-<!--
-Specifying optional pattern matching
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-5/
--->
+```Cypher
+MATCH (p:Person)
+WHERE p.name STARTS WITH 'James'
+OPTIONAL MATCH (p)-[r:REVIEWED]->(m:Movie)
+RETURN p.name, type(r), m.title
+```
+
+The return will be a table like this:
+
+| p.name | type(r)|m.title|
+| --- | --- | --- |
+| "James Marshall"|null|null|
+| "James L. Brooks"|null|null|
+| "James Cromwell"|null|null|
+| "James Thompson"|"REVIEWED"|"The Replacements"|
+| "James Thompson"|"REVIEWED"|"The Da Vinci Code"|
+
+#### Aggregation in Cypher
+
+In Cypher is not need to specify a grouping key, all non-aggregated result columns become grouping keys, The grouping is implicity done beased upon the filds in the `RETURN` clause.
+
+For example, in Cypher statement, all rows returned with the same values for a.name and d.name are counted and only return once:
+
+```Cypher
+MATCH (a)-[:ACTED_IN]->(m)<-[:DIRECTED]-(d)
+RETURN a.name, d.name, count(*)
+```
+
+|a.name|d.name|count(*)|
+| --- | --- | --- |
+|"Emil Eifrem"|"Lana Wachowski"|1|
+|"Hugo Weaving"|"Lana Wachowski"|4|
+|"Laurence Fishburne"|"Lana Wachowski"|3|
+|"Carrie-Anne Moss"|"Lana Wachowski"|3|
+|"Keanu Reeves"|"Lana Wachowski"|3|
+|"Emil Eifrem"|"Lilly Wachowski"|1|
+|"Hugo Weaving"|"Lilly Wachowski"|4|
+|"Laurence Fishburne"|"Lilly Wachowski"|3|
+|"Carrie-Anne Moss"|"Lilly Wachowski"|3|
+|"Keanu Reeves"|"Lilly Wachowski"|3|
+|"Al Pacino"|"Taylor Hackford"|1|
+
+This function is very useful when you want to count the number of occurrences of a particular query result.
+It's possible to specify the occurrences of an alias `count(n)` and the graph engine calculates the number of occurrences of n.
+If we want to calculates the number of rows retrived, including those with `null` values the count argument need to be a *.
+Last one is the `count()` without argument and this will implicit group by based upon the aggregation.
+
+There are more aggregating functions such as `min()` or `max()` that can also use in queries.
+
+#### Collecting results
+
+Cypher has a built-in function `collect()` that enables you to aggregate value into a list:
+
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE p.name = 'Tom Cruise'
+RETURN collect(m.title) AS `movies for Tom Cruise`
+```
+
+And the result will be a list called **movies for Tom Cruise** with the values ["Jerry Maguire", "Top Gun", "A Few Good Men"].
+
+#### Additional processing using `WITH`
+
+During the execution of a `MATCH` clause, is possible to specify some intermediate calculations or values that will be used for further processing of the query, or for limiting the number of results before further processing is done.
+With the `WITH` clause it's possible to perform intermediate processing ro data flow operations.
+
+Here is an example:
+
+```Cypher
+MATCH (a:Person)-[:ACTED_IN]->(m:Movie)
+WITH a, count(a) AS numMovies, collect(m.title) AS movies
+WHERE numMovies > 1 AND numMovies < 4
+RETURN a.name, numMovies, movies
+```
+
+This example return the actors name only if they acted on 2 or 3 movies, with a reference of the numbers of the films and a list of that.
+
+Be carefull with this clause because in the `WITH` body are specify some variables from the previous part of the query that need to be part of the next section of the query, all the aliases for the next part are the only one defined in the body.
+
+Remember to name all expressions with an alias in a `WITH` that are not simple variables.
+
+One more example:
+
+```Cypher
+MATCH (p:Person)
+WITH p, size((p)-[:ACTED_IN]->(:Movie)) as movies
+WHERE movies>=5
+OPTIONAL MATCH (p)-[:DIRECTED]->(m:Movie)
+RETURN p.name, m.title
+```
+
+This is a simple query to retrive all the actor that are acted in at least 5 movies and if they also directed a movie than return the name of that movie.
+
+|p.name|m.title|
+| --- | --- |
+|"Keanu Reeves"|null|
+|"Hugo Weaving"|null|
+|"Jack Nicholson"|null|
+|"Meg Ryan"|null|
+|"Tom Hanks"|"That Thing You Do"|
+
+#### Exercises part five
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 5 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 5.1: Write a Cypher query that retrieves all movies that Gene Hackman has acted it, along with the directors of the movies. In addition, retrieve the actors that acted in the same movies as Gene Hackman. Return the name of the movie, the name of the director, and the names of actors that worked with Gene Hackman.
+
+```Cypher
+MATCH (gene:Person)-[:ACTED_IN]->(movie:Movie)
+WHERE gene.name = 'Gene Hackman'
+OPTIONAL MATCH
+    (other:Person)-[:ACTED_IN]->(movie),
+    (dir:Person)-[:DIRECTED]->(movie)
+WITH
+    movie,
+    collect(other.name) AS Actors,
+    collect(dir.name) AS Directors
+RETURN
+    movie.title AS `Title of movie`,
+    Actors AS `Co-Actors`,
+    Directors
+```
+
+Exercise 5.2: Retrieve all nodes that the person named James Thompson directly has the FOLLOWS relationship in either direction.
+
+```Cypher
+MATCH (james:Person)-[:FOLLOWS]-(other:Person)
+WHERE james.name = 'James Thompson'
+RETURN james, other
+```
+
+Exercise 5.3: Modify the query to retrieve nodes that are exactly three hops away.
+
+```Cypher
+MATCH (james:Person)-[:FOLLOWS*3]-(other:Person)
+WHERE james.name = 'James Thompson'
+RETURN james, other
+```
+
+Exercise 5.4: Modify the query to retrieve nodes that are one and two hops away.
+
+```Cypher
+MATCH (james:Person)-[:FOLLOWS*1..2]-(other:Person)
+WHERE james.name = 'James Thompson'
+RETURN james, other
+```
+
+Exercise 5.5: Modify the query to retrieve particular nodes that are connected no matter how many hops are required.
+
+```Cypher
+MATCH (james:Person)-[:FOLLOWS*]-(other:Person)
+WHERE james.name = 'James Thompson'
+RETURN james, other
+```
+
+Exercise 5.6: Write a Cypher query to retrieve all people in the graph whose name begins with Tom and optionally retrieve all people named Tom who directed a movie.
+
+```Cypher
+MATCH (tom:Person)
+WHERE toLower(tom.name) STARTS WITH 'tom'
+OPTIONAL MATCH (tom)-[:DIRECTED]->(movie:Movie)
+WITH tom, collect(movie.title) as DirMov
+RETURN tom.name AS `Tom* name`, DirMov AS `Directed movies`
+```
+
+Exercise 5.7: Retrieve actors and the movies they have acted in, returning each actor’s name and the list of movies they acted in.
+
+```Cypher
+MATCH (actor:Person)-[:ACTED_IN]->(movie:Movie)
+WITH actor.name AS Actor, collect(movie.title) as Movies
+RETURN Actor, Movies
+```
+
+Exercise 5.8: Retrieve all movies that Tom Cruise has acted in and the co-actors that acted in the same movie, returning the movie title and the list of co-actors that Tom Cruise worked with.
+
+```Cypher
+MATCH (tom:Person {name: "Tom Cruise"})-[:ACTED_IN]->(movie:Movie)<-[:ACTED_IN]-(other:Person)
+RETURN movie.title AS `Movie`, collect(other.name) AS `Co-Actors`
+```
+
+Exercise 5.9: Retrieve all people who reviewed a movie, returning the list of reviewers and how many reviewers reviewed the movie.
+
+```Cypher
+MATCH (reviewer:Person)-[:REVIEWED]->(movie:Movie)
+RETURN movie.title AS `Movie`, collect(reviewer.name) AS `reviewers`, count(reviewer) as `Number of reviewers`
+```
+
+Exercise 5.10: Retrieve all directors, their movies, and people who acted in the movies, returning the name of the director, the number of actors the director has worked with, and the list of actors.
+
+```Cypher
+MATCH (dir:Person)-[:DIRECTED]->(movie:Movie)<-[:ACTED_IN]-(actor:Person)
+WITH dir.name as Director, count(actor) as ActorsNumber, collect(actor.name) AS ActorsList
+RETURN Director, ActorsList AS `Actors` , ActorsNumber AS `Number of actors`
+```
+
+Exercise 5.11: Retrieve the actors who have acted in exactly five movies.
+
+```Cypher
+MATCH (actor:Person)-[:ACTED_IN]->(movie:Movie)
+WITH actor, count(movie) as movies, collect(movie.title) as moviesList
+WHERE movies = 5
+RETURN actor.name AS `Name of actor`, moviesList as `Movies`
+```
+
+Exercise 5.12: Retrieve the movies that have at least 2 directors, and optionally the names of people who reviewed the movies.
+
+```Cypher
+MATCH (dir:Person)-[:DIRECTED]->(movie:Movie)
+WITH movie, count(dir) AS numDir
+WHERE numDir >= 2
+OPTIONAL MATCH (movie)<-[:REVIEWED]-(reviewer:Person)
+WITH movie.title AS title, collect(reviewer.name) as listRev
+RETURN title, listRev AS `reviewer`
+```
+
+--------------------
+
+### Part six
 
 #### Create
 
@@ -904,6 +1141,7 @@ To create a new data we use the **CREATE** clause:
 ```Cypher
 CREATE (ee:Person {name: "Emil", from: "Sweden", klout:99})
 ```
+
 ***klout = influence based on the ability to drive action across the social web***
 
 With this query we create a node **ee** of type Person that have 3 properties: name, from and klout.
@@ -1740,7 +1978,27 @@ The benefits of this environments are:
 
 ### Regular expression
 
-<!--https://en.wikipedia.org/wiki/Regular_expression-->
+<!--
+https://en.wikipedia.org/wiki/Regular_expression
+-->
+
+The phrase regular expressions, and consequently, regexes, is often used to mean the specific, standard textual syntax for representing patterns for matching text.
+Each character in a regular expression is either a metacharacter, having a special meaning, or a regular character that has a literal meaning.
+For example, in the regex a., a is a literal character which matches just 'a', while '.' is a meta character that matches every character except a newline.
+Therefore, this regex matches, for example, 'a ', or 'ax', or 'a0'.
+Together, metacharacters and literal characters can be used to identify text of a given pattern, or process a number of instances of it.
+Pattern matches may vary from a precise equality to a very general similarity, as controlled by the metacharacters.
+For example, . is a very general pattern, [a-z] (match all lower case letters from 'a' to 'z') is less general and a is a precise pattern (matches just 'a').
+The metacharacter syntax is designed specifically to represent prescribed targets in a concise and flexible way to direct the automation of text processing of a variety of input data, in a form easy to type using a standard ASCII keyboard.
+
+A very simple case of a regular expression in this syntax is to locate a word spelled two different ways in a text editor, the regular expression seriali[sz]e matches both "serialise" and "serialize".
+Wildcards also achieve this, but are more limited in what they can pattern, as they have fewer metacharacters and a simple language-base.
+
+The usual context of wildcard characters is in globbing similar names in a list of files, whereas regexes are usually employed in applications that pattern-match text strings in general.
+For example, the regex ^[ \t]+|[ \t]+$ matches excess whitespace at the beginning or end of a line.
+An advanced regular expression that matches any numeral is [+-]?(\d+(\.\d+)?|\.\d+)([eE][+-]?\d+)?.
+
+For more read wikipedia -> [regex](https://en.wikipedia.org/wiki/Regular_expression)
 
 -----------------------
 
