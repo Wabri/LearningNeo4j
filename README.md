@@ -164,17 +164,15 @@ Some definitions:
 ![neo4jStructure](resources/neo4jStructure.PNG)
 
 To use Neo4j there are two options:
+
 * [desktop application](https://neo4j.com/developer/neo4j-desktop/)
 
     " The Neo4j Desktop includes the Neo4j Database server which includes the graph engine and kernel so that Cypher statements can be executed to access a database on your system. It includes an application called Neo4j Browser. Neo4j Browser enables you to access a Neo4j database using Cypher. You can also call built-in procedures that communicate with the database server. There are a number of additional libraries and drivers for accessing the Neo4j database from Cypher or from another programming language that you can install in your development environment. If you are looking to use your system for application development and you want to be able to create multiple Neo4j databases on your machine, you should consider downloading the Neo4j Desktop (free download). The Neo4j Desktop runs on OS X, Linux, and Windows. "
 
     How to use on:
-
-    * OSX: [youtube video](https://www.youtube.com/watch?v=8yWhuUnPapw)
-
-    * Windows: [youtube video](https://www.youtube.com/watch?v=EO57N03U_sI)
-
-    * Linux: [youtube video](https://www.youtube.com/watch?v=SGH_5x3kfdw)
+    1. OSX: [youtube video](https://www.youtube.com/watch?v=8yWhuUnPapw)
+    2. Windows: [youtube video](https://www.youtube.com/watch?v=EO57N03U_sI)
+    3. Linux: [youtube video](https://www.youtube.com/watch?v=SGH_5x3kfdw)
 
 * [browser sandbox](https://neo4j.com/sandbox-v2/)
 
@@ -186,18 +184,19 @@ To use Neo4j there are two options:
 
 Both of them use Neo4j Browser application to perform querying in the database -> [GettingStartedBrowser](https://www.youtube.com/watch?v=rQTximyaETA)
 
-------------------------------------------------
+--------------------
 
 ### Cypher
 
-###### ***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
-###### ***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)***
+##### *This notes below can be read on neo4J browser sandbox by type the command: :play cypher*
+
+##### *All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)*
 
 Neo4J's Cypher language is purpose built for working with graph data, is a declarative query language that allows for expressive and efficient querying and updating of graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
 This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs.
 It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it:
 
-**" Describing what to find and not how to find it "**
+#### **" Describing what to find and not how to find it "**
 
 This means that complex database queries can easily be expressed through Cypher, allowing you to focus on your domain instead of getting lost in the syntax of database access. Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality (also know as CRUD operations).
 
@@ -206,6 +205,7 @@ The unwritten rule wants to rappresents the nouns as the nodes of the graph, the
 ![unwrittenRule](resources/unwrittenRule.PNG)
 
 Graph patterns are expressed in Cypher using ASCII-art like syntax to make queries more self-explanatory:
+
 * **NODES** uses a pair of parentheses like `()` or `(node)` to rapresent a node, similar to a circle on witheboard. An anonymous node `()` represents one or more nodes during a query processing where there are no restrictions of the type of the node, a name inside the parentheses `(node)` tells the query processor that for this query is used the variable called `node` to rapresents all the nodes of the graph.
 * **LABELS** are used to group nodes and filter queries against the graph and is defined with a colon `(:Label)`. A node can have zero or more labels for example `(node)`, `(node:Label)`, `(node:Label1:Label2)`, `(:Label)`, `(:Label1:Label2)`.
 * **RELATIONSHIPS** are defined within square brackets `[]` and optionally we can specify type and direction like `()<-[:RELATIONSHIP]-()`.
@@ -223,22 +223,29 @@ The Cypher language are case insensitive and sensitive:
 
 Later on the cypher keywords are upper-case, this is a coding convention and is described in the [Cypher Style Guyide](https://neo4j.com/developer/cypher-style-guide/).
 
---------------------------
+--------------------
+
 ### Part one
 
 #### Comments
 
 You can place comments anywhere in the query and to specify that the rest of the line is interpreted as a comment you need to put a double slash `// comment`.
 
+#### Null
+
+Null represents missing or undefined values. You do not store a null value in a property. It just doesen't exist on that particular node.
+**Warning: null=null is not true but the result will be null because we don't know the value of a null property**
+
 #### Match
 
-###### ***on neof4j browser run the command `:help MATCH`***
+##### ***on neof4j browser run the command `:help MATCH`***
 
 [youtube video - how to execute a MATCH statement](https://www.youtube.com/watch?v=Sz2C618QKN8)
 
 The most widely used Cypher clause is **MATCH**, this performs a pattern match against the data in the graph. During the query processing, the graph engine traverses the graph to find all nodes that match the graph pattern.
 
 A query with match need to be present with the **RETURN** clause. This clause must be the last of a query to the graph. Here some examples:
+
 ```Cypher
 // returns all nodes in the graph
 MATCH (variable)
@@ -256,32 +263,37 @@ When you specify a pattern for a **MATCH** clause, you should always specify a n
 #### Type of query output
 
 The output of a query can be different:
-- by **graph**:
+
+* by **graph**:
 
 ![matchEmilReturnG](resources/matchEmilReturnG.PNG)
 
-- by **table**:
-```Json
-{
-    "name": "Emil",
-    "from": "Sweden",
-    "klout": 99
-}
-```
-- by **text**:
-```
-╒══════════════════════════════════════════╕
-│"ee"                                      │
-╞══════════════════════════════════════════╡
-│{"name":"Emil","from":"Sweden","klout":99}│
-└──────────────────────────────────────────┘
-```
+* by **table**:
+
+    ```Json
+    {
+        "name": "Emil",
+        "from": "Sweden",
+        "klout": 99
+    }
+    ```
+
+* by **text**:
+
+    ```Column
+    ╒══════════════════════════════════════════╕
+    │"ee"                                      │
+    ╞══════════════════════════════════════════╡
+    │{"name":"Emil","from":"Sweden","klout":99}│
+    └──────────────────────────────────────────┘
+    ```
 
 #### Exercises part one
 
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
 ```Text
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
@@ -321,7 +333,8 @@ RETURN m
 
 ![1.4](resources/partOneExercise_1_4.PNG)
 
----------------
+--------------------
+
 ### Part two
 
 #### Properties
@@ -352,30 +365,36 @@ Here some examples:
 MATCH (variable {propertyKey: propertyValue})
 RETURN variable
 ```
+
 ```Cypher
 MATCH (variable:Label {propertyKey: propertyValue})
 RETURN variable
 ```
+
 ```Cypher
 MATCH (variable:Label {propertyKey1: propertyValue1, propertyKey2: propertyValue2})
 RETURN variable
 ```
 
 It's possible to retrive a property values of nodes in a query and return on output:
+
 ```Cypher
 MATCH (variable {property1: value})
 RETURN variable.property2
 ```
+
 ```Cypher
 MATCH (variable:Label {property1: value})
 RETURN variable.property2
 ```
+
 ```Cypher
 MATCH (variable:Label {property1: value, property2: value})
 RETURN variable.property2, variable.property3
 ```
 
 In the graph database we can filter the person born on 1970:
+
 ```Cypher
 MATCH (p:Person {born: 1970})
 RETURN p.name, p.born
@@ -384,12 +403,14 @@ RETURN p.name, p.born
 #### Aliases
 
 To customize the headings for a table containing property value it can be use aliases:
+
 ```Cypher
 MATCH (variable:Label {property1: value, property2: value})
 RETURN variable.property2 AS alias1, variable.property3 AS alias2
 ```
 
 In the graph database we can specify aliases for the returned property values:
+
 ```Cypher
 MATCH (p:Person {born: 1970})
 RETURN p.name AS name, p.born AS `birth year`
@@ -400,6 +421,7 @@ RETURN p.name AS name, p.born AS `birth year`
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
 ```Text
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
@@ -445,13 +467,15 @@ MATCH (m:Movie)
 RETURN m.title AS `Movie title`, m.released AS `Released date`, m.tagline AS `Tag line`
 ```
 
------------
+--------------------
+
 ### Part three
 
 #### Relationships
 
 A relationship is a directed connection between two nodes that has a relationship type (name). In addiction, a relationship can have properties, just like nodes.
 In a match clause it's possible to specify nodes and their relationships to traverse the graph and quickly find the data of interest:
+
 * `() // a node`
 * `()--() // 2 nodes have some type of relationship`
 * `()-->() // the first node has a relationship to the second node`
@@ -459,10 +483,12 @@ In a match clause it's possible to specify nodes and their relationships to trav
 The relationship can be specified with or without direction.
 
 Here some examples for retrieving a set of nodes that satisfy one or more directed and type relationships:
+
 ```Cypher
 MATCH (node1)-[:REL_TYPE]->(node2)
 RETURN node1, node2
 ```
+
 ```Cypher
 MATCH (node1)-[:REL_TYPEA | :REL_TYPEB]->(node2)
 RETURN node1, node2
@@ -476,6 +502,7 @@ Where:
 | :REL_TYPEA, :REL_TYPEB | are the relationships from node1 to node2, the nodes are returned if at least one of the relationships exists |
 
 In the movie graph to retrive the nodes Person that have acted in the Movie "The Matrix" we need to use relationships:
+
 ```Cypher
 MATCH (node1:Person)-[relation:ACTED_IN]->(node2:Movie {title: "The Matrix"})
 RETURN node1, relation, node2
@@ -485,10 +512,12 @@ RETURN node1, relation, node2
 
 There is a build-in function `type()` that returns the relationship type of a relationship.
 Here is an example where we use the rel variable to hold the relationships retrived:
+
 ```Cypher
 MATCH (p:Person)-[rel]->(:Movie {title: "The Matrix"})
 RETURN p.name, type(rel)
 ```
+
 The output list will be:
 |p.name|type(rel)|
 |---|---|
@@ -503,6 +532,7 @@ The output list will be:
 
 Even relationships can have properties, this enables the graph model to provide more data about the relationships between the nodes. Just as can be specify property values for filtering nodes for a query, you can specify property values for a relationships.
 Here is an example with the movie graph:
+
 ```Cypher
 // Returns the name of the person who gave the movie "the da vinci code" a rating of 65
 MATCH (p:Person)-[:REVIEWED {rating: 65}]->(:Movie {title: "The Da Vinci Code"})
@@ -512,35 +542,42 @@ RETURN p.name
 Since relationships are directionals queries can have multiple type of matching:
 
 * right direction
+
     ```Cypher
     MATCH (n)-[r]->(m)
     RETURN n, r, m
     ```
 
 * left direction
+
     ```Cypher
     MATCH (n)<-[r]-(m)
     RETURN n, r, m
     ```
 
 * both direction
+
     ```Cypher
     MATCH (n)-[r]-(m)
     RETURN n, r, m
     ```
 
 * traversing relationships
+
     ```Cypher
     MATCH (n)-[r]->(m)-[p]->(o)
     RETURN n, m, o
     ```
+
     with query like this it can be usefull to assign a variable to the path and return the path:
+
     ```Cypher
     MATCH path = (n)-[r]->(m)-[p]->(o)
     RETURN path
     ```
 
 * Centralising relationships
+
     ```Cypher
     MATCH (n)-[r]->(m)<-[p]-(o)
     RETURN n, m, o
@@ -562,6 +599,7 @@ Since relationships are directionals queries can have multiple type of matching:
 ###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
 ```Text
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
@@ -600,7 +638,8 @@ MATCH (m:Movie)-[acted:ACTED_IN]-(:Person {name: 'Tom Hanks'})
 RETURN m.title, acted.roles
 ```
 
------------
+--------------------
+
 ### Part four
 
 #### Where
@@ -613,21 +652,24 @@ In the `WHERE` clause it is possible to place conditions that are evaluated at r
 
 Some examples:
 
-1.
+1. Example 1
+
     ```Cypher
     MATCH (m:Movie)
     WHERE m.title = "The Matrix"
     RETURN m
     ```
 
-2.
+2. Example 2
+
     ```Cypher
     MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
     WHERE m.released = 2008
     RETURN p, m
     ```
 
-3.
+3. Example 3
+
     ```Cypher
     MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
     WHERE m.released = 2008 OR m.released = 2009
@@ -639,6 +681,7 @@ It can be use several comparison operators: **=**, **<>**, **<**, **>**, **<=**,
 There are 4 boolean operators that it can use: **AND**, **OR**, **XOR**, **NOT**.
 
 An example:
+
 ```Cypher
 MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
 WHERE
@@ -648,20 +691,25 @@ RETURN p.name, m.title, m.released
 ```
 
 It is opssible to filter node labels in the WHERE clause, for example this two queries:
+
 ```Cypher
 MATCH (p:Person)
 RETURN p.name
 ```
+
 ```Cypher
 MATCH (p:Person)-[:ACTED_IN]->(:Movie {title: 'The Matrix'})
 RETURN p.name
 ```
+
 can be rewritten usign WHERE clauses:
+
 ```Cypher
 MATCH (p)
 WHERE p:Person
 RETURN p.name
 ```
+
 ```Cypher
 MATCH (p)-[:ACTED_IN]->(m)
 WHERE p:Person AND m:Movie AND m.title = 'The Matrix'
@@ -670,6 +718,7 @@ RETURN p.name
 
 Since we are talking about graph database not all the nodes with the same label have the same properties, with the WHERE clause and the build-in function `exists(property)` we can filter the nodes that doesn't have value for the property requested.
 For example:
+
 ```Cypher
 MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
 WHERE p.name='Jack Nicholson' AND exists(m.tagline)
@@ -677,6 +726,7 @@ RETURN m.title, m.tagline
 ```
 
 There are also a set of string-related keywords to test string property values: `STARTS WITH`, `ENDS WITH`, and `CONTAINS`.
+
 ```Cypher
 MATCH (p:Person)-[:ACTED_IN]->()
 WHERE p.name STARTS WITH 'Michael'
@@ -737,11 +787,14 @@ Added 171 labels, created 171 nodes, set 564 properties, created 253 relationshi
 ```
 
 Exercise 4.1: Retrieve all movies that Tom Cruise acted in.
+
 ```Cypher
 MATCH (tom:Person {name: 'Tom Cruise'})-[:ACTED_IN]-(movie:Movie)
 RETURN movie.title
 ```
+
 or
+
 ```Cypher
 MATCH (tom:Person)-[:ACTED_IN]-(movie:Movie)
 WHERE tom.name = 'Tom Cruise'
@@ -749,6 +802,7 @@ RETURN movie.title
 ```
 
 Exercise 4.2: Retrieve all actors that were born in the 70’s, return name and year born.
+
 ```Cypher
 MATCH (p:Person)-[:ACTED_IN]->(:Movie)
 WHERE 1970 <= p.born <= 1979
@@ -756,6 +810,7 @@ RETURN p.name AS Name, p.born AS `Year Born`
 ```
 
 Exercise 4.3: Retrieve the actors who acted in the movie The Matrix who were born after 1960, return name and year born.
+
 ```Cypher
 MATCH (act:Person)-[:ACTED_IN]->(m:Movie)
 WHERE m.title = 'The Matrix' AND act.born > 1960
@@ -763,6 +818,7 @@ RETURN act.name as Name, act.born as `Year Born`
 ```
 
 Exercise 4.4: Retrieve all movies released in 2000 by testing the node label and released property, return the title of the movie.
+
 ```Cypher
 MATCH (mov:Movie)
 WHERE mov.released = 2000
@@ -770,6 +826,7 @@ RETURN mov.title
 ```
 
 Exercise 4.5: Retrieve all people that wrote movies by testing the relationship between two nodes, return the name of the people and the title of the movie.
+
 ```Cypher
 MATCH (p)-[rel]->(mov)
 WHERE p:Person AND type(rel) ='WROTE' AND mov:Movie
@@ -777,6 +834,7 @@ RETURN p.name AS Name, mov.title AS `Movie title`
 ```
 
 Exercise 4.6: Retrieve all people in the graph that do not have a the born property and return there name.
+
 ```Cypher
 MATCH (p)
 WHERE p:Person AND NOT exists(p.born)
@@ -784,22 +842,26 @@ RETURN p.name AS Name
 ```
 
 Exercise 4.7: Retrieve all people related to movies where the relationship has the rating property, than return their name, movie, title and the rating.
+
 ```Cypher
 MATCH (p:Person)-[rel]-(m:Movie)
 WHERE exists(rel.rating)
 RETURN
-	p.name AS Name,
+    p.name AS Name,
     m.title AS `Movie title`,
     rel.rating AS Rating
 ```
 
 Exercise 4.8: Retrieve all actors whose name begins with James.
+
 ```Cypher
 MATCH (p:Person)
 WHERE p.name =~'James.*'
 RETURN p.name
 ```
+
 or
+
 ```Cypher
 MATCH (p:Person)
 WHERE p.name STARTS WITH 'James'
@@ -859,7 +921,7 @@ RETURN mov.title, rel.roles
 
 The `MATCH` clause includes a pattern specified by two paths separated by a comma:
 
-```
+```Cypher
 MATCH (a:Person)-[:ACTED_IN]->(m:Movie),
     (m:Movie)<-[:DIRECTED]-(d:Person)
 WHERE m.released = 2000
@@ -1130,9 +1192,141 @@ RETURN title, listRev AS `reviewer`
 
 ### Part six
 
+#### Eliminating duplication
+
+To eliminating duplicated results it can be used the `DISTINCT` keyword
+
+This is the exercise 5.1, we can use the DISTINCT clause to avoid repeting the directors in the list:
+
+```Cypher
+MATCH (gene:Person)-[:ACTED_IN]->(movie:Movie)
+WHERE gene.name = 'Gene Hackman'
+OPTIONAL MATCH
+    (other:Person)-[:ACTED_IN]->(movie),
+    (dir:Person)-[:DIRECTED]->(movie)
+WITH
+    movie,
+    collect(other.name) AS Actors,
+    collect(DISTINCT dir.name) AS Directors
+RETURN
+    movie.title AS `Title of movie`,
+    Actors AS `Co-Actors`,
+    Directors
+```
+
+This clause can be use in several uses, like this:
+
+```Cypher
+MATCH (p:Person)-[:DIRECTED | :ACTED_IN]->(m:Movie)
+WHERE p.name = 'Tom Hanks'
+WITH DISTINCT m
+RETURN m.released, m.title
+```
+
+#### Ordering result
+
+If you want the results to be sorted, you specify the expression to use for the sort usign the `ORDER BY` keyword and whether you want the order to be descending using the `DESC` keyword. Ascending order is the default.
+It can be use multiple sort expressions and the result will be sorted in that order.
+
+This is an example where there is a specification for the release date of the movies for Tom Hanks:
+
+```Cypher
+MATCH (p:Person)-[:DIRECTED | :ACTED_IN]->(m:Movie)
+WHERE p.name = 'Tom Hanks' AND m.released >= 2000
+RETURN m.released, collect(DISTINCT m.title) AS movies ORDER BY m.released DESC
+```
+
+|m.released|movies|
+| --- | --- |
+|2012|["Cloud Atlas"]|
+|2007|["Charlie Wilson's War"]|
+|2006|["The Da Vinci Code"]|
+|2004|["The Polar Express"]|
+|2000|["Cast Away"]|
+
+#### Limiting the number of results
+
+Although you can filter queries to reduce the number of results returned, you may also want to limit the number of results. This is useful if you have very large result sets and you only need to see the beginning or end of a set of ordered results.
+`LIMIT` is the right choice to do something like this.
+
+Example:
+
+```Cypher
+MATCH (m:Movie)
+RETURN m.title as title, m.released as year
+ORDER BY m.released DESC
+LIMIT 10
+```
+
+#### Exercises part six
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 6 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 6.1: You want to know what actors acted in movies in the decade starting with the year 1990. First write a query to retrieve all actors that acted in movies during the 1990s, where you return the released date, the movie title, and the collected actor names for the movie. For now do not worry about duplication.
+
+```Cypher
+MATCH (per:Person)-[:ACTED_IN]->(mov:Movie)
+WHERE 1990 <= mov.released < 2000
+RETURN mov.released, mov.title, collect(per.name)
+```
+
+Exercise 6.2: Modify the query to eliminate duplication.
+
+```Cypher
+MATCH (per:Person)-[:ACTED_IN]->(mov:Movie)
+WHERE 1990 <= mov.released < 2000
+RETURN mov.released, collect(mov.title), collect(per.name)
+```
+
+Exercise 6.3: Modify the query to eliminate more duplication.
+
+```Cypher
+MATCH (per:Person)-[:ACTED_IN]->(mov:Movie)
+WHERE 1990 <= mov.released < 2000
+RETURN mov.released, collect(DISTINCT mov.title), collect(DISTINCT per.name)
+```
+
+Exercise 6.4: Sort results returned.
+
+```Cypher
+MATCH (per:Person)-[:ACTED_IN]->(mov:Movie)
+WHERE 1990 <= mov.released < 2000
+RETURN mov.released, collect(DISTINCT mov.title), collect(DISTINCT per.name)
+ORDERED BY mov.released DESC
+```
+
+Exercise 6.5: Retrieve the top 5 ratings and their associated movies.
+
+```Cypher
+MATCH (:Person)-[rel:REVIEWED]->(mov:Movie)
+RETURN mov.title, rel.rating as rat
+ORDER BY rat DESC
+LIMIT 5
+```
+
+Exercise 6.6: Retrieve all actors that have not appeared in more than 3 movies.
+
+```Cypher
+MATCH (act:Person)-[:ACTED_IN]->(mov:Movie)
+WITH act, count(mov) AS numberMovies, collect(mov.title) AS movies
+where numberMovies <= 3
+RETURN act.name, movies
+```
+
+--------------------
+
+### Part Seven
+
+
 #### Create
 
-###### ***on neof4j browser run the command `:help CREATE`***
+##### ***on neof4j browser run the command `:help CREATE`***
 
 Let's create a small social graph using this query language.
 
@@ -1151,10 +1345,6 @@ The output of this query will be:
 Added 1 label, created 1 node, set 3 properties, completed after 134 ms.
 ```
 
-#### Null
-
-Null represents missing or undefined values. You do not store a null value in a property. It just doesen't exist on that particular node.
-**Warning: null=null is not true but the result will be null because we don't know the value of a null propertie**
 
 #### More create at once
 
@@ -1193,20 +1383,6 @@ Analyze this clause `MATCH (ee:Person)-[:KNOWS]-(friends)`, the meaning of `()-[
 The output will be all the relationships between node **ee** with property name set as Emil and nodes **friends**, the query graph result will be:
 
 ![matchEmilFriendsG](resources/matchEmilFriendsG.PNG)
-
-#### Distinct
-
-Pattern matching can be used to make recommendations, to suggest a new friend or a new film to watch. For example we can make recomandation to johan that is learning to surf, he may want to find a new frend who already does:
-```Cypher
-MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
-WHERE js.name = "Johan" AND surfer.hobby = "surfing"
-RETURN DISTINCT surfer
-```
-The clause **DISTINCT** is use to avoid an output of the same nodes because more than one Person can be friend to the same Person at the same time more than one nodes can be related to the same node.
-The pattern put on the **MATCH** clause contains 2 relations and the nodes in the center `()` is not important in our recommendation so is ignored and not referred with a name.
-This query return all of the Person who have the hobby "surfing" that are connected to a friend of a friend of Johan. In our database only one node correspond to this filter: "Allison".
-
-![matchsurfingrecommendation](resources/matchSurfingRecommendations.PNG)
 
 #### Explain Profile
 
