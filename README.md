@@ -2,9 +2,9 @@
 
 <!--
 TODO
-exercises part eight
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-6/
-esercizio 8.12
+Exercise 12
+Using Cypher parameters
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
 -->
 
 ## Content
@@ -18,6 +18,12 @@ esercizio 8.12
         * [Part four](#part-four)
         * [Part five](#part-five)
         * [Part six](#part-six)
+        * [Part seven](#part-seven)
+        * [Part eight](#part-eight)
+        * [Part nine](#part-nine)
+        * [Part ten](#part-ten)
+        * [Part eleven](#part-eleven)
+        * [Part twelve](#part-twelve)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -1715,51 +1721,704 @@ SET mov += {
 SET mov:OlderMovie
 ```
 
-<!--
-TODO
-esercizio 8.12
--->
+Exercise 8.12: Retrieve this OlderMovie node to confirm that the properties and label have been properly set.
 
-Exercise 8.12: Retrieve an OlderMovie node to confirm the label and properties.
+```Cypher
+MATCH (p:OlderMovie)
+WHERE p.title = 'Forrest Gump'
+RETURN p
+```
 
-Exercise 8.13: Add properties to the person, Robin Wright.
+Exercise 8.13: Add the following properties to the person, Robin Wright: `born: 1966` and `birthPlace: Dallas`
 
-Exercise 8.14: Retrieve an updated Person node.
+```Cypher
+MATCH (rob:Person)
+WHERE rob.name = 'Robin Wright'
+SET rob += {
+    born: 1996,
+    birthPlace: "Dallas"
+}
+RETURN rob.born, rob.birthPlace
+```
 
-Exercise 8.15: Remove a property from a Movie node.
+Exercise 8.14: Retrieve this Person node to confirm that the properties have been properly set.
 
-Exercise 8.16: Retrieve the node to confirm that the property has been removed.
+```Cypher
+MATCH (rob:Person {name: 'Robin Wright'})
+RETURN rob
+```
 
-Exercise 8.17: Remove a property from a Person node.
+Exercise 8.15: Remove the lengthInMinutes property from the movie, Forrest Gump.
 
-Exercise 8.18: Retrieve the node to confirm that the property has been removed.
+```Cypher
+MATCH (mov:Movie {title: 'Forrest Gump'})
+SET mov.legthInMinutes = null
+return mov
+```
+
+Exercise 8.16: Retrieve the Forrest Gump node to confirm that the property has been removed.
+
+```Cypher
+MATCH (mov:Movie {title: 'Forrest Gump})
+return mov
+```
+
+Exercise 8.17: Remove the birthPlace property from the person, Robin Wright.
+
+```Cypher
+MATCH (rob:Person)
+WHERE rob.name = 'Robin Wright'
+REMOVE rob.birthPlace
+RETURN rob
+```
+
+Exercise 8.18: Retrieve the Robin Wright node to confirm that the property has been removed.
+
+```Cypher
+MATCH (rob:Person)
+WHERE rob.name = 'Robin Wright'
+RETURN rob
+```
+
+--------------------
+
+### Part Nine
 
 #### Creating relationships
 
-The relationships are created by defined the left node and the right node:
+The relationships are created by defined the left node `x` and the right node `y`:
 
 ```Cypher
-(left_node)-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]->(right_node)
+CREATE (x)<-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]-(y)
 ```
 
-The output of the query above is:
+```Cypher
+CREATE (x)-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]->(y)
+```
+
+When a relationship is created it must have a direction unlike the non creational queries.
+The connections capture the semantic relationships and context of the nodes in the graph.
+
+In most cases, unless you are connecting nodes at creation time, you will retrive the two nodes, each with their own variables, for example, by specifying a **`WHERE`** clause to fine them, and then use the variables to connect them.
+
+Here is an example: Creation of a relationship between Michael Caine with the movie Batman Begins
+
+```Cypher
+MATCH (a:Person), (m:Movie)
+WHERE a.name = 'Michael Caine' AND m.title = 'Batman Begins'
+CREATE (a)-[:ACTED_IN]->(m)
+RETURN a, m
+```
+
+Another example is the creation of multiple relationships at once bu simply providing the pattern for the creation that includes the relationship types, their directions and the nodes that you want ot connect.
+
+```Cypher
+MATCH (a:Person), (m:Movie), (p:Person)
+WHERE a.name = 'Liam Neeson' AND
+      m.title = 'Batman Begins' AND
+      p.name = 'Benjamin Melniker'
+CREATE (a)-[:ACTED_IN]->(m)<-[:PRODUCED]-(p)
+RETURN a, m, p
+```
+
+#### Adding properties to relationships
+
+Just like the adding properties to a node, the same is for the relationships.
+
+```Cypher
+SET relationship.propertyName = value
+```
+
+```Cypher
+SET relationship.propertyName1 = value1 , relationship.propertyName2 = value2
+```
+
+```Cypher
+SET r = {propertyName1: value1, propertyName2: value2}
+```
+
+```Cypher
+SET r += {propertyName1: value1, propertyName2: value2}
+```
+
+The same rules of adding properties node is apply to the properties of relationships.
+
+Here is an example: Add the `roles` property to the ACTED_IN relationship from *Christian Bale* to *Batman Begins* right after creation of the relationship.
+
+```Cypher
+MATCH (act:Person), (mov:Movie)
+WHERE act.name = 'Christian Bale' AND mov.title = 'Batman Begins'
+CREATE (act)-[rel:ACTED_IN]->(mov)
+SET rel.roles = ['Bruce Wayne', 'Batman']
+RETURN act, rel, mov
+```
+
+To prevent the useless executions of create and set it can be possible to add a condition:
+
+```Cypher
+MATCH (act:Person), (mov:Movie)
+WHERE act.name = 'Christian Bale' AND
+      mov.title = 'Batman Begins' AND
+      NOT exists((a)-[:ACTED_IN]->(MOV))
+CREATE (act)-[rel:ACTED_IN]->(mov)
+SET rel.roles = ['Bruce Wayne', 'Batman']
+RETURN act, rel, mov
+```
+
+#### Removing properties to relationships
+
+Same as removing properties from nodes it can be possible to remove properties from relationships.
+
+Example:
+
+```Cypher
+MATCH (a:Person)-[rel:ACTED_IN]->(m:Movie)
+WHERE a.name = 'Christian Bale' AND
+      m.title = 'Batman Begins'
+REMOVE rel.roles
+RETURN a, rel, m
+```
+
+#### Exercises part nine
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 9 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
 ```Text
-Added 4 labels, created 4 nodes, set 14 properties, created 7 relationships, completed after 33 ms.
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
 
-To see what we created we need to run a new query that take all of the nodes in relationship with **Emil**:
+Exercise 9.1: Create the ACTED_IN relationship between the actors, Robin Wright, Tom Hanks, and Gary Sinise and the movie, Forrest Gump.
 
 ```Cypher
-MATCH (ee:Person)-[:KNOWS]-(friends)
-WHERE ee.name="Emil"
-RETURN ee.name, friends
+MATCH (mov:Movie)
+WHERE mov.title = 'Forrest Gump'
+MATCH (act:Person)
+WHERE act.name = 'Robin Wright' OR
+      act.name = 'Tom Hanks' OR
+      act.name = 'Gary Sinise'
+CREATE (act)-[:ACTED_IN]->(mov)
+RETURN act, mov
 ```
 
-Analyze this clause `MATCH (ee:Person)-[:KNOWS]-(friends)`, the meaning of `()-[:KNOWS]-()` is to maches **KNOWS** relationship in either direction and takes all nodes with label Person that have a relationship with other nodes.
-The output will be all the relationships between node **ee** with property name set as Emil and nodes **friends**, the query graph result will be:
+Exercise 9.2: Create the DIRECTED relationship between Robert Zemeckis and the movie, Forrest Gump.
 
-![matchEmilFriendsG](resources/matchEmilFriendsG.PNG)
+```Cypher
+MATCH (act:Person), (mov:Movie)
+WHERE mov.title = 'Forrest Gump' AND
+      act.name = 'Robert Zemeckis'
+CREATE (act)-[rel:DIRECTED]->(mov)
+RETURN act, rel, mov
+```
+
+Exercise 9.3: Create a new relationship, HELPED from Tom Hanks to Gary Sinise.
+
+```Cypher
+MATCH (tom:Person), (gar:Person)
+WHERE tom.name = 'Tom Hanks' AND gar.name = 'Gary Sinise'
+CREATE (tom)-[rel:HELPED]->(gar)
+RETURN tom, rel, gar
+```
+
+Exercise 9.4: Write a Cypher query to return all nodes connected to the movie, Forrest Gump, along with their relationships.
+
+```Cypher
+MATCH (pers:Person)-[rel]-(mov:Movie)
+WHERE mov.title = 'Forrest Gump' AND exists(rel)
+RETURN pers,rel, mov
+```
+
+Exercise 9.5: Add the roles property to the three ACTED_IN relationships that you just created to the movie, Forrest Gump using this information: Tom Hanks played the role, Forrest Gump. Robin Wright played the role, Jenny Curran. Gary Sinise played the role, Lieutenant Dan Taylor.
+
+```Cypher
+MATCH (actor:Person)-[rel:ACTED_IN]->(mov:Movie)
+WHERE mov.title = 'Forrest Gump'
+SET rel.roles = CASE actor.name
+                    WHEN 'Tom Hanks'
+                        THEN ['Forrest Gump']
+                    WHEN 'Robin Wright'
+                        THEN ['Jenny Curran']
+                    WHEN 'Gary Sinise'
+                        THEN ['Lieutenant Dan Taylor']
+                END
+RETURN actor, rel, mov
+```
+
+Exercise 9.6: Add a new property, research to the HELPED relationship between Tom Hanks and Gary Sinise and set this property’s value to war history.
+
+```Cypher
+MATCH (tom:Person)-[rel:HELPED]->(gar:Person)
+WHERE tom.name = 'Tom Hanks' AND gar = 'Gary Sinise'
+SET rel.research = 'war history'
+```
+
+Exercise 9.7: View the current list of property keys in the graph.
+
+```Cypher
+CALL db.propertyKeys
+```
+
+Exercise 9.8: View the current schema of the graph.
+
+```Cypher
+CALL db.schema
+```
+
+Exercise 9.9: Query the graph to return the names and roles of actors in the movie, Forrest Gump.
+
+```Cypher
+MATCH (act:Person)-[rel:ACTED_IN]->(mov:Movie)
+WHERE mov.title = 'Forrest Gump'
+RETURN act.name, rel.roles
+```
+
+Exercise 9.10: Query the graph to retrieve information about any HELPED relationships.
+
+```Cypher
+MATCH (pers:Person)-[help:HELPED]->(someone:Person)
+RETURN pers.name, help, someone.name
+```
+
+Exercise 9.11: Modify the role that Gary Sinise played in the movie, Forrest Gump from Lieutenant Dan Taylor to Lt. Dan Taylor.
+
+```Cypher
+MATCH (:Person {name: 'Gary Sinise'})-[rel:ACTED_IN]->(:Movie {title: 'Forrest Gump'})
+SET rel.roles = 'Lt. Dan Taylor'
+RETURN rel.roles
+```
+
+Exercise 9.12: Remove the research property from the HELPED relationship from Tom Hanks to Gary Sinise.
+
+```Cypher
+MATCH (:Person {name: 'Tom Hanks'})-[rel:HELPED]->(:Person {name: 'Gary Sinise'})
+REMOVE rel.research
+RETURN rel
+```
+
+Exercise 9.13: Query the graph to confirm that your modifications were made to the graph.
+
+```Cypher
+MATCH (p:Person)-[]->(m:Movie {title: 'Forrest Gump'})
+RETURN p, m
+```
+
+--------------------
+
+### Part Ten
+
+#### Deleting nodes and relationships
+
+If a node has no relationships to any other nodes, it's possible to simply delete it from the graph using the **`DELETE`**.
+
+The graph engine return errors if attempt to delete a node in the graph that has relationships in or out of the node, this is because deleting such a node will leave *orphaned* relationships in the graph.
+
+To delete a relationship between nodes it's necessary to find it first in the graph and then deleting it.
+
+Example:
+
+* Delete the ACTED_IN relationship between Christian Bale and the movie Batman Begins:
+
+    ```Cypher
+    MATCH (a:Person)-[rel:ACTED_IN]->(m:Movie)
+    WHERE a.name = 'Christian Bale' AND 'm.title = 'Batman Begins'
+    DELETE rel
+    RETURN a, m
+    ```
+
+* Delete the node *Benjamin Melniker* and his relationships to movie nodes. To make this works it's necessary to remove the relationships to prevent errors:
+
+    ```Cypher
+    MATCH (p:Person)-[rel:PRODUCED]->(:Movie)
+    WHERE p.name = 'Benjamin Melniker'
+    DELETE rel, p
+    ```
+
+The most efficient way to delete a node and its corresponding relationships is to specify **`DETACH DELETE`**.
+With this specification, the relationships to and from the node are deleted then the node is deleted.
+
+Examples:
+
+* This gives errors:
+
+    ```Cypher
+    MATCH (p:Person)
+    WHERE p.name = 'Liam Neeson'
+    DELETE p
+    ```
+
+* This not gives errors:
+
+    ```Cypher
+    MATCH (p:Person)
+    WHERE p.name = 'Liam Neeson'
+    DETACH DELETE p
+    ```
+
+#### Exercises part ten
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 10.1: Delete the HELPED relationship from the graph.
+
+```Cypher
+MATCH ()-[rel:HELPED]-()
+DELETE rel
+return rel
+```
+
+Exercise 10.2: Query the graph to confirm that the relationship no longer exists.
+
+```Cypher
+CALL db.relationshipTypes
+```
+
+Exercise 10.3: Query the graph to display Forrest Gump and all of its relationships.
+
+```Cypher
+MATCH (movie:Movie)-[rel]-(nod)
+WHERE movie.title = 'Forrest Gump'
+RETURN movie, rel, nod
+```
+
+Exercise 10.4: Try deleting the Forrest Gump node without detaching its relationships.
+
+```Cypher
+MATCH (movie:Movie)
+WHERE movie.title = 'Forrest Gump'
+DELETE movie
+```
+
+Exercise 10.5: Delete Forrest Gump, along with its relationships in the graph.
+
+```Cypher
+MATCH (movie:Movie)
+WHERE movie.title = 'Forrest Gump'
+DETACH DELETE movie
+```
+
+Exercise 10.6: Query the graph to confirm that the Forrest Gump node has been deleted.
+
+```Cypher
+MATCH (movie:Movie)-[rel]-(pers)
+WHERE movie.title = 'Forrest Gump'
+RETURN movie, rel, pers
+```
+
+--------------------
+
+### Part Eleven
+
+#### Merge
+
+The **MERGE** clause is used either to create new nodes and relationships or to make structural changes to existing nodes and relationships.
+
+Recap of the `CREATE` clause:
+|              | The result with `CREATE` |
+| ---          | ---                      |
+| Node         | If a node with the same property value exists, a duplicate node is creted |
+| Label        | If the label already exists for the node, the node is not updated |
+| Property     | If the node or relationship property already exists, it is updated with the new value |
+| Relationship | If a relationship exists, a duplicate relationship is created |
+
+It's difficult to have a graph where we want some duplicates, and the solution for this is the `MERGE` clause.
+This clause is used to find elements in the graph and if the element is not found then it will be created:
+
+* Create a unique node based on label and key information for a property and if it exists, optionally update it
+* Create a unique relationship
+* Create a node and relationship to it uniquely in the context of another node
+
+```Cypher
+MERGE (variable:Label{nodeProperties})
+RETURN variable
+```
+
+This is an example:
+
+```Cypher
+MERGE (a:Person {name: 'Michael Caine'}) SET a.born = 1933 RETURN a
+```
+
+We can repeat this query with the MERGE clause but no more Actor will be created.
+
+This clause can be used also to create relationships:
+
+```Cypher
+MERGE (variable:Label {nodeProperties})-[:REL_TYPE]->(otherNode)
+RETURN variable
+```
+
+It's possible to leave out the direction of the relationship, if the relationship not exists than will be created assuming the left-to-right arrow.
+
+Using this clause to create relationships is expensive and the suggestion is to do only when it's needed to ensure that a relationship is unique and you are not sure it already exists.
+
+To prevent this the `MATCH` clause:
+
+```Cypher
+MATCH (p:Person), (m:Movie)
+WHERE m.title = 'Batman Begins' AND p.name ENDS WITH 'Caine'
+MERGE (p)-[:ACTED_IN]->(m)
+RETURN p,m
+```
+
+You must be aware of the behavior of the **`MERGE`** clause and how it will automatically create nodes and relationships. This clause tries to find a full pattern and if it doesn't find it, it creates that full pattern. That's why in most cases it's suggested to first **`MERGE`** the nodes and then the relationships afterwards.
+
+Another property of the **`MERGE`** clause is **`ON CREATE`** used to assign specific values to a node being created as a result of an attempt to merge.
+
+Example:
+
+```Cypher
+MERGE (a:Person {name: 'Sir Michael Caine'})
+ON CREATE SET a.birthPlace = 'London',
+              a.born = 1934
+RETURN a
+```
+
+The SET clause will be used only if the node is not found, the clause will be skipped otherwise.
+
+Like `ON CREATE` it exists another clause for the matching case **`ON MATCH`**, used when the node/relationship already exists.
+
+Example:
+
+```Cypher
+MERGE (a:Person {name: 'Sir Michael Caine'})
+ON CREATE SET a.born = 1934
+              a.birthPlace = 'UK'
+ON MATCH SET a.birthPlace = 'UK'
+RETURN a
+```
+
+#### Exercises part eleven
+
+###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 11.1: Use MERGE to create (ON CREATE) a node of type Movie with the title property, Forrest Gump. If created, set the released property to 1994.
+
+```Cypher
+MERGE (mov:Movie {title: 'Forest Gump'})
+ON CREATE
+    SET mov.released = 1994
+RETURN mov
+```
+
+Exercise 11.2: Use MERGE to update (ON MATCH) a node of type Movie with the title property, Forrest Gump. If found, set the tagline property to "Life is like a box of chocolates…​you never know what you’re gonna get.".
+
+```Cypher
+MERGE (mov:Movie {title: 'Forrest Gump'})
+ON CREATE
+    SET mov.released = 1994
+ON MATCH
+    SET mov.tagline = 'Life is like a box of chocolates…​you never know what you’re gonna get.'
+RETURN mov
+```
+
+Exercise 11.3: Use MERGE to create (ON CREATE) a node of type Production with the title property, Forrest Gump. If created, set the property year to the value 1994.
+
+```Cypher
+MERGE (prod:Production {title: 'Forrest Gump'})
+ON CREATE
+    SET prod.year = 1994
+RETURN prod
+```
+
+Exercise 11.4: Query the graph to find labels for nodes with the title property, Forrest Gump.
+
+```Cypher
+MATCH (forrest)
+WHERE forrest.title = 'Forrest Gump'
+RETURN labels(forrest)
+```
+
+Exercise 11.5: Use MERGE to update (ON MATCH) the existing Production node for Forrest Gump to add the company property with a value of Paramount Pictures.
+
+```Cypher
+MERGE (forrest:Production {title: 'Forrest Gump'})
+ON MATCH
+    SET forrest.property = 'Paramount Pictures'
+RETURN forrest
+```
+
+Exercise 11.6: Use MERGE to add the OlderMovie label to the movie, Forrest Gump.
+
+```Cypher
+MERGE (mov:Movie {title: 'Forrest Gump'})
+ON MATCH
+    SET mov:OlderMovie
+RETURN labels(mov)
+```
+
+Exercise 11.7: Execute the following Cypher statement that uses MERGE to create two nodes and a single relationship
+
+```Cypher
+MERGE (p:Person {name: 'Robert Zemeckis'})-[:DIRECTED]->(m {title: 'Forrest Gump'})
+```
+
+This statement first finds all Person nodes that have only the name property value of Robert Zemeckis. It then finds all nodes with only the title property set to Forrest Gump. There are no Person or other nodes that have only these properties so the graph engine creates them. Then the graph engine creates the relationship between these two nodes. That is, this MERGE operation creates two nodes and a single relationship. If we had provided all of the property values for the nodes, we would not have created the extra nodes.
+
+In fact, you should never create nodes and relationships together like this! This example is here to show you how powerful Cypher can be. A best practice is to create nodes first, then relationships.
+
+Exercise 11.8: Repeat the execution of the previous statement.
+
+It should do nothing. A best practice is to always use MERGE to create relationships to ensure that there will be no duplication in the graph.
+
+```Cypher
+MERGE (p:Person {name: 'Robert Zemeckis'})-[:DIRECTED]->(m {title: 'Forrest Gump'})
+```
+
+Exercise 11.9: Find the correct Person node to delete
+
+You query the nodes before you delete them to ensure you have the correct MATCH clauses.
+
+Execute this query:
+
+```Cypher
+MATCH (p:Person {name: 'Robert Zemeckis'})-[rel]-(x)
+WHERE NOT EXISTS (p.born)
+RETURN p, rel, x
+```
+
+Exercise 11.10: Delete this Person node, along with its relationships.
+
+```Cypher
+MATCH (p:Person {name: 'Robert Zemeckis'})-[rel]-(x)
+WHERE NOT EXISTS (p.born)
+DETACH DELETE p
+RETURN p, rel, x
+```
+
+Exercise 11.11: Find the correct Forrest Gump node to delete by executing this statement:
+
+```Cypher
+MATCH (m)
+WHERE m.title = 'Forrest Gump' AND labels(m) = []
+RETURN m, labels(m)
+```
+
+Exercise 11.12: Delete the Forrest Gump node.
+
+```Cypher
+MATCH (m)
+WHERE m.title = 'Forrest Gump' AND labels(m) = []
+DETACH DELETE m
+```
+
+Exercise 11.13: Use MERGE to create the DIRECTED relationship between Robert Zemeckis and the Movie, Forrest Gump.
+
+```Cypher
+MERGE (rob:Person {name: 'Robert Zemeckis})-[:DIRECTED]->(mov:Movie {title: 'Forrest Gump})
+RETURN rob, mov
+```
+
+Exercise 11.14: Use MERGE to create the ACTED_IN relationship between the actors, Tom Hanks, Gary Sinise, and Robin Wright and the Movie, Forrest Gump.
+
+```Cypher
+MATCH (pers:Person), (m:Movie)
+WHERE
+    pers.name IN ['Tom Haks', 'Gary Sinise', 'Robin Wright'] AND
+    m.title = 'Forrest Gump'
+MERGE (pers)-[:ACTED_IN]->(m)
+RETURN pers, m
+```
+
+Exercise 11.15: Modify the relationship property, role for their roles in Forrest Gump: `Tom Hanks is Forrest Gump`, `Gary Sinise is Lt. Dan Taylor`, `Robin Wright is Jenny Curran`
+
+```Cypher
+MATCH (pers:Person)-[rel:ACTED_IN]->(m:Movie)
+WHERE m.title = 'Forrest Gump'
+SET rel.roles =
+    CASE pers.name
+        WHEN 'Tom Hanks'
+            THEN ['Forrest Gump']
+        WHEN 'Gary Sinise'
+            THEN ['Lt. Dan Taylor']
+        WHEN 'Robin Wright'
+            THEN ['Jenny Curran']
+    END
+RETURN pers, m
+```
+
+--------------------
+
+### Part Twelve
+
+In a deployed application, it's not necessary to hard code the Cypher statements. In this case we are going to use a variety of values to test, but we don't want to chenge every time the values of test.
+In addition, typically we include Cypher statements in an application where parameters are passed in the Cypher statement before it executes.
+For these scenarios, we need to parameterize values in the Cypher statements.
+
+#### Parameters
+
+In the Cypher statements, a parameter name begins with the `$` symbol.
+
+Example:
+
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE p.name = $actorName
+RETURN m.released, m.title
+ORDER BY m.released DESC
+```
+
+At runtime, if the parameter `$actorName` has a value, it will be used in the Cypher statement when it runs in the graph engine.
+
+In Neo4j Browser to set values of parameters we can use the command `:param`:
+
+```Cypher
+:param actorName => 'Tom Hanks'
+```
+
+This set the parameter actorName with the value *Tom Hanks*.
+
+The result of this command is:
+
+```Json
+{
+  "actorName": "Tom Hanks"
+}
+See :help param for usage of the :param command.
+```
+
+This is a client-side browser command, so it not work outside of that.
+
+Once this parameter is setted, it can be used to do queries.
+
+Example:
+
+```Cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE p.name = $actorName
+RETURN m.released, m.title
+ORDER BY m.released DESC
+```
+
+Eventually the parameter can be reset with another value and the query can be reused without touch the statements.
+
+To set value for more than one parameters it can be use the JSON-style format:
+
+```Cypher
+:params {actorName: 'Tom Cruise`, movieName: `Top Gun`}
+```
+
+To remove a parameter from the list simply run the command without the parameter unwanted.
+
+To show the list of the parameters in use for the session execute the `:param` command without any definition of parameters.
+
+<!--
+Exercise 12
+Using Cypher parameters
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
+-->
 
 #### Explain Profile
 
