@@ -24,6 +24,8 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
         * [Part ten](#part-ten)
         * [Part eleven](#part-eleven)
         * [Part twelve](#part-twelve)
+        * [Part thirteen](#part-twelve)
+        * [Part fourteen](#part-twelve)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -113,7 +115,7 @@ The graph model can be more versatile and can be upgrade without efforts, for ex
 
 ![graphModelClubsExtend](resources/graphModelClubsExtend.PNG)
 
-----------------
+--------------------
 
 ## Neo4J
 
@@ -197,9 +199,9 @@ Both of them use Neo4j Browser application to perform querying in the database -
 
 ### Cypher
 
-##### *This notes below can be read on neo4J browser sandbox by type the command: :play cypher*
+***This notes below can be read on neo4J browser sandbox by type the command: :play cypher***
 
-##### *All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2)*
+***All of the query are run in the [Neo4J browser sandbox](https://neo4j.com/sandbox-v2) or on [Neo4J desktop](https://neo4j.com/download/)***
 
 Neo4J's Cypher language is purpose built for working with graph data, is a declarative query language that allows for expressive and efficient querying and updating of graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
 This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs.
@@ -299,7 +301,7 @@ The output of a query can be different:
 
 #### Exercises part one
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -427,7 +429,7 @@ RETURN p.name AS name, p.born AS `birth year`
 
 #### Exercises part two
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 2 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -605,7 +607,7 @@ Since relationships are directionals queries can have multiple type of matching:
 
 #### Exercises part three
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 3 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -653,7 +655,7 @@ RETURN m.title, acted.roles
 
 #### Where
 
-###### ***on neof4j browser run the command `:help WHERE`***
+***on neof4j browser run the command `:help WHERE`***
 
 The most common clause to filter queries is `WHERE` that follows a `MATCH` clause.
 This clause is the answer for "how we filter the result for a particular match", so this filter all of the nodes and relationships.
@@ -787,7 +789,7 @@ and the return is:
 
 #### Exercises part four
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 4 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 4 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -1079,7 +1081,7 @@ This is a simple query to retrive all the actor that are acted in at least 5 mov
 
 #### Exercises part five
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 5 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 5 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -1269,7 +1271,7 @@ LIMIT 10
 
 #### Exercises part six
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 6 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 6 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -1386,7 +1388,7 @@ ORDER BY actor.born DESC
 
 #### Exercises part seven
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 6 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 7 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -1503,6 +1505,8 @@ CREATE
 There are two ways to create multiple nodes at once: by separating the nodes specified with commas, or by specifying multiple CREATE statements.
 
 #### Add and remove the labels
+
+***on neof4j browser run the command `:help SET`***
 
 Obviously it can be added more lable or lables for a node before it's creations using the **SET** clause.
 
@@ -1628,7 +1632,7 @@ RETURN m
 
 #### Exercises part eight
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 8 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 8 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -1881,7 +1885,7 @@ RETURN a, rel, m
 
 #### Exercises part nine
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 9 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 9 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -2057,7 +2061,7 @@ Examples:
 
 #### Exercises part ten
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 10 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -2196,7 +2200,7 @@ RETURN a
 
 #### Exercises part eleven
 
-###### ***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 1 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 11 instructions***
 
 First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
 
@@ -2414,96 +2418,437 @@ To remove a parameter from the list simply run the command without the parameter
 
 To show the list of the parameters in use for the session execute the `:param` command without any definition of parameters.
 
-<!--
-Exercise 12
-Using Cypher parameters
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
--->
+#### Exercises part twelve
+
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 12 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 12.1: Write and execute a Cypher query that returns the names of people who reviewed movies and the actors in these movies by returning the name of the reviewer, the movie title reviewed, the release date of the movie, the rating given to the movie by the reviewer, and the list of actors for that particular movie.
+
+```Cypher
+MATCH (rev:Person)-[review:REVIEWED]->(mov:Movie),
+      (act:Person)-[:ACTED_IN]->(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       mov.released AS `Released`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+```
+
+Exercise 12.2: Add a parameter named year to your session with a value of 2000.
+
+```Cypher
+:param year => 2000
+```
+
+Exercise 12.3: Modify the Cypher query you just wrote to filter by the year parameter.
+
+```Cypher
+MATCH (rev:Person)-[review:REVIEWED]->(mov:Movie),
+      (act:Person)-[:ACTED_IN]->(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+WHERE mov.released = $year
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+```
+
+Exercise 12.4: Modify the year parameter to be a different value, 2006, and retest your query.
+
+```Cypher
+:param year => 2006
+```
+
+Exercise 12.5: Add a parameter named ratingValue to your session with a value of 65.
+
+```Cypher
+:param ratingValue => 65
+```
+
+Exercise 12.6: Modify the query you wrote previously to also filter the result returned by the rating for the movie.
+
+```Cypher
+MATCH (rev:Person)-[review:REVIEWED]->(mov:Movie),
+      (act:Person)-[:ACTED_IN]->(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+WHERE mov.released = $year AND
+      review.rating = $ratingValue
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+```
+
+Exercise 12.7: Modify the ratingValue parameter to be a different value, 60, and retest your query.
+
+```Cypher
+:param ratingValue => 60
+```
+
+--------------------
+
+### Part Thirteen
 
 #### Explain Profile
 
-###### ***on neof4j browser run the command `:help EXPLAIN`***
+***on neof4j browser run the command `:help EXPLAIN`***
 
-To understand how the query works you can use the **EXPLAIN** or **PROFILE** clause put at the beginning of the query, like this:
+The graphs studies during this notes is a very small graphs and the problems for the rapresentation become much more harder when the dataset grows larger and larger.
 
-```Cypher
-PROFILE MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
-WHERE js.name = "Johan" AND surfer.hobby = "surfing"
-RETURN DISTINCT surfer
-```
+With larger graphs it will be important to not only add appropriate indexes but also write Cypher statements that execute as efficently as possible.
 
-The outcome will be a cause effect of how the engine find the result.
+There are two Cypher keywords to use as prefix with a Cypher statement to analyze a query:
 
-#### Set
+* **`EXPLAIN`** provides estimates of the graph engine processing that will occur, but does not execute the statement.
+* **`PROFILE`** provides real profiling information for what has occurred in the graph engine during the query and executes the statement.
 
-###### ***on neof4j browser run the command `:help SET`***
+The EXPLAIN option provides the query plan. With this it can be possible to compare different statements to understand the stages of processing that will occur when the Cypher executes.
 
-To change or add properties of a node it's possible to use the SET clause, it can be use 2 format: JSON or OBJECT.
-
-* Json
-
-    ```Cypher
-    MATCH
-        (a:Person)-[:DRIVES]->(c:Car)
-    WHERE
-        a.name = 'Ann'
-    SET
-        c.brand = 'Volvo'
-        c.model = 'V70'
-    RETURN
-        c
-    ```
-
-* OBJECT
-
-    ```Cypher
-    MATCH
-        (a:Person)-[:DRIVES]->(c:Car)
-    WHERE
-        a.name = 'Ann'
-    SET
-        c += {brand: 'Volvo', model:'V70'}
-    RETURN
-        c
-    ```
-
-#### Aggregates
-
-We implicitly group by any non-aggregate fields in the RETURN statement
+Example:
 
 ```Cypher
+EXPLAIN
 MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
-RETURN p.name, count(*) AS numberOfMovies
+WHERE p.name = $actorName AND
+      m.released < $year
+RETURN p.name, m.title, m.released
 ```
 
-This query is grouped by name and aggregate the numberOfMovie associated by the same name of node.
+This query return the phases of the Cypher execution, it can be possible to examine what code is expected to run.
+Each phase of the query presents an estimante of the number of rows expected to be returned.
 
-<!--
-https://neo4j.com/docs/cypher-manual/3.5/functions/aggregating/
-https://neo4j.com/docs/cypher-refcard/ <-- table of aggregating functions
--->
+For a better metric for analyzing how the Cypher statement will run is needed to run the PROFILE prefix keyword which runs the statement and gives the run-time performance metrics.
 
-There are a plenty of procedure for aggregations, check for more with apoc reference:
+Example:
 
-* github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
-* neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
+```Cypher
+PROFILE
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE p.name = $actorName AND
+      m.released < $year
+RETURN p.name, m.title, m.released
+```
 
-#### Examining the data model
+This query above show the cache hits and most importantly the number of times that the engine accessed the database (db hints). This is the metric that will affect the performance of the Cypher statement at run-time.
 
-It is helpful to examine the data model of the graph, it can be done by executing `CALL db.schema` which calls the Neo4j procedure that returns information about the nodes, labels, and relationship in the graph.
-If we run this command in the movie graph the result will be:
+There are two reasons why a query may take long time:
 
-![dataModel](resources/examiningDataModel.PNG)
+* The query returns a lot of data -> the query completes execution in the graph engine, but it takes log time to create the result stream:
+
+    ```Cypher
+    MATCH (a)--(b)--(c)--(d)--(e)--(f)
+    RETURN a
+    ```
+
+* The query takes a long time to execute in the graph engine:
+
+    ```Cypher
+    MATCH (a),(b),(c),(d),(e)
+    RETURN count(id(a))
+    ```
+
+If the query executes and then returns a lots of data, there is no way to monitor it or kill the query, the only think to do is to close the session of the browser and start a new one.
+If the server has many of these rogue querise running, it will slow down considerably so you should aim to limit these types of queries.
+If the query is a **long-running query**, it's possible to monitor it buy using the `:queries` command.
+This command calls the `dbms.listQueries` under the hood.
+It can be possible to kill a query by using the icon to the right, alternatively execute the statement `CALL dbms.killQuery('query-id')`.
+
+#### Exercises part thirteen
+
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 13 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 13.1: View the query plan for a Cypher statement.
+
+For this Part of the exercise, you will use the query that you wrote previously using Cypher parameters. It assumes that you have set the year and ratingValue Cypher parameters:
+
+```Cypher
+MATCH (r:Person)-[rel:REVIEWED]->(m:Movie)<-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating > $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+```
+
+View the query plan for this Cypher statement.
+
+```Cypher
+EXPLAIN
+MATCH (r:Person)-[rel:REVIEWED]->(m:Movie)<-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating > $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+```
+
+Exercise 13.2: View the metrics for the query when the previous statement executes.
+
+```Cypher
+PROFILE
+MATCH (r:Person)-[rel:REVIEWED]->(m:Movie)<-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating > $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+```
+
+Exercise 13.3: Remove the labels from the nodes and relationships in the query and again view the metrics. Compare the db hits from the previous version of the statement.
+
+```Cypher
+PROFILE
+MATCH (r)-[rel]->(m)<-[]-(a)
+WHERE m.released = $year AND
+      rel.rating > $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+```
+
+Exercise 13.4: Recall that a query may run for a long time because there are a lot of results to return
+
+The query takes a long time to execute in the graph engine.
+
+You will perform these steps to gain some experience with monitoring and killing queries by having your original Neo4j Browser window open and then opening another Neo4j Browser window.
+
+Open a second Neo4j Browser session. This session will be used for monitoring queries as they run.
+
+```Cypher
+:queries
+```
+
+Exercise 13.5: Execute this long-running query in your original Neo4j Browser session that returns a lot of results. In the second Neo4j Browser window, monitor the running queries.
+
+Here is a very bad Cypher statement to use that returns a lot of results:
+
+```Cypher
+PROFILE MATCH (a)--(b)--(c)--(d)--(e)--(f)--(g)
+RETURN a
+```
+
+What do you see in the second Neo4j Browser window where you are monitoring queries?
+
+While the query in the original Neo4j Browser window is executing, in the second Neo4j Browser window i can see the state of the `PROFILE` query.
+
+Exercise 13.6: Execute this long-running query in your original Neo4j Browser session and monitor the query in the second Neo4j Browser session.
+
+Here is a very bad Cypher statement that takes a lot of time to execute in the graph engine:
+
+```Cypher
+PROFILE MATCH (a), (b), (c), (d), (e) , (f), (g)
+RETURN count(id(a))
+```
+
+What do you see in the second Neo4j Browser window where you are monitoring queries?
+
+Same as exercise 5 but this query never finished yet.
+
+Exercise 13.7: In the second Neo4j Browser window, kill the long-running query.
+
+Double click in the minus button.
+
+--------------------
+
+#### Part Fourteen
+
+#### Managing constraints and node keys
+
+We are already said that we need to prevent the duplications of the nodes and data, it's not possible to prevent duplication by checking the existence of the exact node (with properties) as this type of test is not cluster or multi-thread safe as mp òpcls are ised. This is why the MERGE clause is preferred over the CREATE because MERGE does use locks.
+
+To define some rules above this problems we can:
+
+* Add a uniqueness constraint that ensures that a value for a property is unique for all nodes of that type.
+* Add an existence constraint that ensure that when a node or relationship is created or modified, ti must have certain properties set.
+* Add a node key that ensures that a set of values for properties of a node of a given type is unique.
+
+#### Constraint properties
+
+We add a uniqueness constraint to the graph by creating a constraint that asserts that a particular node property is unique in the graph for a particular type of node.
+
+Example:
+
+```Cypher
+CREATE CONSTRAINT ON (m:Movie) ASSERT m.title IS UNIQUE
+```
+
+This statement will fail if the graph already has multiple Movie nodes with the same value for the title property.
+
+If we attempt to create a Movie with the title *`The Matrix`* the Cypher statement will fail baceuse the graph already has a movie with that title.
+Also when we attempt to modify the value of a property where the uniqueness assertion fails the Cypher statement will fail.
+
+If we attempt to add a new constraint to a property of some label and this property is not set for some nodes with that label, than the query will fail because we cannot set a new constraint without first make this new rule applicable.
+
+We can also create a constraint on properties of relationships, it's not necessary to define the direction of the relationship:
+
+```Cypher
+CREATE CONSTRAINT ON ()-[rel:REVIEWED]-() ASSERT exists(rel.rating)
+```
+
+To retrieving constraints defined for the graph we can run the command `:schema` to view existing indexes and contraints defined for the graph.
+
+The `CALL db.constraints()` will return the statements of all the constraints.
+
+To delete a constraints it can be run the **`DROP`** clause followed by the statements of the constraints to delete:
+
+```Cypher
+DROP CONSTRAINT ON ()-[rel:REVIEWED]-() ASSERT exists(rel.rating)
+```
+
+#### Constraint node keys
+
+A node key is used to define the uniqueness constraint for multiple properties of a node of a certain type. A node key is also used as a composite index in the graph.
+
+Example:
+
+```Cypher
+CREATE CONSTRAINT ON (p:Person) ASSERT (p.name, p.born) IS NODE KEY
+```
+
+This prevent the duplication of nodes.
+
+#### Exercises part fourteen
+
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 14 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 14.1: Add a uniqueness constraint to the Person nodes in the graph.
+
+Suppose we want to ensure that every Person in the graph must have a unique name.
+
+```Cypher
+CREATE CONSTRAINT ON (p:Person) ASSERT p.name IS UNIQUE
+```
+
+Exercise 14.2: Add Tom Hanks to the graph.
+
+```Cypher
+CREATE (tom:Person {name: 'Tom Hanks'})
+RETURN tom.name
+```
+
+Exercise 14.3: Attempt to add an existence constraint to the Person nodes in the graph.
+
+Suppose we want to ensure that every Person node in the graph has a born property.
+
+```Cypher
+CREATE CONSTRAINT ON (p:Person) ASSERT exists(p.born)
+```
+
+Exercise 14.4: Update the existing Person nodes so that you set the born property to 0 for any nodes that do not exist.
+
+```Cypher
+MATCH (per:Person)
+WHERE NOT exists(per.born)
+SET per.born = 0
+```
+
+Exercise 14.5: Add the existence constraint to the graph for the born property.
+
+```Cypher
+CREATE CONSTRAINT ON (per:Person) ASSERT exists(per.born)
+```
+
+Exercise 14.6: Add Sean Penn to the graph where you do not specify a value for born.
+
+```Cypher
+CREATE (:Person {name: 'Sean Penn'})
+RETURN p
+```
+
+Exercise 14.7: Add an existence constraint to the ACTED_IN relationship in the graph.
+
+Suppose we want to ensure that every ACTED_IN relationship must have a value for the roles property.
+
+```Cypher
+CREATE CONSTRAINT ON ()-[act:ACTED_IN]-() ASSERT exists(act-roles)
+```
+
+Exercise 14.8: Add an ACTED_IN relationship from the person, Emil Eifrem to the movie, Forrest Gump where the roles property is not set.
+
+```Cypher
+MATCH (em:Person {name: 'Emil Eifrem'}), (movie:Movie {title: 'Forrest Gump'})
+MERGE (em)-[:ACTED_IN]->(movie)
+RETURN em
+```
+
+Exercise 14.9: Suppose we want to ensure that the graph will never contain a movie with the same title and the same year. For example, the movie studio decides to release a movie with the title, Back to the Future in 2018. There already is a movie in the graph with this title that was released in 1985. We want to allow this. To implement this type of constraint on the graph, you must add a constraint as a node key since it uses two properties of the node.
+
+Note: If you have created a uniqueness constraint to the graph for the title property (as shown in the module content), you must first drop the constraint as it no longer makes sense if we are to allow duplicate titles in the graph. You must write and execute the statement to drop the constraint if it exists:
+
+```Cypher
+DROP CONSTRAINT ON (m:Movie) ASSERT m.title IS UNIQUE
+```
+
+Add a node key to the graph that will ensure that the combined values of title and released are unique for all Movie nodes.
+
+```Cypher
+CREATE CONSTRAINT ON (m:Movie) ASSERT (m.title, m.released) IS NODE KEY
+```
+
+Exercise 14.10: Add the movie, Back to the Future with a released value of 1985 and a tagline value of Our future..
+
+```Cypher
+CREATE (m:Movie {title: 'Back to the Future', released: 1985, tagline: 'hello future'})
+```
+
+Exercise 14.11: Add the movie, Back to the Future with a released value of 2018 and a tagline value of The future is ours..
+
+```Cypher
+CREATE (m:Movie {title: 'Back to the Future', released: 2018, tagline: 'this future'})
+```
+
+Exercise 14.12: Try adding the 2018 movie again.
+
+```Cypher
+CREATE (m:Movie {title: 'Back to the Future', released: 2018, tagline: 'this future'})
+```
+
+Exercise 14.13: Display the list of constraints defined in the graph.
+
+```Cypher
+CALL db.constraints
+```
+
+Exercise 14.14: Drop the constraint that requires the ACTED_IN relationship to have a property, roles.
+
+```Cypher
+DROP CONSTRAINT ON ()-[ acted_in:ACTED_IN ]-() ASSERT exists(acted_in.roles)
+```
+
+--------------------
+
+#### Part Fiveteen
+
+#### Exercises part fiveteen
+
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 14 instructions***
+
+--------------------
 
 #### Libraries
 
-Neo4j has a published, opnen source Cypher library, Awesome Procedures on Cypher ([APOC](https://github.com/neo4j-contrib/neo4j-apoc-procedures)) that contain many useful procedures you can call from Cypher. [Another Cypher library is the Graph Algorithms library](https://github.com/neo4j-contrib/neo4j-graph-algorithms) to help users to analyze data in graphs.
+Neo4j has a published, open source Cypher library, Awesome Procedures on Cypher ([APOC](https://github.com/neo4j-contrib/neo4j-apoc-procedures)) that contain many useful procedures you can call from Cypher.
+
+* [Another Cypher library is the Graph Algorithms library](https://github.com/neo4j-contrib/neo4j-graph-algorithms) to help users to analyze data in graphs.
+* github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
+* neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
 
 --------------------
 
 ### Example - Simple Graph
 
-###### ***This example below is found on [lesson 5 neo4j](https://www.youtube.com/watch?v=l76udM3wB4U)***
+***This example below is found on [lesson 5 neo4j](https://www.youtube.com/watch?v=l76udM3wB4U)***
 
 Let's create this graph:
 
@@ -2648,7 +2993,7 @@ On create set will be use only if the merge create the node, if you run this que
 
 ### Application - Movie Graph
 
-###### ***on neof4j browser run the command `:play movie graph`***
+***on neof4j browser run the command `:play movie graph`***
 
 Let's create a more complex example with a mini application containing actors and directors that are related through the movies they've collaborated on.
 
@@ -2799,7 +3144,7 @@ The script add lot of nodes with relative relationships and properties, with thi
 
     The **shortestPath({}-[]-{})** is a function that take a relation of 2 nodes and return the shortest path from them.
 
-    ***To know more about the shortest path problem you can visit the wikipedia page: https://en.wikipedia.org/wiki/Shortest_path_problem***
+    ***To know more about the shortest path problem you can visit the wikipedia page: [Shortest_path_problem](https://en.wikipedia.org/wiki/Shortest_path_problem)***
 
 12. Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks
 
@@ -2844,7 +3189,7 @@ RETURN n
 
 ### Application - Northwind Graph
 
-###### ***on neof4j browser run the command `:play northwind graph`***
+***on neof4j browser run the command `:play northwind graph`***
 
 This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
 Pratically how to get this:
@@ -3002,6 +3347,7 @@ set details = row,
 Example of query:
 
 * List of costumers with the number of products purchased for the Produce category:
+
 ```Cypher
 MATCH
     (c:Customer)-[:PURCHASED]->(:Order)-[o:ORDERS]->(p:Product),
@@ -3015,9 +3361,11 @@ RETURN DISTINCT
 
 ### Recommendations
 
-###### ***This paragraph is referred to recommedation application on neo4j browser.***
-###### It is possible to recreate this database using the open movie database here -> [www.omdbapi.com](https://www.omdbapi.com/)
-###### for more -> [https://movielens.org/](https://movielens.org/) and [https://grouplens.org/datasets/movielens/](https://grouplens.org/datasets/movielens/)
+***This paragraph is referred to recommedation application on neo4j browser.***
+
+***It is possible to recreate this database using the open movie database here -> [www.omdbapi.com](https://www.omdbapi.com/)***
+
+*** For more -> [https://movielens.org/](https://movielens.org/) and [https://grouplens.org/datasets/movielens/](https://grouplens.org/datasets/movielens/)***
 
 Personalized product recommendations can increase conversions, improve sales rates and provide a better experice for users.
 This paragraph take a look at how generate graph-based real-time personalized product recommendations using a dataset of movies and movie ratings.
@@ -3046,8 +3394,6 @@ The graph result is made by:
 * Properties -> title, name, year, rating
 
 ![recommendationsGraph](resources/recommendationsGraph.PNG)
-
-###### From now on i will use Cypher -> [Query Language](#cypher)
 
 Let's look at a Cypher query that answers the question "How many reviews does each Matrix movie have?":
 
@@ -3310,6 +3656,7 @@ The main characteristics of an OLTP environment are:
 * Lifecycle-related data usage
 
 The benefits of this environments are:
+
 * Support for bigger databases
 * Partition maintenance operations for data maintenance
 * Potential higher concurrency through elimination of hot spots
@@ -3338,20 +3685,23 @@ An advanced regular expression that matches any numeral is [+-]?(\d+(\.\d+)?|\.\
 
 For more read wikipedia -> [regex](https://en.wikipedia.org/wiki/Regular_expression)
 
------------------------
+--------------------
 
 ### References
 
 [Graph database Fundamentals](#graph-database-fundamentals):
+
 * [neo4J browser sandbox](https://neo4j.com/sandbox-v2/) by type the command `:play concepts`
 * [graphacademy](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-1/)
 
 Others:
-- [neo4j online course](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
-- [neo4j docs](https://neo4j.com/docs/)
-- [neo4j repository](https://github.com/neo4j/neo4j)
-- [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
-- [neo4j developer get started](https://neo4j.com/developer/get-started/)
+
+1. [neo4j online course](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
+2. [neo4j docs](https://neo4j.com/docs/)
+3. [neo4j repository](https://github.com/neo4j/neo4j)
+4. [neo4j browser sandbox](https://neo4j.com/sandbox-v2)
+5. [neo4j developer get started](https://neo4j.com/developer/get-started/)
+
     * [dev-cypher](https://neo4j.com/developer/cypher/)
     * [dev-graph-database](https://neo4j.com/developer/graph-database/)
     * [dev-graph-data-modeling](https://neo4j.com/developer/data-modeling/)
@@ -3361,7 +3711,9 @@ Others:
     * [dev-importing-csv-data](https://neo4j.com/developer/guide-import-csv/)
     * [dev-integration](https://neo4j.com/developer/integration/)
     * [dev-in-production](https://neo4j.com/developer/in-production/)
-- [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2)
-- [Graphacademy](https://neo4j.com/graphacademy/)
+
+6. [neo4j developer manual](https://neo4j.com/docs/developer-manual/3.2)
+7. [Graphacademy](https://neo4j.com/graphacademy/)
+
     * [introduction](https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/)
     * [YouTube playlist](https://www.youtube.com/playlist?list=PL9Hl4pk2FsvWM9GWaguRhlCQ-pa-ERd4U):
