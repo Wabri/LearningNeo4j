@@ -2,8 +2,7 @@
 
 <!--
 TODO
-Exercise 12
-Using Cypher parameters
+Managing indexes
 https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
 -->
 
@@ -24,8 +23,9 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
         * [Part ten](#part-ten)
         * [Part eleven](#part-eleven)
         * [Part twelve](#part-twelve)
-        * [Part thirteen](#part-twelve)
-        * [Part fourteen](#part-twelve)
+        * [Part thirteen](#part-thirteen)
+        * [Part fourteen](#part-fourteen)
+        * [Part fiveteen](#part-fiveteen)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -2829,6 +2829,12 @@ DROP CONSTRAINT ON ()-[ acted_in:ACTED_IN ]-() ASSERT exists(acted_in.roles)
 --------------------
 
 #### Part Fiveteen
+
+<!--
+TODO
+Managing indexes
+https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
+-->
 
 #### Exercises part fiveteen
 
