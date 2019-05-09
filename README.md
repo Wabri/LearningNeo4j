@@ -2,7 +2,7 @@
 
 <!--
 TODO
-Managing indexes
+Creating indexes
 https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
 -->
 
@@ -2828,11 +2828,49 @@ DROP CONSTRAINT ON ()-[ acted_in:ACTED_IN ]-() ASSERT exists(acted_in.roles)
 
 --------------------
 
-#### Part Fiveteen
+### Part Fiveteen
+
+#### Managing indexes
+
+The uniqueness and node key constraints are essentially single-property and composite indexes respectively.
+Indexes are used to improve initial node lookup performance, but they require additional storage in the graph to maintain and also add to the cost of creating or modifying property values that are indexed.
+Indexes store redundant data that points to nodes with the specific property value or values.
+Unlike SQL, there is no such thing as a primary key in Neo4j, but nodes can have multiple properties that must be unique.
+
+This are single-property indexes used:
+
+* Equality checks: `=`
+* Range comparisons: `>`,`>=`,`<`, `<=`
+* List membership: `IN`
+* String comparisons: `STARTS WITH`, `ENDS WITH`, `CONTAINS`
+* Existence checks: `exists()`
+* Spatial distance searches: `distance()`
+* Spatial bounding searches: `point()`
+
+Composite indexes are used only for equality checks and list membership.
+
+***For more about indexes -> [neo4j operations manual]()***
+
+Because index maintenance incurs additional overhead when nodes are created so it's not raccomend to create indexes in a small graph.
+The indexes of a graph can be view by use the build-in command `schema`.
+
+The index for a property of a node can greatly reduce the number of nodes that the engine needs to visit in oredr to satisy a query.
+
+Example:
+
+```Cypher
+MATCH (m:Movie)
+WHERE 1990 < m.released < 2000
+SET m.videoFormat = 'DVD'
+```
+
+The graph engine will find the pointers to all nodes that satisfy the query without having to visit all of the nodes:
+
+![indexes range](resources/indexesRange.png)
 
 <!--
 TODO
-Managing indexes
+Creating indexes
 https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
 -->
 
