@@ -1,4 +1,4 @@
-# LearningDataAnalysis
+# LearningNeo4j
 
 <!--
 TODO
