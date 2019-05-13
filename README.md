@@ -3065,9 +3065,64 @@ ON CREATE
     SET actor.name = line.name, actor.born = toInteger(trim(line.birthyear))
 ```
 
-<!--
-The roles_to_load.csv file (sample below) holds the data that will populate the relationships between the nodes
--->
+Now let's create relationships between the movies and the actors using the csv file:
+
+```CSV
+personId,movieId,role
+1,1,Bud Fox
+4,1,Carl Fox
+3,1,Gordon Gekko
+4,2,A.J. MacInerney
+3,2,President Andrew Shepherd
+5,3,Ellis Boyd 'Red' Redding
+```
+
+The relative query will be:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles_to_load.csv'
+AS line
+MATCH (movie:Movie { movieId: line.movieId })
+MATCH (person:Person { personId: line.personId })
+CREATE (person)-[:ACTED_IN { roles: [line.role]}]->(movie)
+```
+
+#### Importing denormalized data
+
+When file that we need to import are denormalized a supplementary step is needed.
+
+There are a specifications for the field terminator of the file, this is an example:
+
+```Cypher
+title;released;summary;actor;birthyear;characters
+Back to the Future;1985;17 year old Marty McFly got home early last night. 30 years early.;Michael J. Fox;1961;Marty McFly
+Back to the Future;1985;17 year old Marty McFly got home early last night. 30 years early.;Christopher Lloyd;1938;Dr. Emmet Brown
+```
+
+From this we want to create person and movies:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'https://data.neo4j.com/intro-neo4j/movie_actor_roles_to_load.csv'
+AS line FIELDTERMINATOR ';'
+MERGE (movie:Movie { title: line.title })
+ON CREATE SET movie.released = toInteger(line.released),
+              movie.tagline = line.summary
+MERGE (actor:Person { name: line.actor })
+ON CREATE SET actor.born = toInteger(line.birthyear)
+MERGE (actor)-[r:ACTED_IN]->(movie)
+ON CREATE SET r.roles = split(line.characters,',')
+```
+
+Two main things to notice:
+
+1. the definition of the semi-colon as a field terminator rather than comma;
+2. the build-in method `split()` to create the list for the roles property.
+
+It's suggested to create nodes and relationships separately in multiple passes, dependes on the complexity of the operations and the experienced performance.
+
+To import a larger amount of data (more than 10k rows), it is recommended to prefix the load csv clause with a **`PERIODIC COMMIT`** hint. This allow the database to regularly commit the import transactions to avoid memory churn for large transaction-states.
 
 #### Exercises part sixteen
 
@@ -3077,6 +3132,145 @@ First of all use the script found at [Cypher/exercises/part_one/createGraph.cql]
 
 ```Text
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 16.1: You are given the name of a file, http://data.neo4j.com/intro-neo4j/actors.csv that you must load into your graph.
+
+Write the Cypher statement to read the actor data from a file.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/actors.csv'
+AS row
+RETURN count(*)
+```
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/actors.csv'
+AS row
+RETURN row
+LIMIT 1
+```
+
+Exercise 16.2: Read the data and return it, ensuring that the data returned is properly formatted.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/actors.csv'
+AS row
+RETURN row.id, row.name, toInteger(trim(row.birthYear))
+```
+
+Exercise 16.3: Load the data into your graph.
+
+Hint: Use MERGE because the graph already contains some of these actors.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/actors.csv'
+AS row
+MERGE (actor:Person {name: row.name, born: toInteger(trim(row.birthYear))})
+    ON CREATE SET actor.born = toInteger(trim(row.birthYear)), actor.id = row.id
+    ON MATCH SET actor.id = row.id
+```
+
+Exercise 16.4: You are given the name of a file, http://data.neo4j.com/intro-neo4j/movies.csv that you must load into your graph.
+
+Write the Cypher statement to read the movie data from a file.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies.csv'
+AS row
+RETURN count(*)
+```
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies.csv'
+AS row
+RETURN row
+LIMIT 1
+```
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies.csv'
+AS row
+RETURN row.id, row.title, row.year, row.tagLine
+LIMIT 10
+```
+
+Exercise 16.5: Read the data and return it, ensuring that the data returned is properly formatted.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies.csv'
+AS row
+RETURN row.id, row.title, toInteger(trim(row.year)), trim(row.tagLine)
+LIMIT 10
+```
+
+Exercise 16.6: Load the data into your graph.
+
+Hint: Use MERGE because the graph already contains some of these movies.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies.csv'
+AS row
+MERGE (movie:Movie {title: row.title})
+    ON CREATE SET movie.tagLine = trim(row.tagLine), movie.id = row.id, movie.released = toInteger(trim(row.year))
+    ON MATCH SET movie.id = row.id
+```
+
+Exercise 16.7: You are given the name of a file, http://data.neo4j.com/intro-neo4j/roles.csv that you must load into your graph.
+
+Write the Cypher statement to read the relationship data from a file.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles.csv'
+AS row FIELDTERMINATOR ';'
+RETURN count(*)
+```
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles.csv'
+AS row FIELDTERMINATOR ';'
+RETURN row
+LIMIT 1
+```
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles.csv'
+AS row FIELDTERMINATOR ';'
+RETURN row.Role, row.personId, row.movieId
+LIMIT 10
+```
+
+Exercise 16.8: Read the data and return it, ensuring that the data returned is properly formatted.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles.csv'
+AS row FIELDTERMINATOR ';'
+RETURN split(row.Role, ','), row.personId, row.movieId
+LIMIT 10
+```
+
+Exercise 16.9: Load the data into your graph.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/roles.csv'
+AS row FIELDTERMINATOR ';'
+MATCH (pers:Person {id: row.personId}), (mov:Movie {id: row.movieId})
+MERGE (pers)-[rol:ACTED_IN {role: split(row.Role, ',')}]->(mov)
+RETURN pers, rol, mov
 ```
 
 --------------------
