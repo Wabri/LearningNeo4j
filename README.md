@@ -2849,7 +2849,7 @@ This are single-property indexes used:
 
 Composite indexes are used only for equality checks and list membership.
 
-***For more about indexes -> [neo4j operations manual]()***
+***For more about indexes -> [neo4j operations manual](https://neo4j.com/docs/operations-manual/current/)***
 
 Because index maintenance incurs additional overhead when nodes are created so it's not raccomend to create indexes in a small graph.
 The indexes of a graph can be view by use the build-in command `schema`.
@@ -2868,15 +2868,216 @@ The graph engine will find the pointers to all nodes that satisfy the query with
 
 ![indexes range](resources/indexesRange.png)
 
-<!--
-TODO
-Creating indexes
-https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
--->
+Indexes improve graph engine performance.
+A unique constraint on a property is an index so it's not needed to create an index for any properties created with uniqueness constraints for, but an index on its own does not guarantee uniqueness.
+
+To create a single-property index it's necessary to use the `CREATE INDEX ON`:
+
+```Cypher
+CREATE INDEX ON :Movie(released)
+```
+
+If a set of properties for a node must be unique for every node, then it's recommend to create a constraint as a node key, rather than an index. If there can be duplication for a set of property values, but the faster access it's necessary than the composite index is necessary.
+
+Example:
+
+```Cypher
+MATCH (m:Movie)
+WHERE m.released >= 2000
+SET m.videoFormat = 'DVD';
+MATCH (m:Movie)
+WHERE m.released < 2000
+SET m.videoFormat = 'VHS';
+CREATE INDEX ON :Movie(released,videoFormat)
+```
+
+This queries set two new properties and with the last query create composite index on these properties.
+
+To retrive indexes there is a build-in method call `:schema`, similar to `CALL db.constraints()`, that return a list of the indexes, and the unique constraints and node key shown as indexes in the graph.
+
+To drop an existing index created it's possible to use the clause `DROP` instead of `CREATE`:
+
+```Cypher
+DROP INDEX ON :Movie(released, videoFormat)
+```
 
 #### Exercises part fiveteen
 
-***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 14 instructions***
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 15 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
+
+Exercise 15.1: Create a single-property index on the born property of a Person node.
+
+```Cypher
+CREATE INDEX ON :Person(born)
+```
+
+Exercise 15.2: View the indexes defined for the graph.
+
+```Cypher
+:schema
+```
+
+Exercise 15.3: Drop the single-property index you just created for the born property of the Person nodes.
+
+```Cypher
+DROP INDEX ON :Person(born)
+```
+
+--------------------
+
+### Part Sixteen
+
+#### From relational to graph
+
+***[youtube video - (RDBMS+SQL) to (Graphs+Cypher)](https://www.youtube.com/watch?v=NO3C-CWykkY)***
+
+In many applications the datas comes from a .csv files or files of other types and with these we want to populate our graph.
+There are many nuances and best practices for loading data into graph from files.
+
+*To convert a relational database into a graph database with one step you can use the ETL tool (Extract Transform Load) -> [Neo4J ETL](https://neo4j.com/developer/neo4j-etl/)*
+
+In Cypher it's possible to:
+
+* Load data from a URL (http(s) or file)
+* Process data as a stream of records
+* Create or update the graph with the data being loaded
+* Use transactions during the data load
+* Transform and convert values from the load stream
+* Load up to 10M nodes and relationships
+
+Commonly to import data into a graph is used the csv files, to do that it's necessary to develop a model that describes how data need to be represents in the graph.
+
+#### Importing normalized data
+
+The `LOAD CSV` clause parses a local in the import directory of the neo4j installation or a remote file into a stream of rows which represent maps (with eaders) or lists. Once done this it's possible to use Cypher operations to create nodes or relationships or merge existing graph.
+
+Syntax of LOAD CSV:
+
+```Cypher
+LOAD CSV WITH HEADERS FROM url-value
+AS row
+```
+
+* The **row** is a variable that is used to extract data from file.
+* The first line of the file must contain a comma-separated list of column names.
+* The url-value can be a resource or a file on the system.
+
+Each line of this file must contains data that is interpreted as values for each column name. When each line is read from the file, it's possible to perform the necessary processing to create or merge data into the graph.
+
+As CSV file usually represent either node or relationship lists and to create nodes and relationships separately it's necessary to parse several time that file.
+
+Example of csv file:
+
+```CSV
+id,title,country,year,summary
+1,Wall Street,USA,1987, Every dream has a price.
+2,The American President,USA,1995, Why can't the most powerful man in the world have the one thing he wants most?
+3,The Shawshank Redemption,USA,1994, Fear can hold you prisoner. Hope can set you free.
+```
+
+Before loading data from CSV files into graph, we need to confirm that the data retrived looks ok. To do this we can first print the lines of the file and get some information about the data to be loaded.
+
+Example:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies_to_load.csv'
+as LINE
+RETURN count(*)
+```
+
+Or even better we probably want to see how the datas are stored:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies_to_load.csv'
+AS line
+RETURN * LIMIT 1
+```
+
+Since all the lines are with the same format we can limit the visualization to 1.
+
+The output of the last query should be:
+
+```Output
+line
+{
+  "summary": " Every dream has a
+price.",
+  "country": "USA",
+  "year": "1987",
+  "id": "1",
+  "title": "Wall Street"
+}
+```
+
+Notice that the *summary* column's data has an extra space before the data in the file, to make sure not to load data like this we need to beutify the output:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies_to_load.csv'
+AS line
+RETURN line.id, line.title, toInteger(line.year), trim(line.summary)
+```
+
+The output will be formatted to this:
+
+|line.id|line.title|toInteger(line.year)|trim(line.summary)|
+| --- | --- | --- | --- |
+|"1"|"Wall Street"|1987|"Every dream has a price."|
+|"2"|"The American President"|1995|"Why can't the most powerful man in the world have the one thing he wants most?"|
+|"3"|"The Shawshank Redemption"|1994|"Fear can hold you prisoner. Hope can set you free."|
+
+Now we can create nodes and relationships from this file:
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/movies_to_load.csv'
+AS line
+CREATE (movie:Movie {movieId: line.id, title: line.title, released: toInteger(line.year), tagline: trim(line.summary)})
+```
+
+Another example can be the file that holds the data of Person:
+
+```Text
+Id,name,birthyear
+1,Charlie Sheen, 1965
+2,Oliver Stone, 1946
+3,Michael Douglas, 1944
+4,Martin Sheen, 1940
+5,Morgan Freeman, 1937
+```
+
+In this case we need to pay more attention at the people in the database that have already this name to prevent duplications. Instead of creating them, we need to use the **`MERGE`** to ensure unique entries after the import.
+
+```Cypher
+LOAD CSV WITH HEADERS
+FROM 'http://data.neo4j.com/intro-neo4j/person_to_load.csv'
+AS line
+MERGE (actor:Person {personId: line.Id})
+ON CREATE
+    SET actor.name = line.name, actor.born = toInteger(trim(line.birthyear))
+```
+
+<!--
+The roles_to_load.csv file (sample below) holds the data that will populate the relationships between the nodes
+-->
+
+#### Exercises part sixteen
+
+***on neof4j browser run the command `:play intro-neo4j-exercises` and follow exercise 16 instructions***
+
+First of all use the script found at [Cypher/exercises/part_one/createGraph.cql](Cypher/exercises/part_one/createGraph.cql) to create the basic graph:
+
+```Text
+Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+```
 
 --------------------
 
