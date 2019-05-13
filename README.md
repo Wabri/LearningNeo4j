@@ -26,6 +26,7 @@ https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-7/
         * [Part thirteen](#part-thirteen)
         * [Part fourteen](#part-fourteen)
         * [Part fiveteen](#part-fiveteen)
+        * [Part sixteen](#part-sixteen)
         * [Example](#example---simple-graph)
         * [Application - Movies](#application---movie-graph)
         * [Application - Northwind](#application---northwind-graph)
@@ -3134,7 +3135,7 @@ First of all use the script found at [Cypher/exercises/part_one/createGraph.cql]
 Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
 ```
 
-Exercise 16.1: You are given the name of a file, http://data.neo4j.com/intro-neo4j/actors.csv that you must load into your graph.
+Exercise 16.1: You are given the name of a file, `http://data.neo4j.com/intro-neo4j/actors.csv` that you must load into your graph.
 
 Write the Cypher statement to read the actor data from a file.
 
@@ -3175,7 +3176,7 @@ MERGE (actor:Person {name: row.name, born: toInteger(trim(row.birthYear))})
     ON MATCH SET actor.id = row.id
 ```
 
-Exercise 16.4: You are given the name of a file, http://data.neo4j.com/intro-neo4j/movies.csv that you must load into your graph.
+Exercise 16.4: You are given the name of a file, `http://data.neo4j.com/intro-neo4j/movies.csv` that you must load into your graph.
 
 Write the Cypher statement to read the movie data from a file.
 
@@ -3225,7 +3226,7 @@ MERGE (movie:Movie {title: row.title})
     ON MATCH SET movie.id = row.id
 ```
 
-Exercise 16.7: You are given the name of a file, http://data.neo4j.com/intro-neo4j/roles.csv that you must load into your graph.
+Exercise 16.7: You are given the name of a file, `http://data.neo4j.com/intro-neo4j/roles.csv` that you must load into your graph.
 
 Write the Cypher statement to read the relationship data from a file.
 
@@ -3282,6 +3283,25 @@ Neo4j has a published, open source Cypher library, Awesome Procedures on Cypher 
 * [Another Cypher library is the Graph Algorithms library](https://github.com/neo4j-contrib/neo4j-graph-algorithms) to help users to analyze data in graphs.
 * github -> [github.com/neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures)
 * neo4j docs -> [neo4j-contrib.github.io/neo4j-apoc-procedures/](https://neo4j-contrib.github.io/neo4j-apoc-procedures/)
+
+--------------------
+
+### How to learn more
+
+There are many resources available to you for learning more about Neo4j and Cypher.
+
+* [Resources for developers](https://neo4j.com/developer/resources/)
+* Neo4j Community Site where you can ask or answer questions about Neo4j and discuss with other users -> [Community](https://community.neo4j.com)
+* [Neo4j documentation](https://neo4j.com/docs/)
+* [Neo4j Sandboxes for experimenting with graphs](https://neo4j.com/sandbox-v2/)
+* [Videos on YouTube](https://www.youtube.com/channel/UCvze3hU6OZBkB1vkhH2lH9Q)
+* [GitHub repository](https://github.com/neo4j-contrib)
+* [Neo4j events all over the world](https://neo4j.com/events/world/all/)
+* [Neo4j online and classroom training](https://neo4j.com/graphacademy/)
+* [Graph Gists for learning more use cases for Neo4j](https://neo4j.com/graphgists/)
+* [Become a Neo4j certified developer](https://neo4j.com/graphacademy/neo4j-certification/)
+* [Attend a Neo4j meetup](https://www.meetup.com/topics/neo4j/)
+* [View questions/answers raised about Neo4j](https://stackoverflow.com/tags/neo4j/hot)
 
 --------------------
 
