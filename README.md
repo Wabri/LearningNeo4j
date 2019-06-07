@@ -88,6 +88,7 @@ Unlike the other databases, relationships take first priority in graph databases
 By assembling the simple abstractions of nodes and relationships into connected structures, graph databases enable us to build sophisticated models that map closely to out problem domain.
 
 Many applications' data is modeled as relational data, indeed there are some similarities between a relational model nad a graph model:
+
 |Relational|Graph|
 |----|----|
 |Rows|Nodes|
@@ -96,6 +97,7 @@ Many applications' data is modeled as relational data, indeed there are some sim
 |columns|Properties|
 
 There are even difference between this two databases:
+
 |Relational|Graph|
 |----|----|
 |Each column must have field value|Nodes with the same label arent' required to have the same set of properties|
@@ -227,6 +229,7 @@ Graph patterns are expressed in Cypher using ASCII-art like syntax to make queri
 The properties of a node are accessed using `{variable}.{property_key}`, for example `emil.name` or `movie.title`.
 
 The Cypher language are case insensitive and sensitive:
+
 |Sensitive|Insensitive|
 |---|---|
 |Node labels|Cypher keywords|
@@ -507,6 +510,7 @@ RETURN node1, node2
 ```
 
 Where:
+
 | | |
 | ---- | ---- |
 | node1, node2 | is a specification of a node where you may include node labels and property values for filtering |
@@ -781,6 +785,7 @@ RETURN p.name as name, p.born as yearBorn
 ```
 
 and the return is:
+
 |name|yearBorn|
 | --- | --- |
 | "Lana Wachowsky" | 1965 |
@@ -2125,6 +2130,7 @@ RETURN movie, rel, pers
 The **MERGE** clause is used either to create new nodes and relationships or to make structural changes to existing nodes and relationships.
 
 Recap of the `CREATE` clause:
+
 |              | The result with `CREATE` |
 | ---          | ---                      |
 | Node         | If a node with the same property value exists, a duplicate node is creted |
@@ -3877,6 +3883,7 @@ Dissection of the query:
 * Limit the number of records to find and return -> `LIMIT 5`
 
 The result is:
+
 |movie|reviews|
 | --- | --- |
 |"Matrix, The" | 259 |
