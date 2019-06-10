@@ -1,0 +1,2950 @@
+<!doctype html>
+<html>
+    <head>
+        <title>LearningNeo4j</title>
+        <meta charset='utf-8'/>
+        <link rel="stylesheet" type="text/css" href="./Neo4j.html_files/styles.css">
+        <script>
+            window.onload = function() {
+                if (document.querySelector("script[type=\"math/tex; mode=display\"]") !== null) {
+                    var mathjax = document.createElement("script");
+                    mathjax.src = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML";
+                    document.head.appendChild(mathjax);
+                }
+                if (document.getElementsByTagName("code").length !== 0) {
+                    var highlight = document.createElement("script");
+                    var highlightcss = document.createElement("link");
+                    highlight.src = "http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js";
+                    highlightcss.rel = "stylesheet";
+                    highlightcss.href = "http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css";
+                    highlight.onload = function() {hljs.initHighlighting();};
+                    document.head.appendChild(highlight);
+                    document.head.appendChild(highlightcss);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <article>
+            <h1 id="learningneo4j">LearningNeo4j</h1>
+<h2 id="content">Content</h2>
+<ol>
+<li><a href="#graph-database-fundamentals">Graph Database Fundamentals</a></li><li><a href="#neo4j">Neo4J</a><ul>
+<li><a href="#cypher">Query Language Cypher</a><ul>
+<li><a href="#part-one">Part one</a></li><li><a href="#part-two">Part two</a></li><li><a href="#part-three">Part three</a></li><li><a href="#part-four">Part four</a></li><li><a href="#part-five">Part five</a></li><li><a href="#part-six">Part six</a></li><li><a href="#part-seven">Part seven</a></li><li><a href="#part-eight">Part eight</a></li><li><a href="#part-nine">Part nine</a></li><li><a href="#part-ten">Part ten</a></li><li><a href="#part-eleven">Part eleven</a></li><li><a href="#part-twelve">Part twelve</a></li><li><a href="#part-thirteen">Part thirteen</a></li><li><a href="#part-fourteen">Part fourteen</a></li><li><a href="#part-fiveteen">Part fiveteen</a></li><li><a href="#part-sixteen">Part sixteen</a></li><li><a href="#example---simple-graph">Example</a></li><li><a href="#application---movie-graph">Application - Movies</a></li><li><a href="#application---northwind-graph">Application - Northwind</a></li><li><a href="#recommendations">Recommendations - Movies</a><ul>
+<li><a href="#personalized-reccomendations">Personalized recommendations</a></li></ul>
+</li></ul>
+</li></ul>
+</li><li><a href="#index">Index</a></li><li><a href="#references">References</a></li></ol>
+<hr>
+<h2 id="graph-database-fundamentals">Graph Database Fundamentals</h2>
+<p>A graph database can store any kind of data using a few simple concepts:</p>
+<ol>
+<li><p><strong>Nodes</strong> - graph data records</p>
+<p> <img src="Neo4j.html_files/images/nodes.PNG" alt="nodes"></p>
+</li><li><p><strong>Labels</strong> - specifies the type of the node</p>
+<p> <img src="Neo4j.html_files/images/nodesTypes.PNG" alt="nodesTypes"></p>
+</li><li><p><strong>Relationships</strong> - connect nodes</p>
+<p> <img src="Neo4j.html_files/images/nodesTypesRelationships.PNG" alt="nodesTypes"></p>
+</li><li><p><strong>Properties</strong> - key-value pair properties</p>
+<p> <img src="Neo4j.html_files/images/nodesTypesRelationshipsProperties.PNG" alt="nodesTypes"></p>
+</li></ol>
+<p>The simplest graph has just a single <strong>node</strong> with some named values called <strong>Properties</strong>:</p>
+<p><img src="Neo4j.html_files/images/simpleGraph.PNG" alt="simpleGraph"></p>
+<p>Nodes are the name for data records in a graph and the data is stored as Properties that can be simple key-value pairs.</p>
+<p>Nodes can be grouped together by applying a Label to each member. In the example above we can set to that node the label <strong>Person</strong>.  Is important to know that a label is not a object and can&#39;t have any properties, is used only to categorize the nodes in a graph. A node can have zero or more labels based on the definition of that node.</p>
+<p>To add more records we can simply add more nodes.</p>
+<p><img src="Neo4j.html_files/images/moreNodes.PNG" alt="moreNodes"></p>
+<p>Similar nodes can have different properties with different type: string, number or even boolean.
+The dimension of a graph like this can be infinite because there is no limit to the number of nodes that can be added.</p>
+<p>One of the properties of a database is to connect data, in a graph database the link is made by <strong>Relationships</strong>. To associate two nodes we can add <strong>Relationship</strong> between them wich describe how the records are related.</p>
+<p><img src="Neo4j.html_files/images/relationships.PNG" alt="relationships"></p>
+<p>A relationship are data records that need to have two properties: <strong>direction</strong> and <strong>type</strong>, and can also contains properties like nodes.</p>
+<p><img src="Neo4j.html_files/images/relationshipProperties.PNG" alt="relationshipProperties"></p>
+<p>A Graph database is an online database management system with Create, Read, Update and Delete (CRUD) operations working on a graph data model.
+Graph database are generally build for use with <a href="#otlp">OLTP</a> systems, they are normally optimized for transactional performance, and engineered with transactional integrity and operational availability in mind.</p>
+<p>Unlike the other databases, relationships take first priority in graph databases so the foreign keys or out-of-band processing is no more necessary to link a data to another.</p>
+<p>By assembling the simple abstractions of nodes and relationships into connected structures, graph databases enable us to build sophisticated models that map closely to out problem domain.</p>
+<p>Many applications&#39; data is modeled as relational data, indeed there are some similarities between a relational model nad a graph model:</p>
+<table>
+<thead>
+<tr>
+<th>Relational</th>
+<th>Graph</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rows</td>
+<td>Nodes</td>
+</tr>
+<tr>
+<td>Joins</td>
+<td>Relationships</td>
+</tr>
+<tr>
+<td>Table names</td>
+<td>Labels</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>Properties</td>
+</tr>
+</tbody>
+</table>
+<p>There are even difference between this two databases:</p>
+<table>
+<thead>
+<tr>
+<th>Relational</th>
+<th>Graph</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each column must have field value</td>
+<td>Nodes with the same label arent&#39; required to have the same set of properties</td>
+</tr>
+<tr>
+<td>Joins are calculated at query time</td>
+<td>Relationships are stored on disk when they are created</td>
+</tr>
+<tr>
+<td>A row can belong to one table</td>
+<td>A node can have many labels</td>
+</tr>
+<tr>
+<td>Try to get the schema defined and then make minimal changes to it after that</td>
+<td>It&#39;s common for the schema to evolve with the application</td>
+</tr>
+<tr>
+<td>More abstract focus when modeling</td>
+<td>Common to use actual data items when modeling</td>
+</tr>
+</tbody>
+</table>
+<p>Here is the relational model:</p>
+<p><img src="Neo4j.html_files/images/relationalModelClubs.PNG" alt="relationalModelClubs"></p>
+<p>And here is the correspondig graph model:</p>
+<p><img src="Neo4j.html_files/images/graphModelClubs.PNG" alt="graphModelClubs"></p>
+<p>The graph model can be more versatile and can be upgrade without efforts, for example we want to add the confederation and country:</p>
+<p><img src="Neo4j.html_files/images/graphModelClubsExtend.PNG" alt="graphModelClubsExtend"></p>
+<hr>
+<h2 id="neo4j">Neo4J</h2>
+<p><img src="Neo4j.html_files/images/HelloWorld.PNG" alt="HelloWorld"></p>
+<p><a href="https://www.youtube.com/watch?v=_D19h5s73Co">video youtube</a></p>
+<p>Connected information is everywhere in the world around us. Neo4j was build to efficiently store, handle, and query higly-connected data in your data model.</p>
+<p>Neo4J is a high performance graph store with all the feature expected of a mature and robust database. The network structure is made by nodes and relationships rather than static tables.</p>
+<p>Some definitions:</p>
+<ul>
+<li><p>Index free adjacency</p>
+<p>  With index free adjaceny, when a node or relationship is written to the database, it is stored in the database as connected and any subsequent access to the data is done using pointer navigation wich is very fast. Since Neo4j is a native graph database, it supports very large graphs where connected data can be traversed in constant time without the need for an index.</p>
+<p>  <img src="Neo4j.html_files/images/neo4jIndex.PNG" alt="Neo4j index"></p>
+<p>  To know more read -&gt; <a href="#index-free-adjacency">Index-free adjacency</a></p>
+</li><li><p>ACID</p>
+<p>  Transactionality is very important for robust applications that require an atomicity, consistency, isolation, and durability guarantees for their data. If a relationship between nodes is created, not only is the relationship created, but the nodes are updated as connected.
+  All of these updates to the database must all succeed or fail.</p>
+<p>  <img src="Neo4j.html_files/images/neo4jACID.PNG" alt="Neo4j ACID"></p>
+<p>  To know more read -&gt; <a href="#acid-consistency-model">ACID</a></p>
+</li><li><p>Clusters</p>
+<p>  Neo4j supports clusters that provide high availablity, scalability for read access to the data and failover which is important to many enterprises.</p>
+<p>  <img src="Neo4j.html_files/images/neo4jCluster.PNG" alt="neo4jCluster"></p>
+<p>  To know more read -&gt; <a href="#cluster">Cluster</a></p>
+</li><li><p>Graph engine</p>
+<p>  The Neo4j graph engine is used to interpret Cypher statements and also executes kernel-level code to store and retrive data, whether it is on disk, or cached in memory.</p>
+</li><li><p>Bolt</p>
+<p>  Neo4j supports Java, JavaScript, Python, C#, and Go drivers that use Neo4j&#39;s bolt protocol for binary access to the database layer.
+  Bolt is an efficiant binary protocol that compresses data sent over the wire as well encrypting the data.
+  It&#39;s possible to create a java application that uses the bolt driver to access the Neo4j database and the application may use other packages that allow data integration between Neo4j and other data stores or uses as common framework such as spring.</p>
+</li><li><p>Tools</p>
+<p>  <a href="https://neo4j.com/sandbox-v2/">Neo4j browser</a> is an application that uses the JavaScript Bolt driver to access the graph engine of the Neo4j database server.</p>
+<p>  <a href="https://neo4j.com/bloom/">Bloom</a> enables you to visualize a graph without knowing much about Cypher (<a href="https://www.youtube.com/watch?v=KjINhGbG-So">youtube video</a>).</p>
+<p>  <a href="https://neo4j.com/developer/neo4j-etl/">ETL</a> used to importing and exporting data between flat files and a neo4j Database.</p>
+</li></ul>
+<p><img src="Neo4j.html_files/images/neo4jStructure.PNG" alt="neo4jStructure"></p>
+<p>To use Neo4j there are two options:</p>
+<ul>
+<li><p><a href="https://neo4j.com/developer/neo4j-desktop/">desktop application</a></p>
+<p>  &quot; The Neo4j Desktop includes the Neo4j Database server which includes the graph engine and kernel so that Cypher statements can be executed to access a database on your system. It includes an application called Neo4j Browser. Neo4j Browser enables you to access a Neo4j database using Cypher. You can also call built-in procedures that communicate with the database server. There are a number of additional libraries and drivers for accessing the Neo4j database from Cypher or from another programming language that you can install in your development environment. If you are looking to use your system for application development and you want to be able to create multiple Neo4j databases on your machine, you should consider downloading the Neo4j Desktop (free download). The Neo4j Desktop runs on OS X, Linux, and Windows. &quot;</p>
+<p>  How to use on:</p>
+<ol>
+<li>OSX: <a href="https://www.youtube.com/watch?v=8yWhuUnPapw">youtube video</a></li><li>Windows: <a href="https://www.youtube.com/watch?v=EO57N03U_sI">youtube video</a></li><li>Linux: <a href="https://www.youtube.com/watch?v=SGH_5x3kfdw">youtube video</a></li></ol>
+</li><li><p><a href="https://neo4j.com/sandbox-v2/">browser sandbox</a></p>
+<p>  &quot; The Neo4j sandbox is another way that you can begin development with Neo4j. It is a temporary, cloud-based instance of a Neo4j Server with its associated graph that you can access from any Web browser. The database in a Sandbox may be blank or it may be pre-populated. It is started automatically for you when you create the Sandbox.</p>
+<p>  By default, the Neo4j sandbox is available for three days, but you can extend it for up to 10 days. If you do not want to install Neo4j Desktop on your system, consider creating a Neo4j sandbox. You must make sure that you extend your lease of the sandbox, otherwise you will lose your graph and any saved Cypher scripts you have created in the sandbox. However, you can use Neo4j Browser Sync to save Cypher scripts from your sandbox. We recommend you use the Desktop for a real development project. The Sandbox is intended as a temporary environment or for learning about the features of Neo4j as well as specific graph use-cases. &quot;</p>
+<p>  <a href="https://www.youtube.com/watch?v=rmfgRKPjhl8">youtube video - Creating a Neo4j Sandbox</a></p>
+</li></ul>
+<p>Both of them use Neo4j Browser application to perform querying in the database -&gt; <a href="https://www.youtube.com/watch?v=rQTximyaETA">GettingStartedBrowser</a></p>
+<hr>
+<h3 id="cypher">Cypher</h3>
+<p><strong><em>This notes below can be read on neo4J browser sandbox by type the command: :play cypher</em></strong></p>
+<p><strong><em>All of the query are run in the <a href="https://neo4j.com/sandbox-v2">Neo4J browser sandbox</a> or on <a href="https://neo4j.com/download/">Neo4J desktop</a></em></strong></p>
+<p>Neo4J&#39;s Cypher language is purpose built for working with graph data, is a declarative query language that allows for expressive and efficient querying and updating of graph data. It uses patterns to describe graph data and is familiar to sql-like clauses.
+This query language allows users to store and retrive data from the Neo4J graph database with a visual and logical syntax to match patterns of nodes and relationships in the graphs.
+It allow to state what we want to select, insert, update, or delete from our graph data without a description of exactly how to do it:</p>
+<h4 id="-describing-what-to-find-and-not-how-to-find-it"><strong>&quot; Describing what to find and not how to find it &quot;</strong></h4>
+<p>This means that complex database queries can easily be expressed through Cypher, allowing you to focus on your domain instead of getting lost in the syntax of database access. Also give an expressive and efficient queries to handle needed create, read, update, and delete functionality (also know as CRUD operations).</p>
+<p>The unwritten rule wants to rappresents the nouns as the nodes of the graph, the verbs as the relationships, the adjectives and adverbs are the properties:</p>
+<p><img src="Neo4j.html_files/images/unwrittenRule.PNG" alt="unwrittenRule"></p>
+<p>Graph patterns are expressed in Cypher using ASCII-art like syntax to make queries more self-explanatory:</p>
+<ul>
+<li><strong>NODES</strong> uses a pair of parentheses like <code>()</code> or <code>(node)</code> to rapresent a node, similar to a circle on witheboard. An anonymous node <code>()</code> represents one or more nodes during a query processing where there are no restrictions of the type of the node, a name inside the parentheses <code>(node)</code> tells the query processor that for this query is used the variable called <code>node</code> to rapresents all the nodes of the graph.</li><li><strong>LABELS</strong> are used to group nodes and filter queries against the graph and is defined with a colon <code>(:Label)</code>. A node can have zero or more labels for example <code>(node)</code>, <code>(node:Label)</code>, <code>(node:Label1:Label2)</code>, <code>(:Label)</code>, <code>(:Label1:Label2)</code>.</li><li><strong>RELATIONSHIPS</strong> are defined within square brackets <code>[]</code> and optionally we can specify type and direction like <code>()&lt;-[:RELATIONSHIP]-()</code>.</li><li><strong>ALIASES</strong> are used to referred elements to later in the query defined by a name before a name like <code>(node1:Label1)&lt;-[relationship:RELATIONSHIP]-(node2:Label2)</code> where node1, node2 and relationship are aliases.</li><li><strong>Predicates</strong> are filters that can be applied to limit the matching paths: boolean logi operators, <a href="#regular-expressions">regular expressions</a> and string comparison operators.</li></ul>
+<p>The properties of a node are accessed using <code>{variable}.{property_key}</code>, for example <code>emil.name</code> or <code>movie.title</code>.</p>
+<p>The Cypher language are case insensitive and sensitive:</p>
+<table>
+<thead>
+<tr>
+<th>Sensitive</th>
+<th>Insensitive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node labels</td>
+<td>Cypher keywords</td>
+</tr>
+<tr>
+<td>Relationship type</td>
+<td>-----</td>
+</tr>
+<tr>
+<td>Property keys</td>
+<td>----</td>
+</tr>
+</tbody>
+</table>
+<p>Later on the cypher keywords are upper-case, this is a coding convention and is described in the <a href="https://neo4j.com/developer/cypher-style-guide/">Cypher Style Guyide</a>.</p>
+<hr>
+<h3 id="part-one">Part one</h3>
+<h4 id="comments">Comments</h4>
+<p>You can place comments anywhere in the query and to specify that the rest of the line is interpreted as a comment you need to put a double slash <code>// comment</code>.</p>
+<h4 id="null">Null</h4>
+<p>Null represents missing or undefined values. You do not store a null value in a property. It just doesen&#39;t exist on that particular node.
+<strong>Warning: null=null is not true but the result will be null because we don&#39;t know the value of a null property</strong></p>
+<h4 id="match">Match</h4>
+<h5 id="-on-neof4j-browser-run-the-command-help-match"><strong><em>on neof4j browser run the command <code>:help MATCH</code></em></strong></h5>
+<p><a href="https://www.youtube.com/watch?v=Sz2C618QKN8">youtube video - how to execute a MATCH statement</a></p>
+<p>The most widely used Cypher clause is <strong>MATCH</strong>, this performs a pattern match against the data in the graph. During the query processing, the graph engine traverses the graph to find all nodes that match the graph pattern.</p>
+<p>A query with match need to be present with the <strong>RETURN</strong> clause. This clause must be the last of a query to the graph. Here some examples:</p>
+<pre><code class="lang-Cypher">// returns all nodes in the graph
+MATCH (variable)
+RETURN variable
+</code></pre>
+<pre><code class="lang-Cypher">// returns all Label nodes in the graph
+MATCH (variable:Label)
+RETURN variable // returns
+</code></pre>
+<p>When you specify a pattern for a <strong>MATCH</strong> clause, you should always specify a node label if possible. In doing so, the graph engine uses an index to retrive the nodes which will perform better than not using a label for the <strong>MATCH</strong>.</p>
+<h4 id="type-of-query-output">Type of query output</h4>
+<p>The output of a query can be different:</p>
+<ul>
+<li>by <strong>graph</strong>:</li></ul>
+<p><img src="Neo4j.html_files/images/matchEmilReturnG.PNG" alt="matchEmilReturnG"></p>
+<ul>
+<li><p>by <strong>table</strong>:</p>
+<pre><code class="lang-Json">  {
+      &quot;name&quot;: &quot;Emil&quot;,
+      &quot;from&quot;: &quot;Sweden&quot;,
+      &quot;klout&quot;: 99
+  }
+</code></pre>
+</li><li><p>by <strong>text</strong>:</p>
+<pre><code class="lang-Column">  ╒══════════════════════════════════════════╕
+  │&quot;ee&quot;                                      │
+  ╞══════════════════════════════════════════╡
+  │{&quot;name&quot;:&quot;Emil&quot;,&quot;from&quot;:&quot;Sweden&quot;,&quot;klout&quot;:99}│
+  └──────────────────────────────────────────┘
+</code></pre>
+</li></ul>
+<h4 id="exercises-part-one">Exercises part one</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 1 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 1.1 Retrive all nodes from the database</p>
+<pre><code class="lang-Cypher">MATCH (n)
+RETURN n
+</code></pre>
+<p><img src="Neo4j.html_files/images/partOneExercise_1_1.PNG" alt="1.1"></p>
+<p>Exercise 1.2 Examine the schema of your database</p>
+<pre><code class="lang-Cypher">CALL db.schema()
+</code></pre>
+<p><img src="Neo4j.html_files/images/partOneExercise_1_2.PNG" alt="1.2"></p>
+<p>Exercise 1.3 Retrive all Person nodes</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+RETURN p
+</code></pre>
+<p><img src="Neo4j.html_files/images/partOneExercise_1_3.PNG" alt="1.3"></p>
+<p>Exercise 1.4 Retrive all Movie nodes</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+RETURN m
+</code></pre>
+<p><img src="Neo4j.html_files/images/partOneExercise_1_4.PNG" alt="1.4"></p>
+<hr>
+<h3 id="part-two">Part two</h3>
+<h4 id="properties">Properties</h4>
+<p>In Neo4j a node can have properties that are used for further define a node.
+A property is identified with a key and defined for a node and not for a type of node.
+All nodes of the same type need not have the same properties.</p>
+<p>For example in the Movie graph all Movie nodes have both title and released properties, however it is not requirement that every Movie node has a property tagline:</p>
+<p><img src="Neo4j.html_files/images/taglineMovie.PNG" alt="taglineMovie"></p>
+<p>Properties can be used to filter queries so that a subset of the graph is retrived. In addition, with the <code>RETURN</code> clause, you can return property values from the retrived nodes, rather than the nodes.</p>
+<p>The propertiy keys of a graph can be view by execute <code>CALL db.propertyKeys</code> which call the Neo4j library method that returns the property keys for the graph.
+For example run this command in the movie graph returns the result stream contains all property keys in the graph:</p>
+<p><img src="Neo4j.html_files/images/propertyKeys.PNG" alt="propertyKeys"></p>
+<h4 id="nodes-properties-filtering">Nodes properties filtering</h4>
+<p><a href="https://www.youtube.com/watch?v=Nb9tSFVrQuc">youtube video - using match to return propery values</a></p>
+<p>It&#39;s possible to filter the nodes of the graph to a specify a value for a property, any node that matches the value will be retrived.
+Here some examples:</p>
+<pre><code class="lang-Cypher">MATCH (variable {propertyKey: propertyValue})
+RETURN variable
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (variable:Label {propertyKey: propertyValue})
+RETURN variable
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (variable:Label {propertyKey1: propertyValue1, propertyKey2: propertyValue2})
+RETURN variable
+</code></pre>
+<p>It&#39;s possible to retrive a property values of nodes in a query and return on output:</p>
+<pre><code class="lang-Cypher">MATCH (variable {property1: value})
+RETURN variable.property2
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (variable:Label {property1: value})
+RETURN variable.property2
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (variable:Label {property1: value, property2: value})
+RETURN variable.property2, variable.property3
+</code></pre>
+<p>In the graph database we can filter the person born on 1970:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person {born: 1970})
+RETURN p.name, p.born
+</code></pre>
+<h4 id="aliases">Aliases</h4>
+<p>To customize the headings for a table containing property value it can be use aliases:</p>
+<pre><code class="lang-Cypher">MATCH (variable:Label {property1: value, property2: value})
+RETURN variable.property2 AS alias1, variable.property3 AS alias2
+</code></pre>
+<p>In the graph database we can specify aliases for the returned property values:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person {born: 1970})
+RETURN p.name AS name, p.born AS `birth year`
+</code></pre>
+<h4 id="exercises-part-two">Exercises part two</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 2 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 2.1: Retrieve all Movie nodes that have a released property value of 2003.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie {released: 2003})
+RETURN m
+</code></pre>
+<p>Exercise 2.2: View the retrieved results as a table.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie {released: 2003})
+RETURN m
+</code></pre>
+<p>Exercise 2.3: Query the database for all property keys.</p>
+<pre><code class="lang-Cypher">CALL db.propertyKeys
+</code></pre>
+<p>Exercise 2.4: Retrieve all Movies released in a specific year, returning their titles.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie {released: 2006})
+RETURN m.title
+</code></pre>
+<p>Exercise 2.5: Display title, released, and tagline values for every Movie node in the graph.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+RETURN m.title, m.released, m.tagline
+</code></pre>
+<p>Exercise 2.6: Display more user-friendly headers in the table.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+RETURN m.title AS `Movie title`, m.released AS `Released date`, m.tagline AS `Tag line`
+</code></pre>
+<hr>
+<h3 id="part-three">Part three</h3>
+<h4 id="relationships">Relationships</h4>
+<p>A relationship is a directed connection between two nodes that has a relationship type (name). In addiction, a relationship can have properties, just like nodes.
+In a match clause it&#39;s possible to specify nodes and their relationships to traverse the graph and quickly find the data of interest:</p>
+<ul>
+<li><code>() // a node</code></li><li><code>()--() // 2 nodes have some type of relationship</code></li><li><code>()--&gt;() // the first node has a relationship to the second node</code></li><li><code>()&lt;--() // the second node has a relationship to the first node</code>
+The relationship can be specified with or without direction.</li></ul>
+<p>Here some examples for retrieving a set of nodes that satisfy one or more directed and type relationships:</p>
+<pre><code class="lang-Cypher">MATCH (node1)-[:REL_TYPE]-&gt;(node2)
+RETURN node1, node2
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (node1)-[:REL_TYPEA | :REL_TYPEB]-&gt;(node2)
+RETURN node1, node2
+</code></pre>
+<p>Where:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>node1, node2</td>
+<td>is a specification of a node where you may include node labels and property values for filtering</td>
+</tr>
+<tr>
+<td>:REL_TYPE</td>
+<td>is the type for the relationship from node1 to node2</td>
+</tr>
+<tr>
+<td>:REL_TYPEA, :REL_TYPEB</td>
+<td>are the relationships from node1 to node2, the nodes are returned if at least one of the relationships exists</td>
+</tr>
+</tbody>
+</table>
+<p>In the movie graph to retrive the nodes Person that have acted in the Movie &quot;The Matrix&quot; we need to use relationships:</p>
+<pre><code class="lang-Cypher">MATCH (node1:Person)-[relation:ACTED_IN]-&gt;(node2:Movie {title: &quot;The Matrix&quot;})
+RETURN node1, relation, node2
+</code></pre>
+<p><img src="Neo4j.html_files/images/relationshipActorMatrix.PNG" alt="relationshipActorMatrix"></p>
+<p>There is a build-in function <code>type()</code> that returns the relationship type of a relationship.
+Here is an example where we use the rel variable to hold the relationships retrived:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[rel]-&gt;(:Movie {title: &quot;The Matrix&quot;})
+RETURN p.name, type(rel)
+</code></pre>
+<p>The output list will be:
+|p.name|type(rel)|
+|---|---|
+|&quot;Hugo Weaving&quot;|&quot;ACTED_IN&quot;|
+|&quot;Lilly Wachowski&quot;|&quot;DIRECTED&quot;|
+|&quot;Laurence Fishburne&quot;|&quot;ACTED_IN&quot;|
+|&quot;Lana Wachowski&quot;|&quot;DIRECTED&quot;|
+|&quot;Keanu Reeves&quot;|&quot;ACTED_IN&quot;|
+|&quot;Carrie-Anne Moss&quot;|&quot;ACTED_IN&quot;|
+|&quot;Joel Silver&quot;|&quot;PRODUCED&quot;|
+|&quot;Emil Eifrem&quot;|&quot;ACTED_IN&quot;|</p>
+<p>Even relationships can have properties, this enables the graph model to provide more data about the relationships between the nodes. Just as can be specify property values for filtering nodes for a query, you can specify property values for a relationships.
+Here is an example with the movie graph:</p>
+<pre><code class="lang-Cypher">// Returns the name of the person who gave the movie &quot;the da vinci code&quot; a rating of 65
+MATCH (p:Person)-[:REVIEWED {rating: 65}]-&gt;(:Movie {title: &quot;The Da Vinci Code&quot;})
+RETURN p.name
+</code></pre>
+<p>Since relationships are directionals queries can have multiple type of matching:</p>
+<ul>
+<li><p>right direction</p>
+<pre><code class="lang-Cypher">  MATCH (n)-[r]-&gt;(m)
+  RETURN n, r, m
+</code></pre>
+</li><li><p>left direction</p>
+<pre><code class="lang-Cypher">  MATCH (n)&lt;-[r]-(m)
+  RETURN n, r, m
+</code></pre>
+</li><li><p>both direction</p>
+<pre><code class="lang-Cypher">  MATCH (n)-[r]-(m)
+  RETURN n, r, m
+</code></pre>
+</li><li><p>traversing relationships</p>
+<pre><code class="lang-Cypher">  MATCH (n)-[r]-&gt;(m)-[p]-&gt;(o)
+  RETURN n, m, o
+</code></pre>
+<p>  with query like this it can be usefull to assign a variable to the path and return the path:</p>
+<pre><code class="lang-Cypher">  MATCH path = (n)-[r]-&gt;(m)-[p]-&gt;(o)
+  RETURN path
+</code></pre>
+</li><li><p>Centralising relationships</p>
+<pre><code class="lang-Cypher">  MATCH (n)-[r]-&gt;(m)&lt;-[p]-(o)
+  RETURN n, m, o
+</code></pre>
+</li></ul>
+<h4 id="style-recommendations">Style recommendations</h4>
+<ul>
+<li>Node labels are CamelCase and begin with an upper-case letter, like Person or NetworkAddress.</li><li>Property keys, variables, parameters, aliases, and functions are camelCase and begin with a lower-case letter, like title or businessAddress.</li><li>Relationship type are in upper-case and can use the underscore, like ACTED_IN or FOLLOWS.</li><li>Cypher keywords are upper-case, like MATCH or RETURN.</li><li>String constats are in single quotes, unless the string contains a quote or apostrophe, like &#39;The Matrix&#39; or &quot;Something&#39;s Gotta Give&quot;.</li><li>Specify variables only when needed for use later in the cypher statement.</li><li>Place named nodes and relationships before anonymous nodes and relationships in the MATCH clauses when possible.</li><li>Specify anonymous relationships with <code>--&gt;</code>, <code>--</code>, or <code>&lt;--</code>.</li></ul>
+<h4 id="exercises-part-three">Exercises part three</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 3 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 3.1: Display the schema of the database.</p>
+<pre><code class="lang-Cypher">CALL db.schema
+</code></pre>
+<p>Exercise 3.2: Retrieve all people who wrote the movie Speed Racer.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:WROTE]-&gt;(:Movie {title: &quot;Speed Racer&quot;})
+RETURN p
+</code></pre>
+<p>Exercise 3.3: Retrieve all movies that are connected to the person, Tom Hanks.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)--(:Person {name: &#39;Tom Hanks&#39;})
+RETURN m
+</code></pre>
+<p>Exercise 3.4: Retrieve information about the relationships Tom Hanks had with the set of movies retrieved earlier.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)-[relation]-(:Person {name: &#39;Tom Hanks&#39;})
+RETURN m.title, type(relation)
+</code></pre>
+<p>Exercise 3.5: Retrieve information about the roles that Tom Hanks acted in</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)-[acted:ACTED_IN]-(:Person {name: &#39;Tom Hanks&#39;})
+RETURN m.title, acted.roles
+</code></pre>
+<hr>
+<h3 id="part-four">Part four</h3>
+<h4 id="where">Where</h4>
+<p><strong><em>on neof4j browser run the command <code>:help WHERE</code></em></strong></p>
+<p>The most common clause to filter queries is <code>WHERE</code> that follows a <code>MATCH</code> clause.
+This clause is the answer for &quot;how we filter the result for a particular match&quot;, so this filter all of the nodes and relationships.
+In the <code>WHERE</code> clause it is possible to place conditions that are evaluated at runtime to filter the query. The potential of this clause is that is possible to specify complex conditions for the query.</p>
+<p>Some examples:</p>
+<ol>
+<li><p>Example 1</p>
+<pre><code class="lang-Cypher"> MATCH (m:Movie)
+ WHERE m.title = &quot;The Matrix&quot;
+ RETURN m
+</code></pre>
+</li><li><p>Example 2</p>
+<pre><code class="lang-Cypher"> MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+ WHERE m.released = 2008
+ RETURN p, m
+</code></pre>
+</li><li><p>Example 3</p>
+<pre><code class="lang-Cypher"> MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+ WHERE m.released = 2008 OR m.released = 2009
+ RETURN p, m
+</code></pre>
+</li></ol>
+<p>This clause accept conditions that return a boolean value of true or false.
+It can be use several comparison operators: <strong>=</strong>, <strong>&lt;&gt;</strong>, <strong>&lt;</strong>, <strong>&gt;</strong>, <strong>&lt;=</strong>, <strong>&gt;=</strong>, <strong>IS NULL</strong>, <strong>IS NOT NULL</strong>, <strong>=~</strong>.
+There are 4 boolean operators that it can use: <strong>AND</strong>, <strong>OR</strong>, <strong>XOR</strong>, <strong>NOT</strong>.</p>
+<p>An example:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[r:ACTED_IN]-&gt;(m:Movie)
+WHERE
+    m.released &gt; 2000 OR
+    (1994 &lt; m.released &lt;= 1997 AND m.title=&#39;As Good as It Gets&#39;)
+RETURN p.name, m.title, m.released
+</code></pre>
+<p>It is opssible to filter node labels in the WHERE clause, for example this two queries:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+RETURN p.name
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(:Movie {title: &#39;The Matrix&#39;})
+RETURN p.name
+</code></pre>
+<p>can be rewritten usign WHERE clauses:</p>
+<pre><code class="lang-Cypher">MATCH (p)
+WHERE p:Person
+RETURN p.name
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (p)-[:ACTED_IN]-&gt;(m)
+WHERE p:Person AND m:Movie AND m.title = &#39;The Matrix&#39;
+RETURN p.name
+</code></pre>
+<p>Since we are talking about graph database not all the nodes with the same label have the same properties, with the WHERE clause and the build-in function <code>exists(property)</code> we can filter the nodes that doesn&#39;t have value for the property requested.
+For example:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name=&#39;Jack Nicholson&#39; AND exists(m.tagline)
+RETURN m.title, m.tagline
+</code></pre>
+<p>There are also a set of string-related keywords to test string property values: <code>STARTS WITH</code>, <code>ENDS WITH</code>, and <code>CONTAINS</code>.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;()
+WHERE p.name STARTS WITH &#39;Michael&#39;
+RETURN p.name
+</code></pre>
+<p><a href="#regular-expression">Regular expressions</a> can be used to test property values, to specify the request it&#39;s necessary to use the <strong>=~</strong> in the condition:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WHERE p.name =~&#39;Tom.*&#39;
+RETURN p.name
+</code></pre>
+<p>The query above retrive all Person nodes with a name property that begins with Tom, the result can be something like this:</p>
+<table>
+<thead>
+<tr>
+<th>p.name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Tom Cruise&quot;</td>
+</tr>
+<tr>
+<td>&quot;Tom Hanks&quot;</td>
+</tr>
+<tr>
+<td>&quot;Tom Skerritt&quot;</td>
+</tr>
+<tr>
+<td>&quot;Tom Tykwer&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>Some more filtering for relationships can be used during a query, for example can be possible to use the <code>NOT</code> in a <code>WHERE</code> clause:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:WROTE]-&gt;(m:Movie)
+WHERE NOT exists( (p)-[:DIRECTED]-&gt;() )
+RETURN p.name, m.title
+</code></pre>
+<p>This query exclude Person who directed and not wrote the movie.</p>
+<p>One more filtering is <code>IN</code> that can be used to compare each property with values on the list:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WHERE p.born IN [1965, 1970]
+RETURN p.name as name, p.born as yearBorn
+</code></pre>
+<p>and the return is:</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>yearBorn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Lana Wachowsky&quot;</td>
+<td>1965</td>
+</tr>
+<tr>
+<td>&quot;Jay Mohr&quot;</td>
+<td>1970</td>
+</tr>
+<tr>
+<td>&quot;River Phoenix&quot;</td>
+<td>1970</td>
+</tr>
+<tr>
+<td>&quot;Brooke Langton&quot;</td>
+<td>1970</td>
+</tr>
+</tbody>
+</table>
+<h4 id="exercises-part-four">Exercises part four</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 4 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 4.1: Retrieve all movies that Tom Cruise acted in.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person {name: &#39;Tom Cruise&#39;})-[:ACTED_IN]-(movie:Movie)
+RETURN movie.title
+</code></pre>
+<p>or</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person)-[:ACTED_IN]-(movie:Movie)
+WHERE tom.name = &#39;Tom Cruise&#39;
+RETURN movie.title
+</code></pre>
+<p>Exercise 4.2: Retrieve all actors that were born in the 70’s, return name and year born.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(:Movie)
+WHERE 1970 &lt;= p.born &lt;= 1979
+RETURN p.name AS Name, p.born AS `Year Born`
+</code></pre>
+<p>Exercise 4.3: Retrieve the actors who acted in the movie The Matrix who were born after 1960, return name and year born.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE m.title = &#39;The Matrix&#39; AND act.born &gt; 1960
+RETURN act.name as Name, act.born as `Year Born`
+</code></pre>
+<p>Exercise 4.4: Retrieve all movies released in 2000 by testing the node label and released property, return the title of the movie.</p>
+<pre><code class="lang-Cypher">MATCH (mov:Movie)
+WHERE mov.released = 2000
+RETURN mov.title
+</code></pre>
+<p>Exercise 4.5: Retrieve all people that wrote movies by testing the relationship between two nodes, return the name of the people and the title of the movie.</p>
+<pre><code class="lang-Cypher">MATCH (p)-[rel]-&gt;(mov)
+WHERE p:Person AND type(rel) =&#39;WROTE&#39; AND mov:Movie
+RETURN p.name AS Name, mov.title AS `Movie title`
+</code></pre>
+<p>Exercise 4.6: Retrieve all people in the graph that do not have a the born property and return there name.</p>
+<pre><code class="lang-Cypher">MATCH (p)
+WHERE p:Person AND NOT exists(p.born)
+RETURN p.name AS Name
+</code></pre>
+<p>Exercise 4.7: Retrieve all people related to movies where the relationship has the rating property, than return their name, movie, title and the rating.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[rel]-(m:Movie)
+WHERE exists(rel.rating)
+RETURN
+    p.name AS Name,
+    m.title AS `Movie title`,
+    rel.rating AS Rating
+</code></pre>
+<p>Exercise 4.8: Retrieve all actors whose name begins with James.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WHERE p.name =~&#39;James.*&#39;
+RETURN p.name
+</code></pre>
+<p>or</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WHERE p.name STARTS WITH &#39;James&#39;
+RETURN p.name
+</code></pre>
+<p>Exercise 4.9: Retrieve all all REVIEW relationships from the graph with filtered results.</p>
+<pre><code class="lang-Cypher">MATCH ()-[rel:REVIEWED]-&gt;(movie:Movie)
+WHERE toLower(rel.summary) CONTAINS &#39;fun&#39;
+RETURN
+    movie.title as `Movie Title`,
+    rel.rating as `Rating`,
+    rel.summary as `Summary`
+</code></pre>
+<p>Exercise 4.10: Retrieve all people who have produced a movie, but have not directed a movie.</p>
+<pre><code class="lang-Cypher">MATCH (a:Person)-[:PRODUCED]-&gt;(m:Movie)
+WHERE NOT ((a)-[:DIRECTED]-&gt;(:Movie))
+RETURN a.name, m.title
+</code></pre>
+<p>Exercise 4.11: Retrieve the movies and their actors where one of the actors also directed the movie.</p>
+<pre><code class="lang-Cypher">MATCH (actor:Person)-[:ACTED_IN]-&gt;(mov:Movie)&lt;-[:DIRECTED]-(dir:Person)
+WHERE (dir)-[:ACTED_IN]-&gt;(mov)
+RETURN actor.name, dir.name, mov.title
+</code></pre>
+<p>Exercise 4.12: Retrieve all movies that were released in a set of years.</p>
+<pre><code class="lang-Cypher">MATCH (m)
+WHERE
+    m:Movie AND
+    m.released IN [2004, 2008, 2000]
+RETURN m.title, m.released
+</code></pre>
+<p>Exercise 4.13: Retrieve the movies that have an actor’s role that is the name of the movie.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[rel:ACTED_IN]-&gt;(mov:Movie)
+WHERE mov.title in rel.roles
+RETURN mov.title, rel.roles
+</code></pre>
+<hr>
+<h3 id="part-five">Part five</h3>
+<h4 id="multiple-match-patterns">Multiple Match patterns</h4>
+<p>The <code>MATCH</code> clause includes a pattern specified by two paths separated by a comma:</p>
+<pre><code class="lang-Cypher">MATCH (a:Person)-[:ACTED_IN]-&gt;(m:Movie),
+    (m:Movie)&lt;-[:DIRECTED]-(d:Person)
+WHERE m.released = 2000
+RETURN a.name, m.title, d.name
+</code></pre>
+<h4 id="setting-path-variables">Setting path variables</h4>
+<p>It&#39;s possible to assign to a variable a path that can be reuse later in the same query or if it&#39;s needed to return that path:</p>
+<pre><code class="lang-Cypher">MATCH megPath = (meg:Person)-[:ACTED_IN]-&gt;(m:Movie)&lt;-[:DIRECTED]-(d:Person),
+    (other:Person)-[:ACTED_IN]-&gt;(m)
+WHERE meg.name = &#39;Meg Ryan&#39;
+RETURN megPath
+</code></pre>
+<h4 id="varying-lenght-paths">Varying lenght paths</h4>
+<p>Any graph that represents social networking, trees, or hierarchies will most likely have multiple paths of varying lengths.</p>
+<p>To get this far you need to use this format <code>(nodeA)-[:REALTYPE*&lt;number_of_hops&gt;]-&gt;(nodeB)</code> or <code>(nodeA)-[:REALTYPE*n..m]-&gt;(nodeB)</code> where n and m are the extremes of an interval.</p>
+<h4 id="finding-the-shortest-path">Finding the shortest path</h4>
+<p>A built-in function that you may find useful in a graph that has many ways of traversing the graph to get to the same node is the <code>shortestPath()</code> function. Using the shortest path between two nodes improves the performance of the query.</p>
+<p>Here an example:</p>
+<pre><code class="lang-Cypher">MATCH p = shortestPath((m1:Movie)-[*]-(m2:Movie))
+WHERE m1.title = &#39;A Few Good Men&#39; AND
+    m2.title = &#39;The Matrix&#39;
+RETURN p
+</code></pre>
+<p>When you use the shortestPath() function, the query editor will show a warning that this type of query could potentially run for a long time. You should heed the warning, especially for large graphs. Read the Graph Algorithms documentation about the shortest path algorithm.</p>
+<p>When you use ShortestPath(), you can specify a upper limits for the shortest path. In addition, you should aim to provide the patterns for the from an to nodes that execute efficiently. For example, use labels and indexes.</p>
+<h4 id="optional-pattern-matching">Optional pattern matching</h4>
+<p>This clause <code>OPTIONAL MATCH</code> is just like the <code>MATCH</code> but if no matches are found, this clause will use null for missing parts of the pattern.
+Here is an examples:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WHERE p.name STARTS WITH &#39;James&#39;
+OPTIONAL MATCH (p)-[r:REVIEWED]-&gt;(m:Movie)
+RETURN p.name, type(r), m.title
+</code></pre>
+<p>The return will be a table like this:</p>
+<table>
+<thead>
+<tr>
+<th>p.name</th>
+<th>type(r)</th>
+<th>m.title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;James Marshall&quot;</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;James L. Brooks&quot;</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;James Cromwell&quot;</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;James Thompson&quot;</td>
+<td>&quot;REVIEWED&quot;</td>
+<td>&quot;The Replacements&quot;</td>
+</tr>
+<tr>
+<td>&quot;James Thompson&quot;</td>
+<td>&quot;REVIEWED&quot;</td>
+<td>&quot;The Da Vinci Code&quot;</td>
+</tr>
+</tbody>
+</table>
+<h4 id="aggregation-in-cypher">Aggregation in Cypher</h4>
+<p>In Cypher is not need to specify a grouping key, all non-aggregated result columns become grouping keys, The grouping is implicity done beased upon the filds in the <code>RETURN</code> clause.</p>
+<p>For example, in Cypher statement, all rows returned with the same values for a.name and d.name are counted and only return once:</p>
+<pre><code class="lang-Cypher">MATCH (a)-[:ACTED_IN]-&gt;(m)&lt;-[:DIRECTED]-(d)
+RETURN a.name, d.name, count(*)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>a.name</th>
+<th>d.name</th>
+<th>count(*)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Emil Eifrem&quot;</td>
+<td>&quot;Lana Wachowski&quot;</td>
+<td>1</td>
+</tr>
+<tr>
+<td>&quot;Hugo Weaving&quot;</td>
+<td>&quot;Lana Wachowski&quot;</td>
+<td>4</td>
+</tr>
+<tr>
+<td>&quot;Laurence Fishburne&quot;</td>
+<td>&quot;Lana Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Carrie-Anne Moss&quot;</td>
+<td>&quot;Lana Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Keanu Reeves&quot;</td>
+<td>&quot;Lana Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Emil Eifrem&quot;</td>
+<td>&quot;Lilly Wachowski&quot;</td>
+<td>1</td>
+</tr>
+<tr>
+<td>&quot;Hugo Weaving&quot;</td>
+<td>&quot;Lilly Wachowski&quot;</td>
+<td>4</td>
+</tr>
+<tr>
+<td>&quot;Laurence Fishburne&quot;</td>
+<td>&quot;Lilly Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Carrie-Anne Moss&quot;</td>
+<td>&quot;Lilly Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Keanu Reeves&quot;</td>
+<td>&quot;Lilly Wachowski&quot;</td>
+<td>3</td>
+</tr>
+<tr>
+<td>&quot;Al Pacino&quot;</td>
+<td>&quot;Taylor Hackford&quot;</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>This function is very useful when you want to count the number of occurrences of a particular query result.
+It&#39;s possible to specify the occurrences of an alias <code>count(n)</code> and the graph engine calculates the number of occurrences of n.
+If we want to calculates the number of rows retrived, including those with <code>null</code> values the count argument need to be a *.
+Last one is the <code>count()</code> without argument and this will implicit group by based upon the aggregation.</p>
+<p>There are more aggregating functions such as <code>min()</code> or <code>max()</code> that can also use in queries.</p>
+<h4 id="collecting-results">Collecting results</h4>
+<p>Cypher has a built-in function <code>collect()</code> that enables you to aggregate value into a list:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = &#39;Tom Cruise&#39;
+RETURN collect(m.title) AS `movies for Tom Cruise`
+</code></pre>
+<p>And the result will be a list called <strong>movies for Tom Cruise</strong> with the values [&quot;Jerry Maguire&quot;, &quot;Top Gun&quot;, &quot;A Few Good Men&quot;].</p>
+<h4 id="additional-processing-using-with">Additional processing using <code>WITH</code></h4>
+<p>During the execution of a <code>MATCH</code> clause, is possible to specify some intermediate calculations or values that will be used for further processing of the query, or for limiting the number of results before further processing is done.
+With the <code>WITH</code> clause it&#39;s possible to perform intermediate processing ro data flow operations.</p>
+<p>Here is an example:</p>
+<pre><code class="lang-Cypher">MATCH (a:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WITH a, count(a) AS numMovies, collect(m.title) AS movies
+WHERE numMovies &gt; 1 AND numMovies &lt; 4
+RETURN a.name, numMovies, movies
+</code></pre>
+<p>This example return the actors name only if they acted on 2 or 3 movies, with a reference of the numbers of the films and a list of that.</p>
+<p>Be carefull with this clause because in the <code>WITH</code> body are specify some variables from the previous part of the query that need to be part of the next section of the query, all the aliases for the next part are the only one defined in the body.</p>
+<p>Remember to name all expressions with an alias in a <code>WITH</code> that are not simple variables.</p>
+<p>One more example:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)
+WITH p, size((p)-[:ACTED_IN]-&gt;(:Movie)) as movies
+WHERE movies&gt;=5
+OPTIONAL MATCH (p)-[:DIRECTED]-&gt;(m:Movie)
+RETURN p.name, m.title
+</code></pre>
+<p>This is a simple query to retrive all the actor that are acted in at least 5 movies and if they also directed a movie than return the name of that movie.</p>
+<table>
+<thead>
+<tr>
+<th>p.name</th>
+<th>m.title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Keanu Reeves&quot;</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;Hugo Weaving&quot;</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;Jack Nicholson&quot;</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;Meg Ryan&quot;</td>
+<td>null</td>
+</tr>
+<tr>
+<td>&quot;Tom Hanks&quot;</td>
+<td>&quot;That Thing You Do&quot;</td>
+</tr>
+</tbody>
+</table>
+<h4 id="exercises-part-five">Exercises part five</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 5 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 5.1: Write a Cypher query that retrieves all movies that Gene Hackman has acted it, along with the directors of the movies. In addition, retrieve the actors that acted in the same movies as Gene Hackman. Return the name of the movie, the name of the director, and the names of actors that worked with Gene Hackman.</p>
+<pre><code class="lang-Cypher">MATCH (gene:Person)-[:ACTED_IN]-&gt;(movie:Movie)
+WHERE gene.name = &#39;Gene Hackman&#39;
+OPTIONAL MATCH
+    (other:Person)-[:ACTED_IN]-&gt;(movie),
+    (dir:Person)-[:DIRECTED]-&gt;(movie)
+WITH
+    movie,
+    collect(other.name) AS Actors,
+    collect(dir.name) AS Directors
+RETURN
+    movie.title AS `Title of movie`,
+    Actors AS `Co-Actors`,
+    Directors
+</code></pre>
+<p>Exercise 5.2: Retrieve all nodes that the person named James Thompson directly has the FOLLOWS relationship in either direction.</p>
+<pre><code class="lang-Cypher">MATCH (james:Person)-[:FOLLOWS]-(other:Person)
+WHERE james.name = &#39;James Thompson&#39;
+RETURN james, other
+</code></pre>
+<p>Exercise 5.3: Modify the query to retrieve nodes that are exactly three hops away.</p>
+<pre><code class="lang-Cypher">MATCH (james:Person)-[:FOLLOWS*3]-(other:Person)
+WHERE james.name = &#39;James Thompson&#39;
+RETURN james, other
+</code></pre>
+<p>Exercise 5.4: Modify the query to retrieve nodes that are one and two hops away.</p>
+<pre><code class="lang-Cypher">MATCH (james:Person)-[:FOLLOWS*1..2]-(other:Person)
+WHERE james.name = &#39;James Thompson&#39;
+RETURN james, other
+</code></pre>
+<p>Exercise 5.5: Modify the query to retrieve particular nodes that are connected no matter how many hops are required.</p>
+<pre><code class="lang-Cypher">MATCH (james:Person)-[:FOLLOWS*]-(other:Person)
+WHERE james.name = &#39;James Thompson&#39;
+RETURN james, other
+</code></pre>
+<p>Exercise 5.6: Write a Cypher query to retrieve all people in the graph whose name begins with Tom and optionally retrieve all people named Tom who directed a movie.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person)
+WHERE toLower(tom.name) STARTS WITH &#39;tom&#39;
+OPTIONAL MATCH (tom)-[:DIRECTED]-&gt;(movie:Movie)
+WITH tom, collect(movie.title) as DirMov
+RETURN tom.name AS `Tom* name`, DirMov AS `Directed movies`
+</code></pre>
+<p>Exercise 5.7: Retrieve actors and the movies they have acted in, returning each actor’s name and the list of movies they acted in.</p>
+<pre><code class="lang-Cypher">MATCH (actor:Person)-[:ACTED_IN]-&gt;(movie:Movie)
+WITH actor.name AS Actor, collect(movie.title) as Movies
+RETURN Actor, Movies
+</code></pre>
+<p>Exercise 5.8: Retrieve all movies that Tom Cruise has acted in and the co-actors that acted in the same movie, returning the movie title and the list of co-actors that Tom Cruise worked with.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person {name: &quot;Tom Cruise&quot;})-[:ACTED_IN]-&gt;(movie:Movie)&lt;-[:ACTED_IN]-(other:Person)
+RETURN movie.title AS `Movie`, collect(other.name) AS `Co-Actors`
+</code></pre>
+<p>Exercise 5.9: Retrieve all people who reviewed a movie, returning the list of reviewers and how many reviewers reviewed the movie.</p>
+<pre><code class="lang-Cypher">MATCH (reviewer:Person)-[:REVIEWED]-&gt;(movie:Movie)
+RETURN movie.title AS `Movie`, collect(reviewer.name) AS `reviewers`, count(reviewer) as `Number of reviewers`
+</code></pre>
+<p>Exercise 5.10: Retrieve all directors, their movies, and people who acted in the movies, returning the name of the director, the number of actors the director has worked with, and the list of actors.</p>
+<pre><code class="lang-Cypher">MATCH (dir:Person)-[:DIRECTED]-&gt;(movie:Movie)&lt;-[:ACTED_IN]-(actor:Person)
+WITH dir.name as Director, count(actor) as ActorsNumber, collect(actor.name) AS ActorsList
+RETURN Director, ActorsList AS `Actors` , ActorsNumber AS `Number of actors`
+</code></pre>
+<p>Exercise 5.11: Retrieve the actors who have acted in exactly five movies.</p>
+<pre><code class="lang-Cypher">MATCH (actor:Person)-[:ACTED_IN]-&gt;(movie:Movie)
+WITH actor, count(movie) as movies, collect(movie.title) as moviesList
+WHERE movies = 5
+RETURN actor.name AS `Name of actor`, moviesList as `Movies`
+</code></pre>
+<p>Exercise 5.12: Retrieve the movies that have at least 2 directors, and optionally the names of people who reviewed the movies.</p>
+<pre><code class="lang-Cypher">MATCH (dir:Person)-[:DIRECTED]-&gt;(movie:Movie)
+WITH movie, count(dir) AS numDir
+WHERE numDir &gt;= 2
+OPTIONAL MATCH (movie)&lt;-[:REVIEWED]-(reviewer:Person)
+WITH movie.title AS title, collect(reviewer.name) as listRev
+RETURN title, listRev AS `reviewer`
+</code></pre>
+<hr>
+<h3 id="part-six">Part six</h3>
+<h4 id="eliminating-duplication">Eliminating duplication</h4>
+<p>To eliminating duplicated results it can be used the <code>DISTINCT</code> keyword</p>
+<p>This is the exercise 5.1, we can use the DISTINCT clause to avoid repeting the directors in the list:</p>
+<pre><code class="lang-Cypher">MATCH (gene:Person)-[:ACTED_IN]-&gt;(movie:Movie)
+WHERE gene.name = &#39;Gene Hackman&#39;
+OPTIONAL MATCH
+    (other:Person)-[:ACTED_IN]-&gt;(movie),
+    (dir:Person)-[:DIRECTED]-&gt;(movie)
+WITH
+    movie,
+    collect(other.name) AS Actors,
+    collect(DISTINCT dir.name) AS Directors
+RETURN
+    movie.title AS `Title of movie`,
+    Actors AS `Co-Actors`,
+    Directors
+</code></pre>
+<p>This clause can be use in several uses, like this:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:DIRECTED | :ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = &#39;Tom Hanks&#39;
+WITH DISTINCT m
+RETURN m.released, m.title
+</code></pre>
+<h4 id="ordering-result">Ordering result</h4>
+<p>If you want the results to be sorted, you specify the expression to use for the sort usign the <code>ORDER BY</code> keyword and whether you want the order to be descending using the <code>DESC</code> keyword. Ascending order is the default.
+It can be use multiple sort expressions and the result will be sorted in that order.</p>
+<p>This is an example where there is a specification for the release date of the movies for Tom Hanks:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:DIRECTED | :ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = &#39;Tom Hanks&#39; AND m.released &gt;= 2000
+RETURN m.released, collect(DISTINCT m.title) AS movies ORDER BY m.released DESC
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>m.released</th>
+<th>movies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2012</td>
+<td>[&quot;Cloud Atlas&quot;]</td>
+</tr>
+<tr>
+<td>2007</td>
+<td>[&quot;Charlie Wilson&#39;s War&quot;]</td>
+</tr>
+<tr>
+<td>2006</td>
+<td>[&quot;The Da Vinci Code&quot;]</td>
+</tr>
+<tr>
+<td>2004</td>
+<td>[&quot;The Polar Express&quot;]</td>
+</tr>
+<tr>
+<td>2000</td>
+<td>[&quot;Cast Away&quot;]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="limiting-the-number-of-results">Limiting the number of results</h4>
+<p>Although you can filter queries to reduce the number of results returned, you may also want to limit the number of results. This is useful if you have very large result sets and you only need to see the beginning or end of a set of ordered results.
+<code>LIMIT</code> is the right choice to do something like this.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+RETURN m.title as title, m.released as year
+ORDER BY m.released DESC
+LIMIT 10
+</code></pre>
+<h4 id="exercises-part-six">Exercises part six</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 6 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 6.1: You want to know what actors acted in movies in the decade starting with the year 1990. First write a query to retrieve all actors that acted in movies during the 1990s, where you return the released date, the movie title, and the collected actor names for the movie. For now do not worry about duplication.</p>
+<pre><code class="lang-Cypher">MATCH (per:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WHERE 1990 &lt;= mov.released &lt; 2000
+RETURN mov.released, mov.title, collect(per.name)
+</code></pre>
+<p>Exercise 6.2: Modify the query to eliminate duplication.</p>
+<pre><code class="lang-Cypher">MATCH (per:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WHERE 1990 &lt;= mov.released &lt; 2000
+RETURN mov.released, collect(mov.title), collect(per.name)
+</code></pre>
+<p>Exercise 6.3: Modify the query to eliminate more duplication.</p>
+<pre><code class="lang-Cypher">MATCH (per:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WHERE 1990 &lt;= mov.released &lt; 2000
+RETURN mov.released, collect(DISTINCT mov.title), collect(DISTINCT per.name)
+</code></pre>
+<p>Exercise 6.4: Sort results returned.</p>
+<pre><code class="lang-Cypher">MATCH (per:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WHERE 1990 &lt;= mov.released &lt; 2000
+RETURN mov.released, collect(DISTINCT mov.title), collect(DISTINCT per.name)
+ORDERED BY mov.released DESC
+</code></pre>
+<p>Exercise 6.5: Retrieve the top 5 ratings and their associated movies.</p>
+<pre><code class="lang-Cypher">MATCH (:Person)-[rel:REVIEWED]-&gt;(mov:Movie)
+RETURN mov.title, rel.rating as rat
+ORDER BY rat DESC
+LIMIT 5
+</code></pre>
+<p>Exercise 6.6: Retrieve all actors that have not appeared in more than 3 movies.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WITH act, count(mov) AS numberMovies, collect(mov.title) AS movies
+where numberMovies &lt;= 3
+RETURN act.name, movies
+</code></pre>
+<hr>
+<h3 id="part-seven">Part Seven</h3>
+<h4 id="list">List</h4>
+<p>There are many build-in Cypher functions that you can use to build or access elements in lists.
+A Cypher <code>map</code> is list of key/value pairs where each element of the list is of the format key: value.</p>
+<p>It&#39;s possible to collect values for a list during a query and with this it&#39;s possible to sort by the size of the list using the <code>size()</code> function as follows:</p>
+<pre><code class="lang-Cypher">MATCH (a:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WITH m, count(m) AS numCast, collect(a.name) AS cast
+RETURN m.title, cast, numCast
+ORDER BY size(cast)
+</code></pre>
+<h4 id="unwinding-lists">Unwinding lists</h4>
+<p>There my be some situations where you want to perform the opposite of collecting results, but rather separate the lists into separate rows.
+This functionality is done using the unwind clause.</p>
+<p>Here is an example where we create a list with three elements, unwind the list and then return the values. Since there are three elements, three rows are returned with the values:</p>
+<pre><code class="lang-Cypher">WITH [1, 2, 3] AS list
+UNWIND list AS row
+RETURN row, list
+</code></pre>
+<p>and the result will be:</p>
+<table>
+<thead>
+<tr>
+<th>row</th>
+<th>list</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>[1,2,3]</td>
+</tr>
+<tr>
+<td>2</td>
+<td>[1,2,3]</td>
+</tr>
+<tr>
+<td>3</td>
+<td>[1,2,3]</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>unwind</code> clause is frequently used when importing data into a graph.</p>
+<h4 id="dates">Dates</h4>
+<p>Cypher has a built-in <code>date()</code> function, as well as other temporal values and functions that you can use to calculate temporal values.
+You use a combination of numeric, temporal, spatial, list and string functions to calculate values that are useful to your application.</p>
+<p>For example we want to calculate all the age value of the actors given the born year:</p>
+<pre><code class="lang-Cypher">MATCH (actor:Person)-[:ACTED_IN]-&gt;(:Movie)
+WHERE exists(actor.born)
+WITH DISTINCT actor, date().year - actor.born AS age
+RETURN actor.name, age AS `age today`
+ORDER BY actor.born DESC
+</code></pre>
+<h4 id="exercises-part-seven">Exercises part seven</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 7 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 7.1: Write a Cypher query that retrieves all actors that acted in movies, and also retrieves the producers for those movies. During the query, collect the names of the actors and the names of the producers. Return the movie titles, along with the list of actors for each movie, and the list of producers for each movie making sure there is no duplication of data. Order the results returned based upon the size of the list of actors.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[:ACTED_IN]-&gt;(mov:Movie)&lt;-[:PRODUCED]-(prod:Person)
+WITH mov, collect(act.name) AS actList, collect(DISTINCT prod.name) AS prodList
+RETURN mov.title AS `Title`, actList AS `Actors`, prodList AS `Producers`
+ORDER BY size(actList) DESC
+</code></pre>
+<p>Exercise 7.2: Write a Cypher query that retrieves all actors that acted in movies, and collects the list of movies for any actor that acted in more than five movies. Return the name of the actor and the list.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WITH act, collect(mov.title) as movs
+WHERE size(movs) &gt; 5
+RETURN act.name AS `Name`, movs AS `Movies`
+</code></pre>
+<p>Exercise 7.3: Modify the query you just wrote so that before the query processing ends, you unwind the list of movies and then return the name of the actor and the title of the associated movie</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WITH act, collect(mov.title) as movs
+WHERE size(movs) &gt; 5
+UNWIND movs as movie
+RETURN act.name, movie
+</code></pre>
+<p>Exercise 7.4: Write a query that retrieves all movies that Tom Hanks acted in, returning the title of the movie, the year the movie was released, the number of years ago that the movie was released, and the age of Tom when the movie was released.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person)-[:ACTED_IN]-&gt;(mov:Movie)
+WHERE tom.name = &quot;Tom Hanks&quot;
+WITH mov, date().year - mov.released AS yearsAgo, mov.released - tom.born AS yearTom
+RETURN mov.title, mov.released, yearsAgo, yearTom
+ORDER BY yearsAgo
+</code></pre>
+<hr>
+<h3 id="part-eight">Part Eight</h3>
+<h4 id="create">Create</h4>
+<h5 id="-on-neof4j-browser-run-the-command-help-create"><strong><em>on neof4j browser run the command <code>:help CREATE</code></em></strong></h5>
+<p>Recall that a node is an element of a graph representing a domain entity that has zero or more labels, properties, and relationships to or from other nodes in the graph.</p>
+<p>When you create a node, you can add it to the graph without connecting it to another node.</p>
+<p>Here is the simplified syntax for creating a node:</p>
+<pre><code class="lang-Cypher">CREATE (optionalVariable optionalLabels {optionalProperties})
+</code></pre>
+<p>Let&#39;s create a small social graph using this query language.</p>
+<p>If you plan on referencing the newly created node, you must provide a variable. Whether you provide labels or properties at node creation time is optional.
+In most cases, you will want to provide some label and property values for a node when created. This will enable you to later retrive the node. Provided you have a reference to the node.</p>
+<p>Here some examples:</p>
+<ul>
+<li><p>1 -&gt; Create node of type <em>Movie</em> with the <em>title Batman Begins</em>:</p>
+<pre><code class="lang-Cypher">  CREATE  (:Movie {title: &#39;Batman Begins&#39;})
+</code></pre>
+</li><li><p>2 -&gt; Create a node with two labels to the graph of types <em>Movie</em> and <em>Action</em> with the <em>title Batman Begins</em>:</p>
+<pre><code class="lang-Cypher">  CREATE (:Movie:Action {title: &#39;Batman Begins&#39;})
+</code></pre>
+</li><li><p>3 -&gt; Create the same node of example 2 and return the title:</p>
+<pre><code class="lang-Cypher">  CREATE (m:Movie:Action {title: &#39;Batman Begins&#39;})
+  RETURN m.title
+</code></pre>
+</li><li><p>4 -&gt; Create the same node but with more properties:</p>
+<pre><code class="lang-Cypher">  CREATE (:Movie:Action {title: &#39;Batman Begins&#39;, released: 2005})
+</code></pre>
+</li></ul>
+<p>When the graph engine creates a node, it automatically assigns a read-only, unique ID to the node but this value is not accessible like the other properties but is an internal value.</p>
+<p>If all of this 4 queries are execute, this will generate 4 differents nodes this is because the graph engine will create a node with the same properties of a node that already exists. To prevent this &quot;<em>issue</em>&quot; you can use the <strong>MERGE</strong> clause rather than <strong>CREATE</strong> or you can add constraints to the graph.</p>
+<h4 id="more-create-at-once">More create at once</h4>
+<p><strong>Create</strong> clauses can create many nodes at once:</p>
+<pre><code class="lang-Cypher">CREATE
+(:Person {name: &#39;Michael Caine&#39;, born: 1933}),
+(:Person {name: &#39;Liam Neeson&#39;, born: 1952})
+
+CREATE
+(:Person {name: &#39;Katie Holmes&#39;, born: 1978}),
+(:Person {name: &#39;Benjamin Melniker&#39;, born: 1913})
+</code></pre>
+<p>There are two ways to create multiple nodes at once: by separating the nodes specified with commas, or by specifying multiple CREATE statements.</p>
+<h4 id="add-and-remove-the-labels">Add and remove the labels</h4>
+<p><strong><em>on neof4j browser run the command <code>:help SET</code></em></strong></p>
+<p>Obviously it can be added more lable or lables for a node before it&#39;s creations using the <strong>SET</strong> clause.</p>
+<p>Adding 1 label to the x node:</p>
+<pre><code class="lang-Cypher">SET x:Label
+</code></pre>
+<p>Adding 2 labels to the x node:</p>
+<pre><code class="lang-Cypher">SET x:Label1:Label2
+</code></pre>
+<p>The <strong>SET</strong> processing is ignored if that label already exists in that node.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.title = &#39;Batman Begins`
+SET m:Action
+RETURN labels(m)
+</code></pre>
+<p><em>This query used the build-in function <code>label()</code> that return the set of labels for the node</em></p>
+<p>It&#39;s possible to remove labels from a node by using the <strong>REMOVE</strong> clause with the same syntax of the <strong>SET</strong> clause.</p>
+<p>Example: Remove the Action label from the previous created node.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie:Action)
+WHERE m.title = &#39;Batman Begins&#39;
+REMOVE m:Action
+RETURN labels(m)
+</code></pre>
+<h4 id="adding-properties-to-a-node">Adding properties to a node</h4>
+<p>The <strong>SET</strong> clause can be use even to add properties to a node.</p>
+<p>Some examples:</p>
+<pre><code class="lang-Cypher">SET x.propertyName = value
+</code></pre>
+<pre><code class="lang-Cypher">SET x.propertyName1 = value1, x.propertyName2 = value2
+</code></pre>
+<pre><code class="lang-Cypher">SET x = {propertyName1: value1, propertyName2: value2}
+</code></pre>
+<pre><code class="lang-Cypher">SET x += {propertyName1: value1, propertyName2: value2}
+</code></pre>
+<p>If the property does not exist, it is added to the node. If the property exists, its value is updated. If the value specified is <code>null</code>, the property is removed.</p>
+<p>The type of data for a property is not enforced, so you can assign a string value to a property that was once a numeric value and visa versa.</p>
+<p>When the assignment used is the <code>=</code> than the properties and their values must exists and their values are overwritten; however <code>+=</code> is used to update if exists already, alternatively the properties and values are created.</p>
+<p>Example: Add the properties <em>released</em> and <em>lengthInMinutes</em> to the movie <em>Batman Begins</em>.</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.title = &#39;Batman Begins&#39;
+SET m.released = 2005, m.lengthInMinutes = 140
+RETURN m
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.title = &#39;Batman Begins&#39;
+SET  m = {title: &#39;Batman Begins&#39;,
+          released: 2005,
+          lengthInMinutes: 140,
+          videoFormat: &#39;DVD&#39;,
+          grossMillions: 206.5}
+RETURN m
+</code></pre>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.title = &#39;Batman Begins&#39;
+SET m += {
+        grossMillions: 300,
+        awards: 66
+        }
+RETURN m
+</code></pre>
+<h4 id="removing-properties-from-a-node">Removing properties from a node</h4>
+<p>There are two ways that you can remove a property from a node:</p>
+<ol>
+<li><p>Using the <strong>REMOVE</strong> keyword:</p>
+<pre><code class="lang-Cypher"> REMOVE x.propertyName
+</code></pre>
+</li><li><p>Set the property&#39;s value to <code>null</code></p>
+<pre><code class="lang-Cypher"> SET x.propertyName = null
+</code></pre>
+</li></ol>
+<p>For example if we want to remove the video format and the gross millions from the batman begins film we can execute this query:</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.title = &#39;Batman Begins&#39;
+SET m.grossMillions = null
+REMOVE m.videoFormat
+RETURN m
+</code></pre>
+<h4 id="exercises-part-eight">Exercises part eight</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 8 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 8.1: Create a Movie node for the movie with the title, Forrest Gump.</p>
+<pre><code class="lang-Cypher">CREATE (:Movie {title: &#39;Forrest Gump&#39;})
+</code></pre>
+<p>Exercise 8.2: Retrieve the newly-created node.</p>
+<pre><code class="lang-Cypher">MATCH (forrest:Movie {title: &#39;Forrest Gump&#39;})
+RETURN forrest
+</code></pre>
+<p>Exercise 8.3: Create a Person node for the person with the name, Robin Wright.</p>
+<pre><code class="lang-Cypher">CREATE (rob:Person {name: &#39;Robin Wright&#39;})
+</code></pre>
+<p>Exercise 8.4: Retrieve the newly-created node.</p>
+<pre><code class="lang-Cypher">MATCH (rob:Person {name: &#39;Robin Wright&#39;})
+RETURN rob
+</code></pre>
+<p>Exercise 8.5: Add the label OlderMovie to any Movie node that was released before 2010.</p>
+<pre><code class="lang-Cypher">MATCH (oldMov:Movie)
+WHERE oldMov.released &lt; 2010
+SET oldMov:OlderMovie
+RETURN DISTINCT labels(oldMov)
+</code></pre>
+<p>Exercise 8.6: Retrieve all older movie nodes to test that the label was indeed added to these nodes.</p>
+<pre><code class="lang-Cypher">MATCH (old:OlderMovie)
+RETURN old.title, old.released
+ORDER BY old.released DESC
+</code></pre>
+<p>Exercise 8.7: Add the label Female to all Person nodes that has a person whose name starts with Robin.</p>
+<pre><code class="lang-Cypher">MATCH (female:Person)
+WHERE female.name STARTS WITH &#39;Robin&#39;
+SET female:Female
+RETURN DISTINCT labels(female)
+</code></pre>
+<p>Exercise 8.8: Retrieve all Female nodes.</p>
+<pre><code class="lang-Cypher">MATCH (female:Female)
+RETURN female
+</code></pre>
+<p>Exercise 8.9: We’ve decided to not use the Female label. Remove the Female label from the nodes that have this label.</p>
+<pre><code class="lang-Cypher">MATCH (female:Female)
+REMOVE female:Female
+RETURN female
+</code></pre>
+<p>Exercise 8.10: View the current schema of the graph.</p>
+<pre><code class="lang-Cypher">CALL db.schema
+</code></pre>
+<p>Exercise 8.11: Add the following properties to the movie, Forrest Gump: <code>released: 1994</code>, <code>tagline: Life is like a box of chocolates…​you never know what you’re gonna get.</code>, <code>lengthInMinutes: 142</code>,</p>
+<pre><code class="lang-Cypher">MATCH (mov:Movie {title: &#39;Forrest Gump&#39;})
+SET mov += {
+    released: 1994,
+    tagline: &#39;Life is like a box of chocolates…​you never know what you’re gonna get.&#39;,
+    leghtInMinutes: 142
+}
+SET mov:OlderMovie
+</code></pre>
+<p>Exercise 8.12: Retrieve this OlderMovie node to confirm that the properties and label have been properly set.</p>
+<pre><code class="lang-Cypher">MATCH (p:OlderMovie)
+WHERE p.title = &#39;Forrest Gump&#39;
+RETURN p
+</code></pre>
+<p>Exercise 8.13: Add the following properties to the person, Robin Wright: <code>born: 1966</code> and <code>birthPlace: Dallas</code></p>
+<pre><code class="lang-Cypher">MATCH (rob:Person)
+WHERE rob.name = &#39;Robin Wright&#39;
+SET rob += {
+    born: 1996,
+    birthPlace: &quot;Dallas&quot;
+}
+RETURN rob.born, rob.birthPlace
+</code></pre>
+<p>Exercise 8.14: Retrieve this Person node to confirm that the properties have been properly set.</p>
+<pre><code class="lang-Cypher">MATCH (rob:Person {name: &#39;Robin Wright&#39;})
+RETURN rob
+</code></pre>
+<p>Exercise 8.15: Remove the lengthInMinutes property from the movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (mov:Movie {title: &#39;Forrest Gump&#39;})
+SET mov.legthInMinutes = null
+return mov
+</code></pre>
+<p>Exercise 8.16: Retrieve the Forrest Gump node to confirm that the property has been removed.</p>
+<pre><code class="lang-Cypher">MATCH (mov:Movie {title: &#39;Forrest Gump})
+return mov
+</code></pre>
+<p>Exercise 8.17: Remove the birthPlace property from the person, Robin Wright.</p>
+<pre><code class="lang-Cypher">MATCH (rob:Person)
+WHERE rob.name = &#39;Robin Wright&#39;
+REMOVE rob.birthPlace
+RETURN rob
+</code></pre>
+<p>Exercise 8.18: Retrieve the Robin Wright node to confirm that the property has been removed.</p>
+<pre><code class="lang-Cypher">MATCH (rob:Person)
+WHERE rob.name = &#39;Robin Wright&#39;
+RETURN rob
+</code></pre>
+<hr>
+<h3 id="part-nine">Part Nine</h3>
+<h4 id="creating-relationships">Creating relationships</h4>
+<p>The relationships are created by defined the left node <code>x</code> and the right node <code>y</code>:</p>
+<pre><code class="lang-Cypher">CREATE (x)&lt;-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]-(y)
+</code></pre>
+<pre><code class="lang-Cypher">CREATE (x)-[:NAME_OF_RELATIONSHIP {name_of_property: value_of_property}]-&gt;(y)
+</code></pre>
+<p>When a relationship is created it must have a direction unlike the non creational queries.
+The connections capture the semantic relationships and context of the nodes in the graph.</p>
+<p>In most cases, unless you are connecting nodes at creation time, you will retrive the two nodes, each with their own variables, for example, by specifying a <strong><code>WHERE</code></strong> clause to fine them, and then use the variables to connect them.</p>
+<p>Here is an example: Creation of a relationship between Michael Caine with the movie Batman Begins</p>
+<pre><code class="lang-Cypher">MATCH (a:Person), (m:Movie)
+WHERE a.name = &#39;Michael Caine&#39; AND m.title = &#39;Batman Begins&#39;
+CREATE (a)-[:ACTED_IN]-&gt;(m)
+RETURN a, m
+</code></pre>
+<p>Another example is the creation of multiple relationships at once bu simply providing the pattern for the creation that includes the relationship types, their directions and the nodes that you want ot connect.</p>
+<pre><code class="lang-Cypher">MATCH (a:Person), (m:Movie), (p:Person)
+WHERE a.name = &#39;Liam Neeson&#39; AND
+      m.title = &#39;Batman Begins&#39; AND
+      p.name = &#39;Benjamin Melniker&#39;
+CREATE (a)-[:ACTED_IN]-&gt;(m)&lt;-[:PRODUCED]-(p)
+RETURN a, m, p
+</code></pre>
+<h4 id="adding-properties-to-relationships">Adding properties to relationships</h4>
+<p>Just like the adding properties to a node, the same is for the relationships.</p>
+<pre><code class="lang-Cypher">SET relationship.propertyName = value
+</code></pre>
+<pre><code class="lang-Cypher">SET relationship.propertyName1 = value1 , relationship.propertyName2 = value2
+</code></pre>
+<pre><code class="lang-Cypher">SET r = {propertyName1: value1, propertyName2: value2}
+</code></pre>
+<pre><code class="lang-Cypher">SET r += {propertyName1: value1, propertyName2: value2}
+</code></pre>
+<p>The same rules of adding properties node is apply to the properties of relationships.</p>
+<p>Here is an example: Add the <code>roles</code> property to the ACTED_IN relationship from <em>Christian Bale</em> to <em>Batman Begins</em> right after creation of the relationship.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person), (mov:Movie)
+WHERE act.name = &#39;Christian Bale&#39; AND mov.title = &#39;Batman Begins&#39;
+CREATE (act)-[rel:ACTED_IN]-&gt;(mov)
+SET rel.roles = [&#39;Bruce Wayne&#39;, &#39;Batman&#39;]
+RETURN act, rel, mov
+</code></pre>
+<p>To prevent the useless executions of create and set it can be possible to add a condition:</p>
+<pre><code class="lang-Cypher">MATCH (act:Person), (mov:Movie)
+WHERE act.name = &#39;Christian Bale&#39; AND
+      mov.title = &#39;Batman Begins&#39; AND
+      NOT exists((a)-[:ACTED_IN]-&gt;(MOV))
+CREATE (act)-[rel:ACTED_IN]-&gt;(mov)
+SET rel.roles = [&#39;Bruce Wayne&#39;, &#39;Batman&#39;]
+RETURN act, rel, mov
+</code></pre>
+<h4 id="removing-properties-to-relationships">Removing properties to relationships</h4>
+<p>Same as removing properties from nodes it can be possible to remove properties from relationships.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (a:Person)-[rel:ACTED_IN]-&gt;(m:Movie)
+WHERE a.name = &#39;Christian Bale&#39; AND
+      m.title = &#39;Batman Begins&#39;
+REMOVE rel.roles
+RETURN a, rel, m
+</code></pre>
+<h4 id="exercises-part-nine">Exercises part nine</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 9 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 9.1: Create the ACTED_IN relationship between the actors, Robin Wright, Tom Hanks, and Gary Sinise and the movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (mov:Movie)
+WHERE mov.title = &#39;Forrest Gump&#39;
+MATCH (act:Person)
+WHERE act.name = &#39;Robin Wright&#39; OR
+      act.name = &#39;Tom Hanks&#39; OR
+      act.name = &#39;Gary Sinise&#39;
+CREATE (act)-[:ACTED_IN]-&gt;(mov)
+RETURN act, mov
+</code></pre>
+<p>Exercise 9.2: Create the DIRECTED relationship between Robert Zemeckis and the movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person), (mov:Movie)
+WHERE mov.title = &#39;Forrest Gump&#39; AND
+      act.name = &#39;Robert Zemeckis&#39;
+CREATE (act)-[rel:DIRECTED]-&gt;(mov)
+RETURN act, rel, mov
+</code></pre>
+<p>Exercise 9.3: Create a new relationship, HELPED from Tom Hanks to Gary Sinise.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person), (gar:Person)
+WHERE tom.name = &#39;Tom Hanks&#39; AND gar.name = &#39;Gary Sinise&#39;
+CREATE (tom)-[rel:HELPED]-&gt;(gar)
+RETURN tom, rel, gar
+</code></pre>
+<p>Exercise 9.4: Write a Cypher query to return all nodes connected to the movie, Forrest Gump, along with their relationships.</p>
+<pre><code class="lang-Cypher">MATCH (pers:Person)-[rel]-(mov:Movie)
+WHERE mov.title = &#39;Forrest Gump&#39; AND exists(rel)
+RETURN pers,rel, mov
+</code></pre>
+<p>Exercise 9.5: Add the roles property to the three ACTED_IN relationships that you just created to the movie, Forrest Gump using this information: Tom Hanks played the role, Forrest Gump. Robin Wright played the role, Jenny Curran. Gary Sinise played the role, Lieutenant Dan Taylor.</p>
+<pre><code class="lang-Cypher">MATCH (actor:Person)-[rel:ACTED_IN]-&gt;(mov:Movie)
+WHERE mov.title = &#39;Forrest Gump&#39;
+SET rel.roles = CASE actor.name
+                    WHEN &#39;Tom Hanks&#39;
+                        THEN [&#39;Forrest Gump&#39;]
+                    WHEN &#39;Robin Wright&#39;
+                        THEN [&#39;Jenny Curran&#39;]
+                    WHEN &#39;Gary Sinise&#39;
+                        THEN [&#39;Lieutenant Dan Taylor&#39;]
+                END
+RETURN actor, rel, mov
+</code></pre>
+<p>Exercise 9.6: Add a new property, research to the HELPED relationship between Tom Hanks and Gary Sinise and set this property’s value to war history.</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person)-[rel:HELPED]-&gt;(gar:Person)
+WHERE tom.name = &#39;Tom Hanks&#39; AND gar = &#39;Gary Sinise&#39;
+SET rel.research = &#39;war history&#39;
+</code></pre>
+<p>Exercise 9.7: View the current list of property keys in the graph.</p>
+<pre><code class="lang-Cypher">CALL db.propertyKeys
+</code></pre>
+<p>Exercise 9.8: View the current schema of the graph.</p>
+<pre><code class="lang-Cypher">CALL db.schema
+</code></pre>
+<p>Exercise 9.9: Query the graph to return the names and roles of actors in the movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (act:Person)-[rel:ACTED_IN]-&gt;(mov:Movie)
+WHERE mov.title = &#39;Forrest Gump&#39;
+RETURN act.name, rel.roles
+</code></pre>
+<p>Exercise 9.10: Query the graph to retrieve information about any HELPED relationships.</p>
+<pre><code class="lang-Cypher">MATCH (pers:Person)-[help:HELPED]-&gt;(someone:Person)
+RETURN pers.name, help, someone.name
+</code></pre>
+<p>Exercise 9.11: Modify the role that Gary Sinise played in the movie, Forrest Gump from Lieutenant Dan Taylor to Lt. Dan Taylor.</p>
+<pre><code class="lang-Cypher">MATCH (:Person {name: &#39;Gary Sinise&#39;})-[rel:ACTED_IN]-&gt;(:Movie {title: &#39;Forrest Gump&#39;})
+SET rel.roles = &#39;Lt. Dan Taylor&#39;
+RETURN rel.roles
+</code></pre>
+<p>Exercise 9.12: Remove the research property from the HELPED relationship from Tom Hanks to Gary Sinise.</p>
+<pre><code class="lang-Cypher">MATCH (:Person {name: &#39;Tom Hanks&#39;})-[rel:HELPED]-&gt;(:Person {name: &#39;Gary Sinise&#39;})
+REMOVE rel.research
+RETURN rel
+</code></pre>
+<p>Exercise 9.13: Query the graph to confirm that your modifications were made to the graph.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[]-&gt;(m:Movie {title: &#39;Forrest Gump&#39;})
+RETURN p, m
+</code></pre>
+<hr>
+<h3 id="part-ten">Part Ten</h3>
+<h4 id="deleting-nodes-and-relationships">Deleting nodes and relationships</h4>
+<p>If a node has no relationships to any other nodes, it&#39;s possible to simply delete it from the graph using the <strong><code>DELETE</code></strong>.</p>
+<p>The graph engine return errors if attempt to delete a node in the graph that has relationships in or out of the node, this is because deleting such a node will leave <em>orphaned</em> relationships in the graph.</p>
+<p>To delete a relationship between nodes it&#39;s necessary to find it first in the graph and then deleting it.</p>
+<p>Example:</p>
+<ul>
+<li><p>Delete the ACTED_IN relationship between Christian Bale and the movie Batman Begins:</p>
+<pre><code class="lang-Cypher">  MATCH (a:Person)-[rel:ACTED_IN]-&gt;(m:Movie)
+  WHERE a.name = &#39;Christian Bale&#39; AND &#39;m.title = &#39;Batman Begins&#39;
+  DELETE rel
+  RETURN a, m
+</code></pre>
+</li><li><p>Delete the node <em>Benjamin Melniker</em> and his relationships to movie nodes. To make this works it&#39;s necessary to remove the relationships to prevent errors:</p>
+<pre><code class="lang-Cypher">  MATCH (p:Person)-[rel:PRODUCED]-&gt;(:Movie)
+  WHERE p.name = &#39;Benjamin Melniker&#39;
+  DELETE rel, p
+</code></pre>
+</li></ul>
+<p>The most efficient way to delete a node and its corresponding relationships is to specify <strong><code>DETACH DELETE</code></strong>.
+With this specification, the relationships to and from the node are deleted then the node is deleted.</p>
+<p>Examples:</p>
+<ul>
+<li><p>This gives errors:</p>
+<pre><code class="lang-Cypher">  MATCH (p:Person)
+  WHERE p.name = &#39;Liam Neeson&#39;
+  DELETE p
+</code></pre>
+</li><li><p>This not gives errors:</p>
+<pre><code class="lang-Cypher">  MATCH (p:Person)
+  WHERE p.name = &#39;Liam Neeson&#39;
+  DETACH DELETE p
+</code></pre>
+</li></ul>
+<h4 id="exercises-part-ten">Exercises part ten</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 10 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 10.1: Delete the HELPED relationship from the graph.</p>
+<pre><code class="lang-Cypher">MATCH ()-[rel:HELPED]-()
+DELETE rel
+return rel
+</code></pre>
+<p>Exercise 10.2: Query the graph to confirm that the relationship no longer exists.</p>
+<pre><code class="lang-Cypher">CALL db.relationshipTypes
+</code></pre>
+<p>Exercise 10.3: Query the graph to display Forrest Gump and all of its relationships.</p>
+<pre><code class="lang-Cypher">MATCH (movie:Movie)-[rel]-(nod)
+WHERE movie.title = &#39;Forrest Gump&#39;
+RETURN movie, rel, nod
+</code></pre>
+<p>Exercise 10.4: Try deleting the Forrest Gump node without detaching its relationships.</p>
+<pre><code class="lang-Cypher">MATCH (movie:Movie)
+WHERE movie.title = &#39;Forrest Gump&#39;
+DELETE movie
+</code></pre>
+<p>Exercise 10.5: Delete Forrest Gump, along with its relationships in the graph.</p>
+<pre><code class="lang-Cypher">MATCH (movie:Movie)
+WHERE movie.title = &#39;Forrest Gump&#39;
+DETACH DELETE movie
+</code></pre>
+<p>Exercise 10.6: Query the graph to confirm that the Forrest Gump node has been deleted.</p>
+<pre><code class="lang-Cypher">MATCH (movie:Movie)-[rel]-(pers)
+WHERE movie.title = &#39;Forrest Gump&#39;
+RETURN movie, rel, pers
+</code></pre>
+<hr>
+<h3 id="part-eleven">Part Eleven</h3>
+<h4 id="merge">Merge</h4>
+<p>The <strong>MERGE</strong> clause is used either to create new nodes and relationships or to make structural changes to existing nodes and relationships.</p>
+<p>Recap of the <code>CREATE</code> clause:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>The result with <code>CREATE</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node</td>
+<td>If a node with the same property value exists, a duplicate node is creted</td>
+</tr>
+<tr>
+<td>Label</td>
+<td>If the label already exists for the node, the node is not updated</td>
+</tr>
+<tr>
+<td>Property</td>
+<td>If the node or relationship property already exists, it is updated with the new value</td>
+</tr>
+<tr>
+<td>Relationship</td>
+<td>If a relationship exists, a duplicate relationship is created</td>
+</tr>
+</tbody>
+</table>
+<p>It&#39;s difficult to have a graph where we want some duplicates, and the solution for this is the <code>MERGE</code> clause.
+This clause is used to find elements in the graph and if the element is not found then it will be created:</p>
+<ul>
+<li>Create a unique node based on label and key information for a property and if it exists, optionally update it</li><li>Create a unique relationship</li><li>Create a node and relationship to it uniquely in the context of another node</li></ul>
+<pre><code class="lang-Cypher">MERGE (variable:Label{nodeProperties})
+RETURN variable
+</code></pre>
+<p>This is an example:</p>
+<pre><code class="lang-Cypher">MERGE (a:Person {name: &#39;Michael Caine&#39;}) SET a.born = 1933 RETURN a
+</code></pre>
+<p>We can repeat this query with the MERGE clause but no more Actor will be created.</p>
+<p>This clause can be used also to create relationships:</p>
+<pre><code class="lang-Cypher">MERGE (variable:Label {nodeProperties})-[:REL_TYPE]-&gt;(otherNode)
+RETURN variable
+</code></pre>
+<p>It&#39;s possible to leave out the direction of the relationship, if the relationship not exists than will be created assuming the left-to-right arrow.</p>
+<p>Using this clause to create relationships is expensive and the suggestion is to do only when it&#39;s needed to ensure that a relationship is unique and you are not sure it already exists.</p>
+<p>To prevent this the <code>MATCH</code> clause:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person), (m:Movie)
+WHERE m.title = &#39;Batman Begins&#39; AND p.name ENDS WITH &#39;Caine&#39;
+MERGE (p)-[:ACTED_IN]-&gt;(m)
+RETURN p,m
+</code></pre>
+<p>You must be aware of the behavior of the <strong><code>MERGE</code></strong> clause and how it will automatically create nodes and relationships. This clause tries to find a full pattern and if it doesn&#39;t find it, it creates that full pattern. That&#39;s why in most cases it&#39;s suggested to first <strong><code>MERGE</code></strong> the nodes and then the relationships afterwards.</p>
+<p>Another property of the <strong><code>MERGE</code></strong> clause is <strong><code>ON CREATE</code></strong> used to assign specific values to a node being created as a result of an attempt to merge.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MERGE (a:Person {name: &#39;Sir Michael Caine&#39;})
+ON CREATE SET a.birthPlace = &#39;London&#39;,
+              a.born = 1934
+RETURN a
+</code></pre>
+<p>The SET clause will be used only if the node is not found, the clause will be skipped otherwise.</p>
+<p>Like <code>ON CREATE</code> it exists another clause for the matching case <strong><code>ON MATCH</code></strong>, used when the node/relationship already exists.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MERGE (a:Person {name: &#39;Sir Michael Caine&#39;})
+ON CREATE SET a.born = 1934
+              a.birthPlace = &#39;UK&#39;
+ON MATCH SET a.birthPlace = &#39;UK&#39;
+RETURN a
+</code></pre>
+<h4 id="exercises-part-eleven">Exercises part eleven</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 11 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 11.1: Use MERGE to create (ON CREATE) a node of type Movie with the title property, Forrest Gump. If created, set the released property to 1994.</p>
+<pre><code class="lang-Cypher">MERGE (mov:Movie {title: &#39;Forest Gump&#39;})
+ON CREATE
+    SET mov.released = 1994
+RETURN mov
+</code></pre>
+<p>Exercise 11.2: Use MERGE to update (ON MATCH) a node of type Movie with the title property, Forrest Gump. If found, set the tagline property to &quot;Life is like a box of chocolates…​you never know what you’re gonna get.&quot;.</p>
+<pre><code class="lang-Cypher">MERGE (mov:Movie {title: &#39;Forrest Gump&#39;})
+ON CREATE
+    SET mov.released = 1994
+ON MATCH
+    SET mov.tagline = &#39;Life is like a box of chocolates…​you never know what you’re gonna get.&#39;
+RETURN mov
+</code></pre>
+<p>Exercise 11.3: Use MERGE to create (ON CREATE) a node of type Production with the title property, Forrest Gump. If created, set the property year to the value 1994.</p>
+<pre><code class="lang-Cypher">MERGE (prod:Production {title: &#39;Forrest Gump&#39;})
+ON CREATE
+    SET prod.year = 1994
+RETURN prod
+</code></pre>
+<p>Exercise 11.4: Query the graph to find labels for nodes with the title property, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (forrest)
+WHERE forrest.title = &#39;Forrest Gump&#39;
+RETURN labels(forrest)
+</code></pre>
+<p>Exercise 11.5: Use MERGE to update (ON MATCH) the existing Production node for Forrest Gump to add the company property with a value of Paramount Pictures.</p>
+<pre><code class="lang-Cypher">MERGE (forrest:Production {title: &#39;Forrest Gump&#39;})
+ON MATCH
+    SET forrest.property = &#39;Paramount Pictures&#39;
+RETURN forrest
+</code></pre>
+<p>Exercise 11.6: Use MERGE to add the OlderMovie label to the movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MERGE (mov:Movie {title: &#39;Forrest Gump&#39;})
+ON MATCH
+    SET mov:OlderMovie
+RETURN labels(mov)
+</code></pre>
+<p>Exercise 11.7: Execute the following Cypher statement that uses MERGE to create two nodes and a single relationship</p>
+<pre><code class="lang-Cypher">MERGE (p:Person {name: &#39;Robert Zemeckis&#39;})-[:DIRECTED]-&gt;(m {title: &#39;Forrest Gump&#39;})
+</code></pre>
+<p>This statement first finds all Person nodes that have only the name property value of Robert Zemeckis. It then finds all nodes with only the title property set to Forrest Gump. There are no Person or other nodes that have only these properties so the graph engine creates them. Then the graph engine creates the relationship between these two nodes. That is, this MERGE operation creates two nodes and a single relationship. If we had provided all of the property values for the nodes, we would not have created the extra nodes.</p>
+<p>In fact, you should never create nodes and relationships together like this! This example is here to show you how powerful Cypher can be. A best practice is to create nodes first, then relationships.</p>
+<p>Exercise 11.8: Repeat the execution of the previous statement.</p>
+<p>It should do nothing. A best practice is to always use MERGE to create relationships to ensure that there will be no duplication in the graph.</p>
+<pre><code class="lang-Cypher">MERGE (p:Person {name: &#39;Robert Zemeckis&#39;})-[:DIRECTED]-&gt;(m {title: &#39;Forrest Gump&#39;})
+</code></pre>
+<p>Exercise 11.9: Find the correct Person node to delete</p>
+<p>You query the nodes before you delete them to ensure you have the correct MATCH clauses.</p>
+<p>Execute this query:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person {name: &#39;Robert Zemeckis&#39;})-[rel]-(x)
+WHERE NOT EXISTS (p.born)
+RETURN p, rel, x
+</code></pre>
+<p>Exercise 11.10: Delete this Person node, along with its relationships.</p>
+<pre><code class="lang-Cypher">MATCH (p:Person {name: &#39;Robert Zemeckis&#39;})-[rel]-(x)
+WHERE NOT EXISTS (p.born)
+DETACH DELETE p
+RETURN p, rel, x
+</code></pre>
+<p>Exercise 11.11: Find the correct Forrest Gump node to delete by executing this statement:</p>
+<pre><code class="lang-Cypher">MATCH (m)
+WHERE m.title = &#39;Forrest Gump&#39; AND labels(m) = []
+RETURN m, labels(m)
+</code></pre>
+<p>Exercise 11.12: Delete the Forrest Gump node.</p>
+<pre><code class="lang-Cypher">MATCH (m)
+WHERE m.title = &#39;Forrest Gump&#39; AND labels(m) = []
+DETACH DELETE m
+</code></pre>
+<p>Exercise 11.13: Use MERGE to create the DIRECTED relationship between Robert Zemeckis and the Movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MERGE (rob:Person {name: &#39;Robert Zemeckis})-[:DIRECTED]-&gt;(mov:Movie {title: &#39;Forrest Gump})
+RETURN rob, mov
+</code></pre>
+<p>Exercise 11.14: Use MERGE to create the ACTED_IN relationship between the actors, Tom Hanks, Gary Sinise, and Robin Wright and the Movie, Forrest Gump.</p>
+<pre><code class="lang-Cypher">MATCH (pers:Person), (m:Movie)
+WHERE
+    pers.name IN [&#39;Tom Haks&#39;, &#39;Gary Sinise&#39;, &#39;Robin Wright&#39;] AND
+    m.title = &#39;Forrest Gump&#39;
+MERGE (pers)-[:ACTED_IN]-&gt;(m)
+RETURN pers, m
+</code></pre>
+<p>Exercise 11.15: Modify the relationship property, role for their roles in Forrest Gump: <code>Tom Hanks is Forrest Gump</code>, <code>Gary Sinise is Lt. Dan Taylor</code>, <code>Robin Wright is Jenny Curran</code></p>
+<pre><code class="lang-Cypher">MATCH (pers:Person)-[rel:ACTED_IN]-&gt;(m:Movie)
+WHERE m.title = &#39;Forrest Gump&#39;
+SET rel.roles =
+    CASE pers.name
+        WHEN &#39;Tom Hanks&#39;
+            THEN [&#39;Forrest Gump&#39;]
+        WHEN &#39;Gary Sinise&#39;
+            THEN [&#39;Lt. Dan Taylor&#39;]
+        WHEN &#39;Robin Wright&#39;
+            THEN [&#39;Jenny Curran&#39;]
+    END
+RETURN pers, m
+</code></pre>
+<hr>
+<h3 id="part-twelve">Part Twelve</h3>
+<p>In a deployed application, it&#39;s not necessary to hard code the Cypher statements. In this case we are going to use a variety of values to test, but we don&#39;t want to chenge every time the values of test.
+In addition, typically we include Cypher statements in an application where parameters are passed in the Cypher statement before it executes.
+For these scenarios, we need to parameterize values in the Cypher statements.</p>
+<h4 id="parameters">Parameters</h4>
+<p>In the Cypher statements, a parameter name begins with the <code>$</code> symbol.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = $actorName
+RETURN m.released, m.title
+ORDER BY m.released DESC
+</code></pre>
+<p>At runtime, if the parameter <code>$actorName</code> has a value, it will be used in the Cypher statement when it runs in the graph engine.</p>
+<p>In Neo4j Browser to set values of parameters we can use the command <code>:param</code>:</p>
+<pre><code class="lang-Cypher">:param actorName =&gt; &#39;Tom Hanks&#39;
+</code></pre>
+<p>This set the parameter actorName with the value <em>Tom Hanks</em>.</p>
+<p>The result of this command is:</p>
+<pre><code class="lang-Json">{
+  &quot;actorName&quot;: &quot;Tom Hanks&quot;
+}
+See :help param for usage of the :param command.
+</code></pre>
+<p>This is a client-side browser command, so it not work outside of that.</p>
+<p>Once this parameter is setted, it can be used to do queries.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = $actorName
+RETURN m.released, m.title
+ORDER BY m.released DESC
+</code></pre>
+<p>Eventually the parameter can be reset with another value and the query can be reused without touch the statements.</p>
+<p>To set value for more than one parameters it can be use the JSON-style format:</p>
+<pre><code class="lang-Cypher">:params {actorName: &#39;Tom Cruise`, movieName: `Top Gun`}
+</code></pre>
+<p>To remove a parameter from the list simply run the command without the parameter unwanted.</p>
+<p>To show the list of the parameters in use for the session execute the <code>:param</code> command without any definition of parameters.</p>
+<h4 id="exercises-part-twelve">Exercises part twelve</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 12 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 12.1: Write and execute a Cypher query that returns the names of people who reviewed movies and the actors in these movies by returning the name of the reviewer, the movie title reviewed, the release date of the movie, the rating given to the movie by the reviewer, and the list of actors for that particular movie.</p>
+<pre><code class="lang-Cypher">MATCH (rev:Person)-[review:REVIEWED]-&gt;(mov:Movie),
+      (act:Person)-[:ACTED_IN]-&gt;(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       mov.released AS `Released`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+</code></pre>
+<p>Exercise 12.2: Add a parameter named year to your session with a value of 2000.</p>
+<pre><code class="lang-Cypher">:param year =&gt; 2000
+</code></pre>
+<p>Exercise 12.3: Modify the Cypher query you just wrote to filter by the year parameter.</p>
+<pre><code class="lang-Cypher">MATCH (rev:Person)-[review:REVIEWED]-&gt;(mov:Movie),
+      (act:Person)-[:ACTED_IN]-&gt;(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+WHERE mov.released = $year
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+</code></pre>
+<p>Exercise 12.4: Modify the year parameter to be a different value, 2006, and retest your query.</p>
+<pre><code class="lang-Cypher">:param year =&gt; 2006
+</code></pre>
+<p>Exercise 12.5: Add a parameter named ratingValue to your session with a value of 65.</p>
+<pre><code class="lang-Cypher">:param ratingValue =&gt; 65
+</code></pre>
+<p>Exercise 12.6: Modify the query you wrote previously to also filter the result returned by the rating for the movie.</p>
+<pre><code class="lang-Cypher">MATCH (rev:Person)-[review:REVIEWED]-&gt;(mov:Movie),
+      (act:Person)-[:ACTED_IN]-&gt;(mov)
+WITH rev, review, mov, collect(act.name) AS actors
+WHERE mov.released = $year AND
+      review.rating = $ratingValue
+RETURN DISTINCT rev.name AS `Reviewer`,
+       mov.title AS `Movie`,
+       review.rating AS `Rated`,
+       actors AS `Actors`
+</code></pre>
+<p>Exercise 12.7: Modify the ratingValue parameter to be a different value, 60, and retest your query.</p>
+<pre><code class="lang-Cypher">:param ratingValue =&gt; 60
+</code></pre>
+<hr>
+<h3 id="part-thirteen">Part Thirteen</h3>
+<h4 id="explain-profile">Explain Profile</h4>
+<p><strong><em>on neof4j browser run the command <code>:help EXPLAIN</code></em></strong></p>
+<p>The graphs studies during this notes is a very small graphs and the problems for the rapresentation become much more harder when the dataset grows larger and larger.</p>
+<p>With larger graphs it will be important to not only add appropriate indexes but also write Cypher statements that execute as efficently as possible.</p>
+<p>There are two Cypher keywords to use as prefix with a Cypher statement to analyze a query:</p>
+<ul>
+<li><strong><code>EXPLAIN</code></strong> provides estimates of the graph engine processing that will occur, but does not execute the statement.</li><li><strong><code>PROFILE</code></strong> provides real profiling information for what has occurred in the graph engine during the query and executes the statement.</li></ul>
+<p>The EXPLAIN option provides the query plan. With this it can be possible to compare different statements to understand the stages of processing that will occur when the Cypher executes.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">EXPLAIN
+MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = $actorName AND
+      m.released &lt; $year
+RETURN p.name, m.title, m.released
+</code></pre>
+<p>This query return the phases of the Cypher execution, it can be possible to examine what code is expected to run.
+Each phase of the query presents an estimante of the number of rows expected to be returned.</p>
+<p>For a better metric for analyzing how the Cypher statement will run is needed to run the PROFILE prefix keyword which runs the statement and gives the run-time performance metrics.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">PROFILE
+MATCH (p:Person)-[:ACTED_IN]-&gt;(m:Movie)
+WHERE p.name = $actorName AND
+      m.released &lt; $year
+RETURN p.name, m.title, m.released
+</code></pre>
+<p>This query above show the cache hits and most importantly the number of times that the engine accessed the database (db hints). This is the metric that will affect the performance of the Cypher statement at run-time.</p>
+<p>There are two reasons why a query may take long time:</p>
+<ul>
+<li><p>The query returns a lot of data -&gt; the query completes execution in the graph engine, but it takes log time to create the result stream:</p>
+<pre><code class="lang-Cypher">  MATCH (a)--(b)--(c)--(d)--(e)--(f)
+  RETURN a
+</code></pre>
+</li><li><p>The query takes a long time to execute in the graph engine:</p>
+<pre><code class="lang-Cypher">  MATCH (a),(b),(c),(d),(e)
+  RETURN count(id(a))
+</code></pre>
+</li></ul>
+<p>If the query executes and then returns a lots of data, there is no way to monitor it or kill the query, the only think to do is to close the session of the browser and start a new one.
+If the server has many of these rogue querise running, it will slow down considerably so you should aim to limit these types of queries.
+If the query is a <strong>long-running query</strong>, it&#39;s possible to monitor it buy using the <code>:queries</code> command.
+This command calls the <code>dbms.listQueries</code> under the hood.
+It can be possible to kill a query by using the icon to the right, alternatively execute the statement <code>CALL dbms.killQuery(&#39;query-id&#39;)</code>.</p>
+<h4 id="exercises-part-thirteen">Exercises part thirteen</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 13 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 13.1: View the query plan for a Cypher statement.</p>
+<p>For this Part of the exercise, you will use the query that you wrote previously using Cypher parameters. It assumes that you have set the year and ratingValue Cypher parameters:</p>
+<pre><code class="lang-Cypher">MATCH (r:Person)-[rel:REVIEWED]-&gt;(m:Movie)&lt;-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating &gt; $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+</code></pre>
+<p>View the query plan for this Cypher statement.</p>
+<pre><code class="lang-Cypher">EXPLAIN
+MATCH (r:Person)-[rel:REVIEWED]-&gt;(m:Movie)&lt;-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating &gt; $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+</code></pre>
+<p>Exercise 13.2: View the metrics for the query when the previous statement executes.</p>
+<pre><code class="lang-Cypher">PROFILE
+MATCH (r:Person)-[rel:REVIEWED]-&gt;(m:Movie)&lt;-[:ACTED_IN]-(a:Person)
+WHERE m.released = $year AND
+      rel.rating &gt; $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+</code></pre>
+<p>Exercise 13.3: Remove the labels from the nodes and relationships in the query and again view the metrics. Compare the db hits from the previous version of the statement.</p>
+<pre><code class="lang-Cypher">PROFILE
+MATCH (r)-[rel]-&gt;(m)&lt;-[]-(a)
+WHERE m.released = $year AND
+      rel.rating &gt; $ratingValue
+RETURN  DISTINCT r.name, m.title, m.released, rel.rating, collect(a.name)
+</code></pre>
+<p>Exercise 13.4: Recall that a query may run for a long time because there are a lot of results to return</p>
+<p>The query takes a long time to execute in the graph engine.</p>
+<p>You will perform these steps to gain some experience with monitoring and killing queries by having your original Neo4j Browser window open and then opening another Neo4j Browser window.</p>
+<p>Open a second Neo4j Browser session. This session will be used for monitoring queries as they run.</p>
+<pre><code class="lang-Cypher">:queries
+</code></pre>
+<p>Exercise 13.5: Execute this long-running query in your original Neo4j Browser session that returns a lot of results. In the second Neo4j Browser window, monitor the running queries.</p>
+<p>Here is a very bad Cypher statement to use that returns a lot of results:</p>
+<pre><code class="lang-Cypher">PROFILE MATCH (a)--(b)--(c)--(d)--(e)--(f)--(g)
+RETURN a
+</code></pre>
+<p>What do you see in the second Neo4j Browser window where you are monitoring queries?</p>
+<p>While the query in the original Neo4j Browser window is executing, in the second Neo4j Browser window i can see the state of the <code>PROFILE</code> query.</p>
+<p>Exercise 13.6: Execute this long-running query in your original Neo4j Browser session and monitor the query in the second Neo4j Browser session.</p>
+<p>Here is a very bad Cypher statement that takes a lot of time to execute in the graph engine:</p>
+<pre><code class="lang-Cypher">PROFILE MATCH (a), (b), (c), (d), (e) , (f), (g)
+RETURN count(id(a))
+</code></pre>
+<p>What do you see in the second Neo4j Browser window where you are monitoring queries?</p>
+<p>Same as exercise 5 but this query never finished yet.</p>
+<p>Exercise 13.7: In the second Neo4j Browser window, kill the long-running query.</p>
+<p>Double click in the minus button.</p>
+<hr>
+<h4 id="part-fourteen">Part Fourteen</h4>
+<h4 id="managing-constraints-and-node-keys">Managing constraints and node keys</h4>
+<p>We are already said that we need to prevent the duplications of the nodes and data, it&#39;s not possible to prevent duplication by checking the existence of the exact node (with properties) as this type of test is not cluster or multi-thread safe as mp òpcls are ised. This is why the MERGE clause is preferred over the CREATE because MERGE does use locks.</p>
+<p>To define some rules above this problems we can:</p>
+<ul>
+<li>Add a uniqueness constraint that ensures that a value for a property is unique for all nodes of that type.</li><li>Add an existence constraint that ensure that when a node or relationship is created or modified, ti must have certain properties set.</li><li>Add a node key that ensures that a set of values for properties of a node of a given type is unique.</li></ul>
+<h4 id="constraint-properties">Constraint properties</h4>
+<p>We add a uniqueness constraint to the graph by creating a constraint that asserts that a particular node property is unique in the graph for a particular type of node.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (m:Movie) ASSERT m.title IS UNIQUE
+</code></pre>
+<p>This statement will fail if the graph already has multiple Movie nodes with the same value for the title property.</p>
+<p>If we attempt to create a Movie with the title <em><code>The Matrix</code></em> the Cypher statement will fail baceuse the graph already has a movie with that title.
+Also when we attempt to modify the value of a property where the uniqueness assertion fails the Cypher statement will fail.</p>
+<p>If we attempt to add a new constraint to a property of some label and this property is not set for some nodes with that label, than the query will fail because we cannot set a new constraint without first make this new rule applicable.</p>
+<p>We can also create a constraint on properties of relationships, it&#39;s not necessary to define the direction of the relationship:</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON ()-[rel:REVIEWED]-() ASSERT exists(rel.rating)
+</code></pre>
+<p>To retrieving constraints defined for the graph we can run the command <code>:schema</code> to view existing indexes and contraints defined for the graph.</p>
+<p>The <code>CALL db.constraints()</code> will return the statements of all the constraints.</p>
+<p>To delete a constraints it can be run the <strong><code>DROP</code></strong> clause followed by the statements of the constraints to delete:</p>
+<pre><code class="lang-Cypher">DROP CONSTRAINT ON ()-[rel:REVIEWED]-() ASSERT exists(rel.rating)
+</code></pre>
+<h4 id="constraint-node-keys">Constraint node keys</h4>
+<p>A node key is used to define the uniqueness constraint for multiple properties of a node of a certain type. A node key is also used as a composite index in the graph.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (p:Person) ASSERT (p.name, p.born) IS NODE KEY
+</code></pre>
+<p>This prevent the duplication of nodes.</p>
+<h4 id="exercises-part-fourteen">Exercises part fourteen</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 14 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 14.1: Add a uniqueness constraint to the Person nodes in the graph.</p>
+<p>Suppose we want to ensure that every Person in the graph must have a unique name.</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (p:Person) ASSERT p.name IS UNIQUE
+</code></pre>
+<p>Exercise 14.2: Add Tom Hanks to the graph.</p>
+<pre><code class="lang-Cypher">CREATE (tom:Person {name: &#39;Tom Hanks&#39;})
+RETURN tom.name
+</code></pre>
+<p>Exercise 14.3: Attempt to add an existence constraint to the Person nodes in the graph.</p>
+<p>Suppose we want to ensure that every Person node in the graph has a born property.</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (p:Person) ASSERT exists(p.born)
+</code></pre>
+<p>Exercise 14.4: Update the existing Person nodes so that you set the born property to 0 for any nodes that do not exist.</p>
+<pre><code class="lang-Cypher">MATCH (per:Person)
+WHERE NOT exists(per.born)
+SET per.born = 0
+</code></pre>
+<p>Exercise 14.5: Add the existence constraint to the graph for the born property.</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (per:Person) ASSERT exists(per.born)
+</code></pre>
+<p>Exercise 14.6: Add Sean Penn to the graph where you do not specify a value for born.</p>
+<pre><code class="lang-Cypher">CREATE (:Person {name: &#39;Sean Penn&#39;})
+RETURN p
+</code></pre>
+<p>Exercise 14.7: Add an existence constraint to the ACTED_IN relationship in the graph.</p>
+<p>Suppose we want to ensure that every ACTED_IN relationship must have a value for the roles property.</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON ()-[act:ACTED_IN]-() ASSERT exists(act-roles)
+</code></pre>
+<p>Exercise 14.8: Add an ACTED_IN relationship from the person, Emil Eifrem to the movie, Forrest Gump where the roles property is not set.</p>
+<pre><code class="lang-Cypher">MATCH (em:Person {name: &#39;Emil Eifrem&#39;}), (movie:Movie {title: &#39;Forrest Gump&#39;})
+MERGE (em)-[:ACTED_IN]-&gt;(movie)
+RETURN em
+</code></pre>
+<p>Exercise 14.9: Suppose we want to ensure that the graph will never contain a movie with the same title and the same year. For example, the movie studio decides to release a movie with the title, Back to the Future in 2018. There already is a movie in the graph with this title that was released in 1985. We want to allow this. To implement this type of constraint on the graph, you must add a constraint as a node key since it uses two properties of the node.</p>
+<p>Note: If you have created a uniqueness constraint to the graph for the title property (as shown in the module content), you must first drop the constraint as it no longer makes sense if we are to allow duplicate titles in the graph. You must write and execute the statement to drop the constraint if it exists:</p>
+<pre><code class="lang-Cypher">DROP CONSTRAINT ON (m:Movie) ASSERT m.title IS UNIQUE
+</code></pre>
+<p>Add a node key to the graph that will ensure that the combined values of title and released are unique for all Movie nodes.</p>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (m:Movie) ASSERT (m.title, m.released) IS NODE KEY
+</code></pre>
+<p>Exercise 14.10: Add the movie, Back to the Future with a released value of 1985 and a tagline value of Our future..</p>
+<pre><code class="lang-Cypher">CREATE (m:Movie {title: &#39;Back to the Future&#39;, released: 1985, tagline: &#39;hello future&#39;})
+</code></pre>
+<p>Exercise 14.11: Add the movie, Back to the Future with a released value of 2018 and a tagline value of The future is ours..</p>
+<pre><code class="lang-Cypher">CREATE (m:Movie {title: &#39;Back to the Future&#39;, released: 2018, tagline: &#39;this future&#39;})
+</code></pre>
+<p>Exercise 14.12: Try adding the 2018 movie again.</p>
+<pre><code class="lang-Cypher">CREATE (m:Movie {title: &#39;Back to the Future&#39;, released: 2018, tagline: &#39;this future&#39;})
+</code></pre>
+<p>Exercise 14.13: Display the list of constraints defined in the graph.</p>
+<pre><code class="lang-Cypher">CALL db.constraints
+</code></pre>
+<p>Exercise 14.14: Drop the constraint that requires the ACTED_IN relationship to have a property, roles.</p>
+<pre><code class="lang-Cypher">DROP CONSTRAINT ON ()-[ acted_in:ACTED_IN ]-() ASSERT exists(acted_in.roles)
+</code></pre>
+<hr>
+<h3 id="part-fiveteen">Part Fiveteen</h3>
+<h4 id="managing-indexes">Managing indexes</h4>
+<p>The uniqueness and node key constraints are essentially single-property and composite indexes respectively.
+Indexes are used to improve initial node lookup performance, but they require additional storage in the graph to maintain and also add to the cost of creating or modifying property values that are indexed.
+Indexes store redundant data that points to nodes with the specific property value or values.
+Unlike SQL, there is no such thing as a primary key in Neo4j, but nodes can have multiple properties that must be unique.</p>
+<p>This are single-property indexes used:</p>
+<ul>
+<li>Equality checks: <code>=</code></li><li>Range comparisons: <code>&gt;</code>,<code>&gt;=</code>,<code>&lt;</code>, <code>&lt;=</code></li><li>List membership: <code>IN</code></li><li>String comparisons: <code>STARTS WITH</code>, <code>ENDS WITH</code>, <code>CONTAINS</code></li><li>Existence checks: <code>exists()</code></li><li>Spatial distance searches: <code>distance()</code></li><li>Spatial bounding searches: <code>point()</code></li></ul>
+<p>Composite indexes are used only for equality checks and list membership.</p>
+<p><strong><em>For more about indexes -&gt; <a href="https://neo4j.com/docs/operations-manual/current/">neo4j operations manual</a></em></strong></p>
+<p>Because index maintenance incurs additional overhead when nodes are created so it&#39;s not raccomend to create indexes in a small graph.
+The indexes of a graph can be view by use the build-in command <code>schema</code>.</p>
+<p>The index for a property of a node can greatly reduce the number of nodes that the engine needs to visit in oredr to satisy a query.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE 1990 &lt; m.released &lt; 2000
+SET m.videoFormat = &#39;DVD&#39;
+</code></pre>
+<p>The graph engine will find the pointers to all nodes that satisfy the query without having to visit all of the nodes:</p>
+<p><img src="Neo4j.html_files/images/indexesRange.png" alt="indexes range"></p>
+<p>Indexes improve graph engine performance.
+A unique constraint on a property is an index so it&#39;s not needed to create an index for any properties created with uniqueness constraints for, but an index on its own does not guarantee uniqueness.</p>
+<p>To create a single-property index it&#39;s necessary to use the <code>CREATE INDEX ON</code>:</p>
+<pre><code class="lang-Cypher">CREATE INDEX ON :Movie(released)
+</code></pre>
+<p>If a set of properties for a node must be unique for every node, then it&#39;s recommend to create a constraint as a node key, rather than an index. If there can be duplication for a set of property values, but the faster access it&#39;s necessary than the composite index is necessary.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">MATCH (m:Movie)
+WHERE m.released &gt;= 2000
+SET m.videoFormat = &#39;DVD&#39;;
+MATCH (m:Movie)
+WHERE m.released &lt; 2000
+SET m.videoFormat = &#39;VHS&#39;;
+CREATE INDEX ON :Movie(released,videoFormat)
+</code></pre>
+<p>This queries set two new properties and with the last query create composite index on these properties.</p>
+<p>To retrive indexes there is a build-in method call <code>:schema</code>, similar to <code>CALL db.constraints()</code>, that return a list of the indexes, and the unique constraints and node key shown as indexes in the graph.</p>
+<p>To drop an existing index created it&#39;s possible to use the clause <code>DROP</code> instead of <code>CREATE</code>:</p>
+<pre><code class="lang-Cypher">DROP INDEX ON :Movie(released, videoFormat)
+</code></pre>
+<h4 id="exercises-part-fiveteen">Exercises part fiveteen</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 15 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 15.1: Create a single-property index on the born property of a Person node.</p>
+<pre><code class="lang-Cypher">CREATE INDEX ON :Person(born)
+</code></pre>
+<p>Exercise 15.2: View the indexes defined for the graph.</p>
+<pre><code class="lang-Cypher">:schema
+</code></pre>
+<p>Exercise 15.3: Drop the single-property index you just created for the born property of the Person nodes.</p>
+<pre><code class="lang-Cypher">DROP INDEX ON :Person(born)
+</code></pre>
+<hr>
+<h3 id="part-sixteen">Part Sixteen</h3>
+<h4 id="from-relational-to-graph">From relational to graph</h4>
+<p><strong><em><a href="https://www.youtube.com/watch?v=NO3C-CWykkY">youtube video - (RDBMS+SQL) to (Graphs+Cypher)</a></em></strong></p>
+<p>In many applications the datas comes from a .csv files or files of other types and with these we want to populate our graph.
+There are many nuances and best practices for loading data into graph from files.</p>
+<p><em>To convert a relational database into a graph database with one step you can use the ETL tool (Extract Transform Load) -&gt; <a href="https://neo4j.com/developer/neo4j-etl/">Neo4J ETL</a></em></p>
+<p>In Cypher it&#39;s possible to:</p>
+<ul>
+<li>Load data from a URL (http(s) or file)</li><li>Process data as a stream of records</li><li>Create or update the graph with the data being loaded</li><li>Use transactions during the data load</li><li>Transform and convert values from the load stream</li><li>Load up to 10M nodes and relationships</li></ul>
+<p>Commonly to import data into a graph is used the csv files, to do that it&#39;s necessary to develop a model that describes how data need to be represents in the graph.</p>
+<h4 id="importing-normalized-data">Importing normalized data</h4>
+<p>The <code>LOAD CSV</code> clause parses a local in the import directory of the neo4j installation or a remote file into a stream of rows which represent maps (with eaders) or lists. Once done this it&#39;s possible to use Cypher operations to create nodes or relationships or merge existing graph.</p>
+<p>Syntax of LOAD CSV:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS FROM url-value
+AS row
+</code></pre>
+<ul>
+<li>The <strong>row</strong> is a variable that is used to extract data from file.</li><li>The first line of the file must contain a comma-separated list of column names.</li><li>The url-value can be a resource or a file on the system.</li></ul>
+<p>Each line of this file must contains data that is interpreted as values for each column name. When each line is read from the file, it&#39;s possible to perform the necessary processing to create or merge data into the graph.</p>
+<p>As CSV file usually represent either node or relationship lists and to create nodes and relationships separately it&#39;s necessary to parse several time that file.</p>
+<p>Example of csv file:</p>
+<pre><code class="lang-CSV">id,title,country,year,summary
+1,Wall Street,USA,1987, Every dream has a price.
+2,The American President,USA,1995, Why can&#39;t the most powerful man in the world have the one thing he wants most?
+3,The Shawshank Redemption,USA,1994, Fear can hold you prisoner. Hope can set you free.
+</code></pre>
+<p>Before loading data from CSV files into graph, we need to confirm that the data retrived looks ok. To do this we can first print the lines of the file and get some information about the data to be loaded.</p>
+<p>Example:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies_to_load.csv&#39;
+as LINE
+RETURN count(*)
+</code></pre>
+<p>Or even better we probably want to see how the datas are stored:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies_to_load.csv&#39;
+AS line
+RETURN * LIMIT 1
+</code></pre>
+<p>Since all the lines are with the same format we can limit the visualization to 1.</p>
+<p>The output of the last query should be:</p>
+<pre><code class="lang-Output">line
+{
+  &quot;summary&quot;: &quot; Every dream has a
+price.&quot;,
+  &quot;country&quot;: &quot;USA&quot;,
+  &quot;year&quot;: &quot;1987&quot;,
+  &quot;id&quot;: &quot;1&quot;,
+  &quot;title&quot;: &quot;Wall Street&quot;
+}
+</code></pre>
+<p>Notice that the <em>summary</em> column&#39;s data has an extra space before the data in the file, to make sure not to load data like this we need to beutify the output:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies_to_load.csv&#39;
+AS line
+RETURN line.id, line.title, toInteger(line.year), trim(line.summary)
+</code></pre>
+<p>The output will be formatted to this:</p>
+<table>
+<thead>
+<tr>
+<th>line.id</th>
+<th>line.title</th>
+<th>toInteger(line.year)</th>
+<th>trim(line.summary)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;1&quot;</td>
+<td>&quot;Wall Street&quot;</td>
+<td>1987</td>
+<td>&quot;Every dream has a price.&quot;</td>
+</tr>
+<tr>
+<td>&quot;2&quot;</td>
+<td>&quot;The American President&quot;</td>
+<td>1995</td>
+<td>&quot;Why can&#39;t the most powerful man in the world have the one thing he wants most?&quot;</td>
+</tr>
+<tr>
+<td>&quot;3&quot;</td>
+<td>&quot;The Shawshank Redemption&quot;</td>
+<td>1994</td>
+<td>&quot;Fear can hold you prisoner. Hope can set you free.&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>Now we can create nodes and relationships from this file:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies_to_load.csv&#39;
+AS line
+CREATE (movie:Movie {movieId: line.id, title: line.title, released: toInteger(line.year), tagline: trim(line.summary)})
+</code></pre>
+<p>Another example can be the file that holds the data of Person:</p>
+<pre><code class="lang-Text">Id,name,birthyear
+1,Charlie Sheen, 1965
+2,Oliver Stone, 1946
+3,Michael Douglas, 1944
+4,Martin Sheen, 1940
+5,Morgan Freeman, 1937
+</code></pre>
+<p>In this case we need to pay more attention at the people in the database that have already this name to prevent duplications. Instead of creating them, we need to use the <strong><code>MERGE</code></strong> to ensure unique entries after the import.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/person_to_load.csv&#39;
+AS line
+MERGE (actor:Person {personId: line.Id})
+ON CREATE
+    SET actor.name = line.name, actor.born = toInteger(trim(line.birthyear))
+</code></pre>
+<p>Now let&#39;s create relationships between the movies and the actors using the csv file:</p>
+<pre><code class="lang-CSV">personId,movieId,role
+1,1,Bud Fox
+4,1,Carl Fox
+3,1,Gordon Gekko
+4,2,A.J. MacInerney
+3,2,President Andrew Shepherd
+5,3,Ellis Boyd &#39;Red&#39; Redding
+</code></pre>
+<p>The relative query will be:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles_to_load.csv&#39;
+AS line
+MATCH (movie:Movie { movieId: line.movieId })
+MATCH (person:Person { personId: line.personId })
+CREATE (person)-[:ACTED_IN { roles: [line.role]}]-&gt;(movie)
+</code></pre>
+<h4 id="importing-denormalized-data">Importing denormalized data</h4>
+<p>When file that we need to import are denormalized a supplementary step is needed.</p>
+<p>There are a specifications for the field terminator of the file, this is an example:</p>
+<pre><code class="lang-Cypher">title;released;summary;actor;birthyear;characters
+Back to the Future;1985;17 year old Marty McFly got home early last night. 30 years early.;Michael J. Fox;1961;Marty McFly
+Back to the Future;1985;17 year old Marty McFly got home early last night. 30 years early.;Christopher Lloyd;1938;Dr. Emmet Brown
+</code></pre>
+<p>From this we want to create person and movies:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;https://data.neo4j.com/intro-neo4j/movie_actor_roles_to_load.csv&#39;
+AS line FIELDTERMINATOR &#39;;&#39;
+MERGE (movie:Movie { title: line.title })
+ON CREATE SET movie.released = toInteger(line.released),
+              movie.tagline = line.summary
+MERGE (actor:Person { name: line.actor })
+ON CREATE SET actor.born = toInteger(line.birthyear)
+MERGE (actor)-[r:ACTED_IN]-&gt;(movie)
+ON CREATE SET r.roles = split(line.characters,&#39;,&#39;)
+</code></pre>
+<p>Two main things to notice:</p>
+<ol>
+<li>the definition of the semi-colon as a field terminator rather than comma;</li><li>the build-in method <code>split()</code> to create the list for the roles property.</li></ol>
+<p>It&#39;s suggested to create nodes and relationships separately in multiple passes, dependes on the complexity of the operations and the experienced performance.</p>
+<p>To import a larger amount of data (more than 10k rows), it is recommended to prefix the load csv clause with a <strong><code>PERIODIC COMMIT</code></strong> hint. This allow the database to regularly commit the import transactions to avoid memory churn for large transaction-states.</p>
+<h4 id="exercises-part-sixteen">Exercises part sixteen</h4>
+<p><strong><em>on neof4j browser run the command <code>:play intro-neo4j-exercises</code> and follow exercise 16 instructions</em></strong></p>
+<p>First of all use the script found at <a href="Cypher/exercises/part_one/createGraph.cql">Cypher/exercises/part_one/createGraph.cql</a> to create the basic graph:</p>
+<pre><code class="lang-Text">Added 171 labels, created 171 nodes, set 564 properties, created 253 relationships, completed after 24 ms.
+</code></pre>
+<p>Exercise 16.1: You are given the name of a file, <code>http://data.neo4j.com/intro-neo4j/actors.csv</code> that you must load into your graph.</p>
+<p>Write the Cypher statement to read the actor data from a file.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/actors.csv&#39;
+AS row
+RETURN count(*)
+</code></pre>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/actors.csv&#39;
+AS row
+RETURN row
+LIMIT 1
+</code></pre>
+<p>Exercise 16.2: Read the data and return it, ensuring that the data returned is properly formatted.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/actors.csv&#39;
+AS row
+RETURN row.id, row.name, toInteger(trim(row.birthYear))
+</code></pre>
+<p>Exercise 16.3: Load the data into your graph.</p>
+<p>Hint: Use MERGE because the graph already contains some of these actors.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/actors.csv&#39;
+AS row
+MERGE (actor:Person {name: row.name, born: toInteger(trim(row.birthYear))})
+    ON CREATE SET actor.born = toInteger(trim(row.birthYear)), actor.id = row.id
+    ON MATCH SET actor.id = row.id
+</code></pre>
+<p>Exercise 16.4: You are given the name of a file, <code>http://data.neo4j.com/intro-neo4j/movies.csv</code> that you must load into your graph.</p>
+<p>Write the Cypher statement to read the movie data from a file.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies.csv&#39;
+AS row
+RETURN count(*)
+</code></pre>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies.csv&#39;
+AS row
+RETURN row
+LIMIT 1
+</code></pre>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies.csv&#39;
+AS row
+RETURN row.id, row.title, row.year, row.tagLine
+LIMIT 10
+</code></pre>
+<p>Exercise 16.5: Read the data and return it, ensuring that the data returned is properly formatted.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies.csv&#39;
+AS row
+RETURN row.id, row.title, toInteger(trim(row.year)), trim(row.tagLine)
+LIMIT 10
+</code></pre>
+<p>Exercise 16.6: Load the data into your graph.</p>
+<p>Hint: Use MERGE because the graph already contains some of these movies.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/movies.csv&#39;
+AS row
+MERGE (movie:Movie {title: row.title})
+    ON CREATE SET movie.tagLine = trim(row.tagLine), movie.id = row.id, movie.released = toInteger(trim(row.year))
+    ON MATCH SET movie.id = row.id
+</code></pre>
+<p>Exercise 16.7: You are given the name of a file, <code>http://data.neo4j.com/intro-neo4j/roles.csv</code> that you must load into your graph.</p>
+<p>Write the Cypher statement to read the relationship data from a file.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles.csv&#39;
+AS row FIELDTERMINATOR &#39;;&#39;
+RETURN count(*)
+</code></pre>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles.csv&#39;
+AS row FIELDTERMINATOR &#39;;&#39;
+RETURN row
+LIMIT 1
+</code></pre>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles.csv&#39;
+AS row FIELDTERMINATOR &#39;;&#39;
+RETURN row.Role, row.personId, row.movieId
+LIMIT 10
+</code></pre>
+<p>Exercise 16.8: Read the data and return it, ensuring that the data returned is properly formatted.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles.csv&#39;
+AS row FIELDTERMINATOR &#39;;&#39;
+RETURN split(row.Role, &#39;,&#39;), row.personId, row.movieId
+LIMIT 10
+</code></pre>
+<p>Exercise 16.9: Load the data into your graph.</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS
+FROM &#39;http://data.neo4j.com/intro-neo4j/roles.csv&#39;
+AS row FIELDTERMINATOR &#39;;&#39;
+MATCH (pers:Person {id: row.personId}), (mov:Movie {id: row.movieId})
+MERGE (pers)-[rol:ACTED_IN {role: split(row.Role, &#39;,&#39;)}]-&gt;(mov)
+RETURN pers, rol, mov
+</code></pre>
+<hr>
+<h4 id="libraries">Libraries</h4>
+<p>Neo4j has a published, open source Cypher library, Awesome Procedures on Cypher (<a href="https://github.com/neo4j-contrib/neo4j-apoc-procedures">APOC</a>) that contain many useful procedures you can call from Cypher.</p>
+<ul>
+<li><a href="https://github.com/neo4j-contrib/neo4j-graph-algorithms">Another Cypher library is the Graph Algorithms library</a> to help users to analyze data in graphs.</li><li>github -&gt; <a href="https://github.com/neo4j-contrib/neo4j-apoc-procedures">github.com/neo4j-contrib/neo4j-apoc-procedures</a></li><li>neo4j docs -&gt; <a href="https://neo4j-contrib.github.io/neo4j-apoc-procedures/">neo4j-contrib.github.io/neo4j-apoc-procedures/</a></li></ul>
+<hr>
+<h3 id="how-to-learn-more">How to learn more</h3>
+<p>There are many resources available to you for learning more about Neo4j and Cypher.</p>
+<ul>
+<li><a href="https://neo4j.com/developer/resources/">Resources for developers</a></li><li>Neo4j Community Site where you can ask or answer questions about Neo4j and discuss with other users -&gt; <a href="https://community.neo4j.com">Community</a></li><li><a href="https://neo4j.com/docs/">Neo4j documentation</a></li><li><a href="https://neo4j.com/sandbox-v2/">Neo4j Sandboxes for experimenting with graphs</a></li><li><a href="https://www.youtube.com/channel/UCvze3hU6OZBkB1vkhH2lH9Q">Videos on YouTube</a></li><li><a href="https://github.com/neo4j-contrib">GitHub repository</a></li><li><a href="https://neo4j.com/events/world/all/">Neo4j events all over the world</a></li><li><a href="https://neo4j.com/graphacademy/">Neo4j online and classroom training</a></li><li><a href="https://neo4j.com/graphgists/">Graph Gists for learning more use cases for Neo4j</a></li><li><a href="https://neo4j.com/graphacademy/neo4j-certification/">Become a Neo4j certified developer</a></li><li><a href="https://www.meetup.com/topics/neo4j/">Attend a Neo4j meetup</a></li><li><a href="https://stackoverflow.com/tags/neo4j/hot">View questions/answers raised about Neo4j</a></li></ul>
+<hr>
+<h3 id="example-simple-graph">Example - Simple Graph</h3>
+<p><strong><em>This example below is found on <a href="https://www.youtube.com/watch?v=l76udM3wB4U">lesson 5 neo4j</a></em></strong></p>
+<p>Let&#39;s create this graph:</p>
+<p><img src="Neo4j.html_files/images/simpleGraphTemplate.PNG" alt="Simple Graph Creation"></p>
+<p>To see the graph result you can use this query:</p>
+<pre><code class="lang-Cypher">MATCH (p)
+RETURN p
+</code></pre>
+<ul>
+<li><p>Creation of the nodes:</p>
+<pre><code class="lang-Cypher">  CREATE (dan:Person {name:&quot;Dan&quot;, born:&quot;Dec 5, 1975&quot;})
+  CREATE (ann:Person {name:&quot;Ann&quot;, born: &quot;May 29, 1970&quot;, twitter: &quot;@ann&quot;})
+  CREATE (car:Car {brand:&quot;Volvo&quot;, model:&quot;V70&quot;})
+</code></pre>
+<p>  result:</p>
+<p>  <img src="Neo4j.html_files/images/simpleGraphCreate.PNG" alt="Create nodes"></p>
+<p>  <strong><em>Query find on: <a href="Cypher/SimpleGraph/CreationOfNodes.cql">creationNodes</a></em></strong></p>
+</li><li><p>Creation of realtionships:</p>
+<pre><code class="lang-Cypher">  MATCH
+      (dan:Person {name: &quot;Dan&quot;}),
+      (ann:Person {name: &quot;Ann&quot;}),
+      (car:Car {model:&quot;V70&quot;})
+  CREATE
+      (dan)-[:LOVES]-&gt;(ann),
+      (ann)-[:LOVES]-&gt;(dan),
+      (ann)-[:LIVES_WITH]-&gt;(dan),
+      (dan)-[:OWNS]-&gt;(car),
+      (dan)-[:DRIVES]-&gt;(car),
+      (ann)-[:DRIVES]-&gt;(car)
+</code></pre>
+<p>  result:</p>
+<p>  <img src="Neo4j.html_files/images/simpleGraphRelationships.PNG" alt="Create relationships"></p>
+<p>  <strong><em>Query find on: <a href="Cypher/SimpleGraph/CreationOfRelationships.cql">creationRelationships</a></em></strong></p>
+</li><li><p>Basic query</p>
+<ol>
+<li><p>&quot;Find who loves Ann&quot;:</p>
+<pre><code class="lang-Cypher"> MATCH
+     (ann:Person {name: &quot;Ann&quot;})&lt;-[:LOVES]-(op)
+ RETURN
+     op
+</code></pre>
+<p> The result is simple &quot;Dan&quot;.</p>
+<p> <strong><em>Query find on: <a href="Cypher/SimpleGraph/lovesAnn.cql">lovesAnn</a></em></strong></p>
+</li><li><p>&quot;Find the Ann&#39;s Car&quot;:</p>
+<pre><code class="lang-Cypher"> MATCH
+     (ann:Person {name: &quot;Ann&quot;})-[:DRIVES]-(car:Car)
+ RETURN
+     car
+</code></pre>
+<p> The result is simple &quot;Volvo&quot;.</p>
+<p> <strong><em>Query find on: <a href="Cypher/SimpleGraph/annCar.cql">annCar</a></em></strong></p>
+</li><li><p>&quot;Find the Dan&#39;s Volvo car and update value of that car with the number of the wheels&quot;:</p>
+<pre><code class="lang-Cypher"> MATCH
+     (ann:Person {name: &quot;Dan&quot;})-[:OWNS]-(car:Car)
+ WHERE
+     car.brand=&quot;Volvo&quot;
+ SET
+     car.wheels=4
+ RETURN
+     car.wheels
+</code></pre>
+<p> The result is simple 4.</p>
+<p> <strong><em>Query find on: <a href="Cypher/SimpleGraph/updateDanCar.cql">updateDanCar</a></em></strong></p>
+</li></ol>
+</li><li><p>Ensuring uniqueness:
+We don&#39;t want a bunch of nodes rapresenting the same object so to prevent this we can use the constraint on and unique properties</p>
+</li></ul>
+<pre><code class="lang-Cypher">CREATE CONSTRAINT ON (p:Person)
+ASSERT p.name IS UNIQUE
+</code></pre>
+<p>If we create a node Person with the same value of name of others than neo4j throws error.
+An example:</p>
+<pre><code class="lang-Cypher">CREATE (a:Person {name:&quot;Ann&quot;})
+CREATE (a)-[:HAS_PET]-&gt;(:Dog {name:&quot;Sam&quot;})
+</code></pre>
+<p>Output:</p>
+<pre><code class="lang-Error">Neo.ClientError.Schema.ConstraintValidationFailed: Node(1) already exists with label `Person` and property `name` = &#39;Ann&#39;
+</code></pre>
+<p>To prevent this error we can use the MERGE clause:</p>
+<pre><code class="lang-Cypher">MERGE (a:Person {name:&quot;Ann&quot;})
+CREATE (a)-[:HAS_PET]-&gt;(:Dog {name:&quot;Sam&quot;})
+</code></pre>
+<p>The node with name Ann will be created if is not exists and if exists then it not create that.
+The new graph will be:</p>
+<p><img src="Neo4j.html_files/images/simpleGraphMerge.PNG" alt="merge"></p>
+<p>In the same way if the dog already exists the above query will give you an error, to prevent is necessary use MERGE instead of CREATE for the Dog creation.
+An example:</p>
+<pre><code class="lang-Cypher">MERGE (a:Person {name:&quot;Ann&quot;})
+ON CREATE SET
+    a.facebook = &quot;@annie&quot;
+MERGE (a)-[:HAS_PET]-&gt;(:Dog {name:&quot;Sam&quot;})
+</code></pre>
+<p>On create set will be use only if the merge create the node, if you run this query before all the queries above the facebook parameter will not be created.</p>
+<p><strong><em>Query find on: <a href="Cypher/SimpleGraph/annDogCreation.cql">annDogCreation</a></em></strong></p>
+<hr>
+<h3 id="application-movie-graph">Application - Movie Graph</h3>
+<p><strong><em>on neof4j browser run the command <code>:play movie graph</code></em></strong></p>
+<p>Let&#39;s create a more complex example with a mini application containing actors and directors that are related through the movies they&#39;ve collaborated on.</p>
+<p>We can create more than one nodes and relationships with a single block query statement composed of multiple <strong>CREATE</strong> clauses:</p>
+<pre><code class="lang-Cypher">CREATE (TheMatrix:Movie {title:&#39;The Matrix&#39;, released:1999, tagline:&#39;Welcome to the Real World&#39;})
+CREATE (Keanu:Person {name:&#39;Keanu Reeves&#39;, born:1964})
+CREATE (Carrie:Person {name:&#39;Carrie-Anne Moss&#39;, born:1967})
+CREATE (Laurence:Person {name:&#39;Laurence Fishburne&#39;, born:1961})
+CREATE (Hugo:Person {name:&#39;Hugo Weaving&#39;, born:1960})
+CREATE (LillyW:Person {name:&#39;Lilly Wachowski&#39;, born:1967})
+CREATE (LanaW:Person {name:&#39;Lana Wachowski&#39;, born:1965})
+CREATE (JoelS:Person {name:&#39;Joel Silver&#39;, born:1952})
+CREATE
+  (Keanu)-[:ACTED_IN {roles:[&#39;Neo&#39;]}]-&gt;(TheMatrix),
+  (Carrie)-[:ACTED_IN {roles:[&#39;Trinity&#39;]}]-&gt;(TheMatrix),
+  (Laurence)-[:ACTED_IN {roles:[&#39;Morpheus&#39;]}]-&gt;(TheMatrix),
+  (Hugo)-[:ACTED_IN {roles:[&#39;Agent Smith&#39;]}]-&gt;(TheMatrix),
+  (LillyW)-[:DIRECTED]-&gt;(TheMatrix),
+  (LanaW)-[:DIRECTED]-&gt;(TheMatrix),
+  (JoelS)-[:PRODUCED]-&gt;(TheMatrix)
+</code></pre>
+<p><strong><em>You can find all the query block here: <a href="Cypher/MovieGraph/createGraph.cql">Cypher/MovieGraph/createGraph.cql</a></em></strong></p>
+<h4 id="-source-query-of-movie-graph-here-cypher-moviegraph"><strong><em>Source query of movie graph -&gt; <a href="/Cypher/MovieGraph/">here</a></em></strong></h4>
+<p>The script add lot of nodes with relative relationships and properties, with this we can test some query:</p>
+<ol>
+<li><p>Find the actor named &quot;TOM Hanks&quot;</p>
+<pre><code class="lang-Cypher"> MATCH (tom {name: &quot;Tom Hanks&quot;})
+ RETURN tom
+</code></pre>
+<p> or</p>
+<pre><code class="lang-Cypher"> MATCH (tom:Person)
+ WHERE tom.name=&quot;Tom Hanks&quot;
+ RETURN tom
+</code></pre>
+</li><li><p>Find the movie with title &quot;Cloud Atlas&quot;</p>
+<pre><code class="lang-Cypher"> MATCH (cloud:Movie)
+ WHERE cloud.title=&quot;Cloud Atlas&quot;
+ RETURN cloud
+</code></pre>
+<p> or</p>
+<pre><code class="lang-Cypher"> MATCH (cloud:Movie {title: &quot;Cloud Atlas&quot;})
+ RETURN cloud
+</code></pre>
+</li><li><p>Find 10 people</p>
+<pre><code class="lang-Cypher"> MATCH (people:Person)
+ RETURN people.name
+ LIMIT 10
+</code></pre>
+<p> The <strong><em>LIMIT</em></strong> clause is use to limitate the number of nodes in output.</p>
+</li><li><p>Find movies released in the 1990s</p>
+<pre><code class="lang-Cypher"> MATCH (movie:Movie)
+ WHERE movie.released &gt;= 1990 AND movie.released &lt; 2000
+ RETURN movie.title
+</code></pre>
+</li><li><p>Find the films where &quot;Tom Hanks&quot; acted and show the director of the film</p>
+<pre><code class="lang-Cypher"> MATCH (tom:Person)-[:ACTED_IN]-&gt;(movie)&lt;-[:DIRECTED]-(dir)
+ WHERE tom.name = &quot;Tom Hanks&quot;
+ RETURN tom,movie,dir
+</code></pre>
+<p> graph result:</p>
+<p> <img src="Neo4j.html_files/images/movieGraphTomHanks.PNG" alt="Tom Hanks"></p>
+</li><li><p>List of Tom Hanks movies</p>
+<pre><code class="lang-Cypher"> MATCH (tom:Person {name: &quot;Tom Hanks&quot;})-[:ACTED_IN]-&gt;(movie)
+ RETURN tom,movie
+</code></pre>
+<p> graph result:</p>
+<p> <img src="Neo4j.html_files/images/movieGraphTomHanksActed.PNG" alt="Tom Hanks Acted"></p>
+</li><li><p>Who directed &quot;Cloud Atlas&quot;</p>
+<pre><code class="lang-Cypher"> MATCH (dir:Person)-[:DIRECTED]-&gt;(movie)
+ WHERE movie.title = &quot;Cloud Atlas&quot;
+ RETURN dir
+</code></pre>
+</li><li><p>Tom Hanks co-actor (actor in the same film)</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person {name: &quot;Tom Hanks&quot;})-[:ACTED_IN]-&gt;(movie)
+WHERE film.title = &quot;Cloud Atlas&quot;
+RETURN dir
+</code></pre>
+</li><li><p>How people are related to &quot;Cloud Atlas&quot;</p>
+<pre><code class="lang-Cypher">MATCH (people:Person)-[relatedTo]-(:Movie {title: &quot;Cloud Atlas&quot;})
+RETURN people.name,Type(relatedTo),relatedTo
+</code></pre>
+<p>The <em>Type()</em> is use to get the type of nodes or relationships.</p>
+</li><li><p>Movies and actors up to 4 &quot;hops&quot; away from Kevin Bacon</p>
+<pre><code class="lang-Cypher">MATCH (bacon:Person {name: &quot;Kevin Bacon&quot;})-[*1..4]-(person)
+RETURN DISTINCT person
+</code></pre>
+<p>The result of this query block count 135 nodes and 180 relationships.</p>
+</li><li><p>Kevin Bacon the shortest path of any relationships to Meg Ryan</p>
+<pre><code class="lang-Cypher">MATCH p=shortestPath(
+    (bacon:Person {name: &quot;Kevin Bacon&quot;})-[*]-(meg:Person {name: &quot;Meg Ryan&quot;})
+)
+RETURN p
+</code></pre>
+<p>Result graph:</p>
+<p><img src="Neo4j.html_files/images/movieGraphKevinToMeg.PNG" alt="movieGraphKevinToMeg"></p>
+<p>The <strong>shortestPath({}-[]-{})</strong> is a function that take a relation of 2 nodes and return the shortest path from them.</p>
+<p><strong><em>To know more about the shortest path problem you can visit the wikipedia page: <a href="https://en.wikipedia.org/wiki/Shortest_path_problem">Shortest_path_problem</a></em></strong></p>
+</li><li><p>Extend Tom Hanks co-actors, to find co-co-actors who haven&#39;t worked with Tom Hanks</p>
+<pre><code class="lang-Cypher">MATCH (tom:Person {name: &quot;Tom Hanks&quot;})-[:ACTED_IN]-&gt;()&lt;-[:ACTED_IN]-(coactor:Person),
+    (coactor)-[:ACTED_IN]-&gt;()&lt;-[:ACTED_IN]-(cocoactor:Person)
+WHERE NOT (tom)-[:ACTED_IN]-&gt;()&lt;-[:ACTED_IN]-(cocoactor) AND tom &lt;&gt; cocoactor
+RETURN cocoactor.name AS Racommended, count(*) AS Strength ORDER BY Strength DESC
+</code></pre>
+</li><li><p>Find someone to introduce Tom Hanks to Tom Cruise</p>
+<pre><code class="lang-Cypher">MATCH (tomh:Person {name: &quot;Tom Hanks&quot;})-[]-&gt;(movie)&lt;-[]-(someone:Person),
+    (someone)-[]-&gt;(movie2)&lt;-[]-(tomc:Person {name: &quot;Tom Cruise&quot;})
+RETURN tomh,movie, someone,movie2, tomc
+</code></pre>
+<p>Result graph:</p>
+<p><img src="Neo4j.html_files/images/movieGraphHanksCruise.PNG" alt="movieGraphHanksCruise"></p>
+</li></ol>
+<p>Let&#39;s now clean the graph by delete all the nodes and relationships:</p>
+<pre><code class="lang-Cypher">MATCH (n)
+DETACH
+DELETE n
+</code></pre>
+<p>With this the engine take all the nodes, for every one it detach from any relationships and then delete it.
+To be sure and prove that the graph is gone the query is:</p>
+<pre><code class="lang-Cypher">MATCH (n)
+RETURN n
+</code></pre>
+<h4 id="-all-the-query-above-is-on-the-source-directory-of-cypher-here-cypher-moviegraph"><strong><em>All the query above is on the source directory of Cypher <a href="/Cypher/MovieGraph/">here</a></em></strong></h4>
+<hr>
+<h3 id="application-northwind-graph">Application - Northwind Graph</h3>
+<p><strong><em>on neof4j browser run the command <code>:play northwind graph</code></em></strong></p>
+<p>This application demostrates how to migrate from a relational database to Neo4j, to do this we need to transform all the data on th relational tables to the nodes and relationships of a graph.
+Pratically how to get this:</p>
+<p><img src="Neo4j.html_files/images/northGraphNodes.PNG" alt="northGraphNodes"></p>
+<p>From this:</p>
+<p><img src="Neo4j.html_files/images/northGraphTables.PNG" alt="northGraphTables"></p>
+<p>This example is a sellers of food products for a few categories provided by suppliers. The database actually in use is a relational table of product catalog. The first step to transform this is with the <code>LOAD CSV</code> clause that retrive a CSV file from a valid URL and create a named map:</p>
+<ul>
+<li><p>Products nodes:</p>
+<pre><code class="lang-Cypher">  LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/products.csv&quot; AS row
+  CREATE (n:Product)
+  SET n = row,
+      n.unitPrice = toFloat(row.unitPrice),
+      n.unitinStock = toInteger(row.unitsInStock), n.unitOnOrder = toInteger(row.unitsOnOrder),
+      n.reorderLevel = toInteger(row.reorderLevel), n.discontinued = (row.discontinued &lt;&gt; &quot;0&quot;)
+</code></pre>
+</li><li><p>Categories nodes:</p>
+<pre><code class="lang-Cypher">  LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/categories.csv&quot; AS row
+  CREATE (n:Category)
+  SET n = row
+</code></pre>
+</li><li><p>Suppliers nodes:</p>
+<pre><code class="lang-Cypher">  LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/suppliers.csv&quot; AS row
+  CREATE (n:Supplier)
+  SET n = row
+</code></pre>
+</li></ul>
+<p>It&#39;s important to define an index for a node with the purpose of making searches of related data more efficent:</p>
+<ul>
+<li><p>Product index:</p>
+<pre><code class="lang-Cypher">  CREATE INDEX ON :Product(productID)
+</code></pre>
+</li><li><p>Category index:</p>
+<pre><code class="lang-Cypher">  CREATE INDEX ON :Category(productID)
+</code></pre>
+</li><li><p>Supplier index:</p>
+<pre><code class="lang-Cypher">  CREATE INDEX ON :Supplier(productID)
+</code></pre>
+</li></ul>
+<p>This 3 type of nodes are related one to another with foreign keys references we can use this properties to create the relationships from node to node.
+A product is a part of a category and a supplier supplies product, let&#39;s create this two relationship:</p>
+<ul>
+<li><p>Product-part_of-&gt;Category:</p>
+<pre><code class="lang-Cypher">  MATCH (p:Product), (c:Category)
+  WHERE p.categoryID = c.categoryID
+  CREATE (p)-[:PART_OF]-&gt;(c)
+</code></pre>
+</li><li><p>Supplier-supplies-&gt;Product:</p>
+<pre><code class="lang-Cypher">  MATCH (p:Product), (s:Supplier)
+  WHERE p.supplierID = s.supplierID
+  CREATE (s)-[:SUPPLIES]-&gt;(p)
+</code></pre>
+</li></ul>
+<p>We can now test what we crated:</p>
+<ol>
+<li><p>List the product categories proviced by each supplier:</p>
+<pre><code class="lang-Cypher"> MATCH (s:Supplier)-[*]-&gt;(c:Category)
+ RETURN
+     s.companyName as Company,
+     collect(distinct c.categoryName) as Categories
+ ORDER BY Company DESC
+</code></pre>
+</li><li><p>Find the produce suppliers:</p>
+<pre><code class="lang-Cypher"> MATCH (s:Supplier)-[*]-&gt;(c:Category {categoryName: &quot;Produce&quot;})
+ RETURN DISTINCT s.companyName as ProduceSuppliers
+</code></pre>
+</li></ol>
+<p>We can expand this graph with more datas and infos about Orders and Costumers:</p>
+<p><img src="Neo4j.html_files/images/northGraphNewTables.PNG" alt="northGraphNewTables"></p>
+<p>We can do the same thing we had before to load and index the records:</p>
+<ul>
+<li><p>Customers nodes</p>
+<pre><code class="lang-Cypher">  LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/customers.csv&quot; AS row
+  CREATE (n:Customer)
+  SET n = row
+</code></pre>
+</li><li><p>Orders nodes</p>
+<pre><code class="lang-Cypher">  LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/orders.csv&quot; AS row
+  CREATE (n:Order)
+  SET n = row
+</code></pre>
+</li><li><p>Index customer</p>
+<pre><code class="lang-Cypher">  CREATE INDEX ON :Customer(customerID)
+</code></pre>
+</li><li><p>Index order</p>
+<pre><code class="lang-Cypher">  CREATE INDEX ON :Order(orderID)
+</code></pre>
+</li><li><p>Create relationship customer-purchased-order</p>
+<pre><code class="lang-Cypher">  MATCH
+      (c:Customer),
+      (o:Order)
+  WHERE c.customerID = o.customerID
+  CREATE (c)-[:PURCHASE]-&gt;(o)
+</code></pre>
+</li></ul>
+<p>Notice that the Order Details are always part of an Order and are the description of the relation between an order and a product, this is a sign of a data relationship indicating shared information between two other records:</p>
+<pre><code class="lang-Cypher">LOAD CSV WITH HEADERS FROM &quot;http://data.neo4j.com/northwind/order-details.csv&quot; AS row
+MATCH (p:Product), (o:Order)
+WHERE
+    p.productID = row.productID AND
+    row.orderID = o.orderID
+CREATE (o)-[details:ORDERS]-&gt;(p)
+set details = row,
+    details.quantity = toInteger(row.quantity)
+</code></pre>
+<p>Example of query:</p>
+<ul>
+<li>List of costumers with the number of products purchased for the Produce category:</li></ul>
+<pre><code class="lang-Cypher">MATCH
+    (c:Customer)-[:PURCHASED]-&gt;(:Order)-[o:ORDERS]-&gt;(p:Product),
+    (p)-[:PART_OF]-&gt;(cat:Category {categoryName: &quot;Produce&quot;})
+RETURN DISTINCT
+    c.contactName AS CustomerName,
+    SUM(o.quantity) AS TotalProductsPurchased
+</code></pre>
+<hr>
+<h3 id="recommendations">Recommendations</h3>
+<p><strong><em>This paragraph is referred to recommedation application on neo4j browser.</em></strong></p>
+<p><strong><em>It is possible to recreate this database using the open movie database here -&gt; <a href="https://www.omdbapi.com/">www.omdbapi.com</a></em></strong></p>
+<p><strong><em> For more -&gt; <a href="https://movielens.org/">https://movielens.org/</a> and <a href="https://grouplens.org/datasets/movielens/">https://grouplens.org/datasets/movielens/</a></em></strong></p>
+<p>Personalized product recommendations can increase conversions, improve sales rates and provide a better experice for users.
+This paragraph take a look at how generate graph-based real-time personalized product recommendations using a dataset of movies and movie ratings.
+All of this techniques can also apply through many different types of products or content.</p>
+<p>Generating personalized recommendations is one of the most common use cases for a graph database and there are some benefits of using a graph to generate racommendations:</p>
+<ul>
+<li>Performance -&gt; <a href="#index-free-adjacency">index-free adjacency</a> allows for calculating recommendations in real time, ensuring the recommendation is always relevant and reflecting up-to-date information.</li><li>Data model -&gt; The labeled property graph model allows for easily combining datasets from multiple sources allowing enterprises to unlock value from previously separated data silos.</li></ul>
+<p>For this paragraph will use a graph movie with default node-relationships-node template:</p>
+<p><img src="Neo4j.html_files/images/recommendationsGraphTemplate.PNG" alt="recommendationsGraphTemplate"></p>
+<p>In this use case, we are using graphs to combine data from multiple silos:</p>
+<ul>
+<li>Product catalog -&gt; data describing movies comes from the product catalog silo</li><li>User Purchases and Reviews -&gt; data on user purchases and reviews comes from the user or transaction silo</li></ul>
+<p>By combining these two containers in one graph, we are able to query across datasets to generate personalized product recommendations.</p>
+<p>The graph result is made by:</p>
+<ul>
+<li>Labels nodes -&gt; Movie, Actor, Director, User, Genre are the</li><li>Relationships -&gt; ACTED_IN, IN_GENERE, DIRECTED, RATED</li><li>Properties -&gt; title, name, year, rating</li></ul>
+<p><img src="Neo4j.html_files/images/recommendationsGraph.PNG" alt="recommendationsGraph"></p>
+<p>Let&#39;s look at a Cypher query that answers the question &quot;How many reviews does each Matrix movie have?&quot;:</p>
+<pre><code class="lang-Cypher">MATCH (movie:Movie)&lt;-[:RATED]-(user:User)
+WHERE movie.title CONTAINS &quot;Matrix&quot;
+WITH
+    movie.title AS movie,
+    COUNT(*) AS reviews
+RETURN movie, reviews
+ORDER BY reviews DESC
+LIMIT 5
+</code></pre>
+<p>Dissection of the query:</p>
+<ul>
+<li>Search for an existing graph pattern -&gt; <code>MATCH (movie:Movie)&lt;-[:RATED]-(user:User)</code> -&gt; find all Movie-Rated-User on the graph</li><li>Filter the match result -&gt; <code>WHERE movie.title CONTAINS &quot;Matrix&quot;</code> -&gt; remove useless Movie-Rated-User</li><li>Aggregate users with movie -&gt; <code>WITH movie.title AS movie, COUNT(*) AS reviews</code> -&gt; count number of paths matched for each movie</li><li>Return for each movie the number of reviews -&gt; <code>RETURN movie, reviews</code></li><li>Order return by number of reviews in descending order -&gt; <code>ORDER BY reviews DESC</code></li><li>Limit the number of records to find and return -&gt; <code>LIMIT 5</code></li></ul>
+<p>The result is:</p>
+<table>
+<thead>
+<tr>
+<th>movie</th>
+<th>reviews</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Matrix, The&quot;</td>
+<td>259</td>
+</tr>
+<tr>
+<td>&quot;Matrix Reloaded, The&quot;</td>
+<td>82</td>
+</tr>
+<tr>
+<td>&quot;Matrix Revolutions, The&quot;</td>
+<td>54</td>
+</tr>
+</tbody>
+</table>
+<h4 id="-personalized-reccomendations"><strong>Personalized Reccomendations</strong></h4>
+<p>There are two basic approaches to recommendation algorithms:</p>
+<ul>
+<li><p><strong>Content-Based filtering</strong>: recommend intems that are similar to those that a user is viewing, rated highly or purchased previously.</p>
+<p>  An example can be &quot;Products similar to the product you are looking at now&quot;:</p>
+<pre><code class="lang-Cypher">  MATCH p=(m:Movie {title: &quot;Net, the&quot;})-[:ACTED_IN|:IN_GENRE|:DIRECTED*2]-()
+  RETURN p LIMIT 25
+</code></pre>
+<p>  <img src="Neo4j.html_files/images/recommendationsGraphContentBased.PNG" alt="recommendationsGraphContentBased"></p>
+<p>  All of that result can be a movie to recommend.</p>
+<p>  The goal of content-based filtering is to find similar items, usign attributes (or traits) of the item. Using our movie data, one way we could define similarity is movies that have common genres.</p>
+<p>  Examples:</p>
+<ol>
+<li><p>Find movies most similar to Inception based on shared generes:</p>
+<pre><code class="lang-Cypher">MATCH (inc:Movie {title: &quot;Inception&quot;})-[:IN_GENRE]-&gt;(g:Genre)&lt;-[:IN_GENRE]-(rec:Movie)
+WITH rec.title, COLLECT(g.name) AS genres, COUNT(*) AS commonGenres
+RETURN rec.title AS title, genres, commonGenres
+ORDER BY commonGenres DESC
+LIMIT 10;
+</code></pre>
+<p>|title|genres|commonGenres|
+|---|---|---|
+|&quot;Patlabor: The Movie (Kidô keisatsu patorebâ: The Movie)&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;, &quot;Sci-Fi&quot;]|6|
+|&quot;Strange Days&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;, &quot;Sci-Fi&quot;]|6|
+|&quot;Watchmen&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;, &quot;Sci-Fi&quot;, &quot;IMAX&quot;]|6|
+|&quot;Girl Who Played with Fire, The (Flickan som lekte med elden)&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;]|5|
+|&quot;Fast Five (Fast and the Furious 5, The)&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;IMAX&quot;]|5|
+|&quot;Cellular&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;]|5|
+|&quot;Rubber&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;]|5|
+|&quot;Negotiator, The&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;]|5|
+|&quot;X-Files: Fight the Future, The&quot;|[&quot;Action&quot;, &quot;Crime&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;, &quot;Sci-Fi&quot;]|5|
+|&quot;Source Code&quot;|[&quot;Drama&quot;, &quot;Action&quot;, &quot;Thriller&quot;, &quot;Mystery&quot;, &quot;Sci-Fi&quot;]|5|</p>
+<p>Remember to use the LIMIT clause to prevent the output of too many rows.</p>
+</li><li><p>Recommend movies similar to those the user Amgeòoca Rodriguez has already watched:</p>
+<p>The solution can be more tricky than expected, let&#39;s analize how to do that.
+We need to get all the movies that Angelica Rodriguez have rated <code>MATCH (u:User{name:&quot;Angelica Rodriguez&quot;})-[r:RATED]-&gt;(movie:Movie)</code>.
+To find the most similar movies we take the genres linked and scan to find all the movies with the same genres <code>(movie)-[:IN_GENRE]-&gt;(genre:Genre)&lt;-[:IN_GENRE]-(other:Movie)</code> and the result of this match are a graph with all the user recommendations, but some movies can be already rated by the user so we need to put a filter to the movies not yet rated <code>WHERE NOT EXISTS((user)-[:RATED]-&gt;(other))</code>.
+To recommend the best element of all, we necessary do some sort of rating: count the common genres between the movies watch by the user and the movie on the list <code>WITH other, [genre.name, COUNT(*)] AS scores</code>.
+The single score of the movie to recommend is the sum of the scores of the genres to do this we can use the REDUCE expression <code>REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score</code>.</p>
+<pre><code class="lang-Cypher">MATCH
+    (user:User {name: &quot;Angelica Rodriguez&quot;})-[rated:RATED]-&gt;(movie:Movie),
+    (movie)-[:IN_GENRE]-&gt;(genre:Genre)&lt;-[:IN_GENRE]-(other:Movie)
+WHERE NOT EXISTS( (user)-[:RATED]-&gt;(other) )
+WITH
+    other,
+    [genre.name, COUNT(*)] AS scores
+RETURN
+    other.title AS recommendation,
+    other.year AS year,
+    COLLECT(scores) AS scoreComponents,
+    REDUCE (s=0,x in COLLECT(scores) | s+x[1]) AS score
+ORDER BY score DESC
+LIMIT 20
+</code></pre>
+</li><li><p>Now let&#39;s try to create a better recommendation for similar films by give a score and weight for the other relationships: such the similar actors and the same directors.</p>
+<pre><code class="lang-Cypher">// Find similar movies by common genres
+MATCH (m:Movie)
+WHERE m.title = &quot;Wizard of Oz, The&quot;
+MATCH (m)-[:IN_GENRE]-&gt;(g:Genre)&lt;-[:IN_GENRE]-(o:Movie)
+WITH m, o, COUNT(*) AS gs
+
+// Find similar movies by common actors
+OPTIONAL MATCH (m)&lt;-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]-&gt;(o)
+WITH m, o, gs, COUNT(a) AS as
+
+// Find similar movies by common directors
+OPTIONAL MATCH (m)&lt;-[:DIRECTED]-(d:Director)-[:DIRECTED]-&gt;(o)
+WITH m, o, gs, as, COUNT(d) AS ds
+
+// Then return with a weighted score
+RETURN o.title AS recommendation, (5*gs)+(3*as)+(4*ds) AS score
+ORDER BY score DESC
+LIMIT 100
+</code></pre>
+<p>These method used to find similar nodes are not so consistent and robust, so we need a new way to quantify usign a similarity metric. Similarity metrics are an important component used in generating personalized recommendations that allow us to quantify how similar two items are, the method we used is the Jaccard Index:</p>
+<p><img src="Neo4j.html_files/images/gif.latex?J(A,B" alt="Jaccard Index">=\frac{\mid&space;A&space;\cap&space;B&space;\mid}{\mid&space;A&space;\cup&space;B&space;\mid}&space;\bigg&space;|)</p>
+<p>The output of this function is a number between 0 and 1 that indicates how similar two sets are: 1 for the identical sets and 0 for sets without common element.</p>
+<p>We can use this index for the movies to answer at the question: &quot;What movies are most similar to Inception based on genres?</p>
+<pre><code class="lang-Cypher">
+
+</code></pre>
+<!-- this query is important and i cannot reproduce by myself so i will take later and go back to learning the basics from the developer tutorial on neo4j -->
+</li></ol>
+</li><li><p><strong>Collaborative Filtering</strong>: use the preferences, ratings and actions of other users in the network to find items to recommend.</p>
+<p>  An example can be &quot;Users who bought this thing, also bought that other thing&quot;:</p>
+<pre><code class="lang-Cypher">  MATCH (m:Movie {title: &quot;Crimson Tide&quot;})&lt;-[:RATED]-(u:User)-[:RATED]-&gt;(rec:Movie)
+  RETURN
+      rec.title AS recommendation,
+      COUNT(*) as usersWhoAlsoWatched
+  ORDER BY usersWhoAlsoWatched DESC
+  LIMIT 25
+</code></pre>
+<p>  |recommendation|usersWhoAlsoWatched|
+  | --- | --- |
+  |&quot;Forrest Gump&quot;|70|
+  |&quot;Dances with Wolves&quot;|68|
+  |&quot;Pulp Fiction&quot;|68|
+  |&quot;Fugitive, The&quot;|65|
+  |&quot;True Lies&quot;|64|
+  |&quot;Jurassic Park&quot;|63|
+  |&quot;Silence of the Lambs, The&quot;|62|
+  |&quot;Apollo 13&quot;|61|
+  |&quot;Batman&quot;|61|
+  |&quot;Aladdin&quot;|58|
+  | ... | ... |</p>
+<p>  All of that result can be a movie to recommend.</p>
+</li></ul>
+<hr>
+<h2 id="index">Index</h2>
+<ol>
+<li><a href="#acid-consistency-model">ACID</a></li><li><a href="#cluster">Cluster</a></li><li><a href="#index-free-adjacency">index-free adjacency</a></li><li><a href="#oltp">OLTP</a></li><li><a href="#regular-expression">Regular expression</a></li></ol>
+<h3 id="acid-consistency-model">ACID consistency model</h3>
+<!--
+* https://neo4j.com/blog/acid-vs-base-consistency-models-explained/
+* https://en.wikipedia.org/wiki/ACID
+-->
+<p>The acronym stands for:</p>
+<ul>
+<li>Atomic -&gt; All operations in a transaction succeed or every operation is rolled back</li><li>Consistent -&gt; On the completition of a transaction, the database is structurally sound</li><li>Isolated -&gt; Transactions do not contend with one another. Contentious access to data is moderated by database so that transactions appear to run sequentially.</li><li>Durable -&gt; The results of applying a transaction are permanent, even in the presence of failures</li></ul>
+<p>This four properties mean that once a transaction is complete, its data is consistent and stable on disk.</p>
+<p>Most of graph databases (Neo4j incuded) use an ACID consistency model to ensure data is safe and consistently stored.</p>
+<h3 id="cluster">Cluster</h3>
+<p>A cluster is when data is assembled around one particular value, on graph usually happens when there are several nodes thet seem to gather in a certain area. In other word a cluster is a group that are placed closely next to each other in a certain area, with a few nodes scattered in other places on the graph.</p>
+<p>For example this is a social netowork graph:</p>
+<p><img src="Neo4j.html_files/images/facebookClusters.png" alt="cluster"></p>
+<p>There are several aggregations of similar nodes that are colored.</p>
+<h3 id="index-free-adjacency">index-free adjacency</h3>
+<!--
+* https://medium.com/@dmccreary/how-to-explain-index-free-adjacency-to-your-manager-1a8e68ec664a
+* https://en.wikipedia.org/wiki/Talk:Graph_database#No_indexes?
+* https://www.arangodb.com/2016/04/index-free-adjacency-hybrid-indexes-graph-databases/
+-->
+<p>A graph database is any storage system that provides index-free adjacency and this means that every element contains a direct pointer to its adjacent element and no index lookups are necessary.
+This is one of the most element of distinction from relational databases that are based on a key-value store.
+The idea of an index-free adjacency is analogous to that of a pointer where the time to follow the relationship is O(1) with respect to the size of the graph, and this is not the cost of found a relationship in a relational.
+To be more precise a relational database use indexes but the aren&#39;t used for adjacency or link purposes.
+With Neo4j tipically a query will find the node to start from with an index and then the resto fo the query simply follows relationships to compute the answer.
+When create a new set of nodes it&#39;s typical to create an index of that type, see <a href="#Application-Northwind-Graph">northwind graph</a>, this reduce the cost of every query run.
+Example:</p>
+<p><img src="Neo4j.html_files/images/simpleGraph.jpeg" alt="simple graph"></p>
+<p>In a relational database if we want to switch from data <strong>A</strong> to data <strong>B</strong> the step are:</p>
+<ol>
+<li>The db prohibited you to access direct items via pointers, so you need to ask for the permission.</li><li>The request permission line can be full of other request, wait for your turn.</li><li>The central index of db search for the data you want in a list of other data , the cost of search is O(n) with <strong>n</strong> number of the data stored.</li><li>Once you get the memory pointer of that data you can go to <strong>B</strong> by follow the memory allocations by hopping on memory.</li><li>The cost of this hopping is O(n), but at the end you can switch to <strong>B</strong> and do your operations.</li></ol>
+<p>In a graph database like Neo4j all the nodes are connected to each other by relationships, so in order to go from <strong>A</strong> to <strong>B</strong>:</p>
+<ol>
+<li>Get the relationships pointer</li><li>Point to node <strong>B</strong> wherever the type of the relationships are</li><li>Do operations on <strong>B</strong></li></ol>
+<p>The cost in this case is O(1), a big difference in performance between a classical relational db.</p>
+<h3 id="oltp">OLTP</h3>
+<!--
+* https://docs.oracle.com/database/121/VLDBG/GUID-0BC75680-5BD4-43A9-826F-CD8837D30EB2.htm
+* https://en.wikipedia.org/wiki/Online_transaction_processing
+-->
+<p>This is an acronym that stands for Online transaction processing. The term transaction in the realm of database transactions it denotes an atomic change of state. The goals of OLTP applications are availability, speed, cuncurrency and recoverability.</p>
+<p>An OLTP system is a common data processing system like order entry, retail sales and financial transaction systems.</p>
+<p>The main characteristics of an OLTP environment are:</p>
+<ul>
+<li>Short response time</li><li>Small transactions</li><li>Data maintenance operations</li><li>Large user populations</li><li>High concurrency</li><li>Large data volumes</li><li>High availability</li><li>Lifecycle-related data usage</li></ul>
+<p>The benefits of this environments are:</p>
+<ul>
+<li>Support for bigger databases</li><li>Partition maintenance operations for data maintenance</li><li>Potential higher concurrency through elimination of hot spots</li></ul>
+<h3 id="regular-expression">Regular expression</h3>
+<!--
+https://en.wikipedia.org/wiki/Regular_expression
+-->
+<p>The phrase regular expressions, and consequently, regexes, is often used to mean the specific, standard textual syntax for representing patterns for matching text.
+Each character in a regular expression is either a metacharacter, having a special meaning, or a regular character that has a literal meaning.
+For example, in the regex a., a is a literal character which matches just &#39;a&#39;, while &#39;.&#39; is a meta character that matches every character except a newline.
+Therefore, this regex matches, for example, &#39;a &#39;, or &#39;ax&#39;, or &#39;a0&#39;.
+Together, metacharacters and literal characters can be used to identify text of a given pattern, or process a number of instances of it.
+Pattern matches may vary from a precise equality to a very general similarity, as controlled by the metacharacters.
+For example, . is a very general pattern, [a-z] (match all lower case letters from &#39;a&#39; to &#39;z&#39;) is less general and a is a precise pattern (matches just &#39;a&#39;).
+The metacharacter syntax is designed specifically to represent prescribed targets in a concise and flexible way to direct the automation of text processing of a variety of input data, in a form easy to type using a standard ASCII keyboard.</p>
+<p>A very simple case of a regular expression in this syntax is to locate a word spelled two different ways in a text editor, the regular expression seriali[sz]e matches both &quot;serialise&quot; and &quot;serialize&quot;.
+Wildcards also achieve this, but are more limited in what they can pattern, as they have fewer metacharacters and a simple language-base.</p>
+<p>The usual context of wildcard characters is in globbing similar names in a list of files, whereas regexes are usually employed in applications that pattern-match text strings in general.
+For example, the regex ^[ \t]+|[ \t]+$ matches excess whitespace at the beginning or end of a line.
+An advanced regular expression that matches any numeral is [+-]?(\d+(.\d+)?|.\d+)([eE][+-]?\d+)?.</p>
+<p>For more read wikipedia -&gt; <a href="https://en.wikipedia.org/wiki/Regular_expression">regex</a></p>
+<hr>
+<h3 id="references">References</h3>
+<p><a href="#graph-database-fundamentals">Graph database Fundamentals</a>:</p>
+<ul>
+<li><a href="https://neo4j.com/sandbox-v2/">neo4J browser sandbox</a> by type the command <code>:play concepts</code></li><li><a href="https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/part-1/">graphacademy</a></li></ul>
+<p>Others:</p>
+<ol>
+<li><a href="https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/">neo4j online course</a></li><li><a href="https://neo4j.com/docs/">neo4j docs</a></li><li><a href="https://github.com/neo4j/neo4j">neo4j repository</a></li><li><a href="https://neo4j.com/sandbox-v2">neo4j browser sandbox</a></li><li><p><a href="https://neo4j.com/developer/get-started/">neo4j developer get started</a></p>
+<ul>
+<li><a href="https://neo4j.com/developer/cypher/">dev-cypher</a></li><li><a href="https://neo4j.com/developer/graph-database/">dev-graph-database</a></li><li><a href="https://neo4j.com/developer/data-modeling/">dev-graph-data-modeling</a></li><li><a href="https://neo4j.com/developer/graph-platform/">dev-graph-platform</a></li><li><a href="https://neo4j.com/developer/tools-graph-visualization/">dev-graph-visualization-tools</a></li><li><a href="https://neo4j.com/developer/language-guides/">dev-language-guide</a></li><li><a href="https://neo4j.com/developer/guide-import-csv/">dev-importing-csv-data</a></li><li><a href="https://neo4j.com/developer/integration/">dev-integration</a></li><li><a href="https://neo4j.com/developer/in-production/">dev-in-production</a></li></ul>
+</li><li><p><a href="https://neo4j.com/docs/developer-manual/3.2">neo4j developer manual</a></p>
+</li><li><p><a href="https://neo4j.com/graphacademy/">Graphacademy</a></p>
+<ul>
+<li><a href="https://neo4j.com/graphacademy/online-training/introduction-to-neo4j/">introduction</a></li><li><a href="https://www.youtube.com/playlist?list=PL9Hl4pk2FsvWM9GWaguRhlCQ-pa-ERd4U">YouTube playlist</a>:</li></ul>
+</li></ol>
+
+        </article>
+    </body>
+</html>
