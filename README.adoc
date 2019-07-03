@@ -4594,9 +4594,9 @@ they have fewer metacharacters and a simple language-base.
 The usual context of wildcard characters is in globbing similar names in
 a list of files, whereas regexes are usually employed in applications
 that pattern-match text strings in general. For example, the regex
-footnote:[ ]+|[ ]+$ matches excess whitespace at the beginning or end of
+`^[ \t]+|[ \t]+$` matches excess whitespace at the beginning or end of
 a line. An advanced regular expression that matches any numeral is
-[+-]?(+(.+)?|.+)([eE][+-]?+)?.
+`[+-]?(+(.+)?|.+)([eE][+-]?+)?`.
 
 For more read wikipedia ->
 https://en.wikipedia.org/wiki/Regular_expression[regex]
