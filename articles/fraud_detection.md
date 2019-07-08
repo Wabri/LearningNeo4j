@@ -64,6 +64,11 @@ Let's take the last one layer of analysis: *Entity Linking*, and create a ring o
 
 ![Ring of 9 synthetic identities made by 3 person with 2 identifiers shared](resources/entity_ring_9.png)
 
+The problem become even more complex if we consider more than 2 identifiers. A ring of **n** people (n $\geq$ 2) sharing **m** elements of data can create up to $n^m$ synthetic identities, where each synthetic identity is linked to $m * (n-1)$ other nodes, for a total of $(n^m * (n-1))/2$ relationships.
+
+To have a real data consider that with 10 person fraud bust-out is up to $1.5M, assuming 100 false identities and 3 financial instruments per identity, each with a $5K credit limit.
+
+With a graph database like neo4j it's possible to visualize the dataset and search for the connection that create rings in the graph. Using this type of database, and the query language Cypher, is possible to work real time and help banks identify probable fraud rings during or even before the bust-out occurs.
 
 -----
 
