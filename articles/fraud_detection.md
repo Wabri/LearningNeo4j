@@ -52,6 +52,19 @@ With sharing only phone number and address, they can combine these to create 4 i
 
 ![Ring of 2 to 4](resources/first-party_fraud_ring2to4.png)
 
+To stop or prevent fraud is necessary to use connection, this because the traditional method use discrete data and these are useful for catching alone fraudsters but they fall when is necessary to detect a group of connected elements (like rings of fraudsters).
+
+There are various approch to do fraud prevention, one of this is the Gartner layered model:
+
+![Gartner's layered fraud prevention approach](resources/gartner_layers.png)
+
+This start with simple discrete methods and progresses to a connection data analysis in order to detect organized fraud.
+
+Let's take the last one layer of analysis: *Entity Linking*, and create a ring of like this:
+
+![Ring of 9 synthetic identities made by 3 person with 2 identifiers shared](resources/entity_ring_9.png)
+
+
 -----
 
 Resources:
@@ -59,3 +72,5 @@ Resources:
 * [Neo4j - fraud detection: Discovering connections with graph databases](https://go.neo4j.com/rs/710-RRC-335/images/Neo4j_WP-Fraud-Detection-with-Graph-Databases.pdf)
 * [Hybrid risk first party fraud](https://www.experian.com/blogs/insights/2015/10/hybrid-risk-the-truth-behind-first-party-fraud/)
 * [Fraud definition](https://legal-dictionary.thefreedictionary.com/Fraud)
+
+
