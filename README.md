@@ -3824,12 +3824,6 @@ RETURN DISTINCT
 ```
 --------------------
 
-## Fraud Detection
-
-You can find the article here: [Fraud Detection](articles/fraud_detection.md)
-
---------------------
-
 ## Index
 
 1. [ACID](#acid-consistency-model)
